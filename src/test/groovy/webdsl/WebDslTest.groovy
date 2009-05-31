@@ -22,6 +22,10 @@ class WebDslTest extends GroovyTestCase {
     server.stop()
   }
 
+  void test_closure_result_returned() {
+    assertEquals 3, web.do {3}
+  }
+  
   void test_page_resets_getters() {
     web.do {
       namedRainbow

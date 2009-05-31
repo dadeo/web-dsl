@@ -9,9 +9,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage
 
 class WebDsl {
 
-  private final WebClient _webClient = new WebClient();
+  def final WebClient _webClient = new WebClient();
   private static final ThreadLocal container = new ThreadLocal()
-  private HtmlPage page
+  def HtmlPage page
 
   def bind = [:]
   private factory = new DslFactory()
@@ -38,19 +38,13 @@ class WebDsl {
     new FormDsl(this, page.getForms()[0])
   }
 
-  protected setPage(newPage) {
+  protected void setPage(HtmlPage newPage) {
     page = newPage
     applyNewMetaClassWithDynamicMethods()
   }
 
   private def applyNewMetaClassWithDynamicMethods() {
-    def emc = new ExpandoMetaClass(WebDsl, false, true)
-    page.allHtmlChildElements.each {element ->
-      def dsl = factory.create(this, element)
-      DslHelper.addGetterMethodsFor(["id", "name"], {-> dsl }, element, emc)
-    }
-    emc.initialize()
-    this.metaClass = emc
+    new DslHelper().addGetterMethodsForAll(page.allHtmlChildElements, ['id', 'name'], this)
   }
 
   private getTitle() {

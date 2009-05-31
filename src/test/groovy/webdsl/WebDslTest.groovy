@@ -370,7 +370,23 @@ class WebDslTest extends GroovyTestCase {
       }
     }
     def expected = [[first:"pinky", last:"jones", ssn:""],[first:"john", last:"doe", ssn:""]]
-    println result
     assertEquals expected, result
+  }
+
+  void test_list_unordered() {
+    def actual
+    web.do {
+      actual = myUnorderedList.value
+    }
+    assertEquals( ['item 1', 'item 2', 'item 3', 'item 4', 'item 5'], actual)
+  }
+
+  void test_list_ordered() {
+    def actual
+    web.do {
+      actual = myOrderedList.value
+    }
+    println actual
+    assertEquals( ['item 1', 'item 2', 'item 3'], actual)
   }
 }

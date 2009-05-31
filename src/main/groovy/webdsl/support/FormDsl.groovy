@@ -17,7 +17,7 @@ class FormDsl {
     this.form = form
   }
 
-  def "do"(closure) {
+  def _do(closure) {
     closure.delegate = this
     closure.resolveStrategy = Closure.DELEGATE_FIRST
     closure()
@@ -56,4 +56,9 @@ class FormDsl {
     }
   }
 
+  def methodMissing(String name, args) {
+    if(name == "do") {
+      return _do(*args)
+    }
+  }
 }

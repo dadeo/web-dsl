@@ -16,13 +16,13 @@ class WebDsl {
   def bind = [:]
   private factory = new DslFactory()
 
-  def "for"(where) {
+  def _for(where) {
     container.set this
     setPage _webClient.getPage(where)
     this
   }
 
-  def "do"(closure) {
+  def _do(closure) {
     closure.delegate = this
     closure.resolveStrategy = Closure.DELEGATE_FIRST
     use(WebDsl) {
@@ -58,6 +58,12 @@ class WebDsl {
   }
 
   def methodMissing(String name, args) {
+    switch(name) {
+      case "for":
+        return _for(*args)
+      case "do":
+        return _do(*args)
+    }
     this[name].do args[0]
   }
 

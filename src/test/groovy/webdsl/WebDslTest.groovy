@@ -4,8 +4,6 @@ import webdsl.support.TableDsl
 import webdsl.support.ElementDsl
 import webdsl.support.SelectDsl
 import webdsl.WebDsl
-import webdsl.support.ElementDsl
-import webdsl.support.SelectDsl
 import webdsl.JettyRunner
 
 class WebDslTest extends GroovyTestCase {
@@ -28,31 +26,39 @@ class WebDslTest extends GroovyTestCase {
   
   void test_page_resets_getters() {
     web.do {
-      namedRainbow
+      assertNotNull namedRainbow
 
-      shouldFail(MissingPropertyException) {
-        namedMain
-      }
+      assertNull namedMain
 
       namedRainbow.click()
 
-      shouldFail(MissingPropertyException) {
-        namedRainbow
-      }
+      assertNull namedRainbow
 
-      namedMain
+      assertNotNull namedMain
     }
   }
 
   void test_page_resets_getters_when_string_properties_are_used() {
     web.do {
-      namedRainbow
+      assertNotNull namedRainbow
 
       'Submit 1'.click()
 
-      shouldFail(MissingPropertyException) {
-        namedRainbow
-      }
+      assertNull namedRainbow
+    }
+  }
+
+  void test_exists() {
+    web.do {
+      assertTrue namedRainbow.exists()
+
+      assertFalse namedMain.exists()
+
+      namedRainbow.click()
+
+      assertFalse namedRainbow.exists()
+
+      assertTrue namedMain.exists()
     }
   }
 
@@ -386,7 +392,6 @@ class WebDslTest extends GroovyTestCase {
     web.do {
       actual = myOrderedList.value
     }
-    println actual
     assertEquals( ['item 1', 'item 2', 'item 3'], actual)
   }
 }

@@ -60,5 +60,7 @@ class FormDsl {
     if(name == "do") {
       return _do(*args)
     }
+    throw new MissingMethodException(name, FormDsl, args)
   }
+
 }

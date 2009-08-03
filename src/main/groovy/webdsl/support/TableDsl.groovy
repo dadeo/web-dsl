@@ -13,6 +13,10 @@ class TableDsl {
     this.table = table
   }
 
+  def getName() {
+    table.getAttribute("name")
+  }
+
   def getBy() {
     this
   }

@@ -67,6 +67,14 @@ class WebDsl {
     this[name].do args[0]
   }
 
+  def propertyMissing(String name) {
+    null
+  }
+
+  static boolean exists(target) {
+    target == null || !(target instanceof org.codehaus.groovy.runtime.NullObject)
+  }
+  
   static def click(String string) {
     def found = container.get().page.getAllHtmlChildElements().find {HtmlElement element ->
       element.getTextContent() == string || element.getAttribute("value") == string || element.getAttribute("href") == string

@@ -10,8 +10,10 @@ class WebDslTest extends GroovyTestCase {
   public static final PORT = 8081
   def web
   def server = new JettyRunner(port:PORT)
-
+  def map
+  
   void setUp() {
+  	map = [key:'value']
     server.start()
     web = new WebDsl().for("http://localhost:$PORT/main.html")
   }
@@ -24,41 +26,55 @@ class WebDslTest extends GroovyTestCase {
     assertEquals 3, web.do {3}
   }
   
+  void test_access_field() {
+  	web.do {
+  		assertEquals 'value', map.key
+  	}	
+  }
+
+  void test_modify_field() {
+  	web.do {
+  		map = [key2: 'value']
+  	}	
+	assertEquals([key2:'value'], map)
+  }
+    
+
   void test_page_resets_getters() {
     web.do {
-      assertNotNull namedRainbow
+      assertTrue(exists('namedRainbow'))
 
-      assertNull namedMain
+      assertFalse exists('namedMain')
 
       namedRainbow.click()
 
-      assertNull namedRainbow
+      assertFalse exists('namedRainbow')
 
-      assertNotNull namedMain
+      assertTrue exists('namedMain')
     }
   }
 
   void test_page_resets_getters_when_string_properties_are_used() {
     web.do {
-      assertNotNull namedRainbow
+      assertTrue exists('namedRainbow')
 
       'Submit 1'.click()
 
-      assertNull namedRainbow
+      assertFalse exists('namedRainbow')
     }
   }
 
   void test_exists() {
     web.do {
-      assertTrue namedRainbow.exists()
+      assertTrue exists('namedRainbow')
 
-      assertFalse namedMain.exists()
+      assertFalse exists('namedMain')
 
       namedRainbow.click()
 
-      assertFalse namedRainbow.exists()
+      assertFalse exists('namedRainbow')
 
-      assertTrue namedMain.exists()
+      assertTrue exists('namedMain')
     }
   }
 

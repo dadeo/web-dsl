@@ -38,25 +38,6 @@ class TableDsl {
     result
   }
 
-  /*
-
-    table.allHtmlChildElements.each { row ->
-      if(row instanceof HtmlTableRow) {
-        def map = [:]
-        int i = 0
-        row.allHtmlChildElements.each { td ->
-          if(i < columnNames.size() && td instanceof HtmlTableDataCell) {
-            map[columnNames[i]] = td.getTextContent()
-            ++i
-          }
-        }
-        (i..<columnNames.size()).each { index -> map[columnNames[index]] = "" }
-   */
-
-
-
-
-
   def columns(columnNames) {
     def result = []
     def map = [:]

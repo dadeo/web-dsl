@@ -9,11 +9,11 @@ import webdsl.JettyRunner
 class WebDslTest extends GroovyTestCase {
   public static final PORT = 8081
   def web
-  def server = new JettyRunner(port:PORT)
+  def server = new JettyRunner(port: PORT)
   def map
-  
+
   void setUp() {
-  	map = [key:'value']
+    map = [key: 'value']
     server.start()
     web = new WebDsl().for("http://localhost:$PORT/main.html")
   }
@@ -25,20 +25,20 @@ class WebDslTest extends GroovyTestCase {
   void test_closure_result_returned() {
     assertEquals 3, web.do {3}
   }
-  
+
   void test_access_field() {
-  	web.do {
-  		assertEquals 'value', map.key
-  	}	
+    web.do {
+      assertEquals 'value', map.key
+    }
   }
 
   void test_modify_field() {
-  	web.do {
-  		map = [key2: 'value']
-  	}	
-	assertEquals([key2:'value'], map)
+    web.do {
+      map = [key2: 'value']
+    }
+    assertEquals([key2: 'value'], map)
   }
-    
+
 
   void test_page_resets_getters() {
     web.do {
@@ -139,7 +139,7 @@ class WebDslTest extends GroovyTestCase {
   void test_textOfChildren_of_type() {
     def expected = ["message 1", "message 2", "message 3"]
     web.do {
-      bind.actual = errors.children(type:"li").text
+      bind.actual = errors.children(type: "li").text
     }
     assertEquals expected.size(), web.bind.actual.size()
     assertEquals expected, web.bind.actual
@@ -148,7 +148,7 @@ class WebDslTest extends GroovyTestCase {
   void test_textOfChildren_of_types() {
     def expected = ["message 0", "message 1", "message 2", "message 3"]
     web.do {
-      bind.actual = errors.children(types:["li", "div"]).text
+      bind.actual = errors.children(types: ["li", "div"]).text
     }
     assertEquals expected.size(), web.bind.actual.size()
     assertEquals expected, web.bind.actual
@@ -315,7 +315,7 @@ class WebDslTest extends GroovyTestCase {
         actual = values()
       }
     }
-    assertEquals([name:"a default value", auto:"Volvo", namedCheckbox1:false, namedCheckbox2:true, radio1:"radio content 3"], actual)
+    assertEquals([name: "a default value", auto: "Volvo", namedCheckbox1: false, namedCheckbox2: true, radio1: "radio content 3"], actual)
   }
 
   void test_valuesById() {
@@ -325,7 +325,7 @@ class WebDslTest extends GroovyTestCase {
         actual = valuesById()
       }
     }
-    assertEquals([nameId:"a default value", autoId:"Volvo", checkbox1:false, checkbox2:true, radio1_1:false, radio1_2:false, radio1_3:true], actual)
+    assertEquals([nameId: "a default value", autoId: "Volvo", checkbox1: false, checkbox2: true, radio1_1: false, radio1_2: false, radio1_3: true], actual)
   }
 
   void test_radio_with_label() {
@@ -353,45 +353,64 @@ class WebDslTest extends GroovyTestCase {
   void test_table() {
     List result
     web.do {
-      form {
-        assertTrue table1 instanceof TableDsl
-        result = table1.by.span
-      }
+      assertTrue table1 instanceof TableDsl
+      result = table1.by.span
     }
-    def expected = [[firstName:"pinky", lastName:"jones"],[firstName:"john", lastName:"doe"]]
+    def expected = [[firstName: "pinky", lastName: "jones"], [firstName: "john", lastName: "doe"]]
     assertEquals expected, result
   }
 
   void test_table_column() {
     List result
     web.do {
-      form {
-        result = table1.by.columns(['first', 'last'])
-      }
+      result = table1.by.columns(['first', 'last'])
     }
-    def expected = [[first:"pinky", last:"jones"],[first:"john", last:"doe"]]
+    def expected = [[first: "pinky", last: "jones"], [first: "john", last: "doe"]]
     assertEquals expected, result
   }
 
   void test_table_columns_not_all_columns_requested() {
     List result
     web.do {
-      form {
-        result = table1.by.columns(['first'])
-      }
+      result = table1.by.columns(['first'])
     }
-    def expected = [[first:"pinky"],[first:"john"]]
+    def expected = [[first: "pinky"], [first: "john"]]
     assertEquals expected, result
   }
 
   void test_table_columns_extra_columns_requested() {
     List result
     web.do {
-      form {
-        result = table1.by.columns(['first', 'last', 'ssn'])
+      result = table1.by.columns(['first', 'last', 'ssn'])
+    }
+    def expected = [[first: "pinky", last: "jones", ssn: ""], [first: "john", last: "doe", ssn: ""]]
+    assertEquals expected, result
+  }
+
+  void test_table_asObject() {
+    def result
+    web.do {
+      result = table2.asObject()
+    }
+    def expected = ["First Name": "john", "Last Name": "doe", "SSN": "555-55-5555"]
+    assertEquals expected, result
+  }
+
+  void test_table_process() {
+    def result = []
+    web.do {
+      table2.process {row, column, content ->
+        result << [rowIndex: row, columnIndex: column, content: content]
       }
     }
-    def expected = [[first:"pinky", last:"jones", ssn:""],[first:"john", last:"doe", ssn:""]]
+    def expected = [
+        [rowIndex: 0, columnIndex: 0, content: "First Name"],
+        [rowIndex: 0, columnIndex: 1, content: "john"],
+        [rowIndex: 1, columnIndex: 0, content: "Last Name"],
+        [rowIndex: 1, columnIndex: 1, content: "doe"],
+        [rowIndex: 2, columnIndex: 0, content: "SSN"],
+        [rowIndex: 2, columnIndex: 1, content: "555-55-5555"],
+    ]
     assertEquals expected, result
   }
 
@@ -400,7 +419,7 @@ class WebDslTest extends GroovyTestCase {
     web.do {
       actual = myUnorderedList.value
     }
-    assertEquals( ['item 1', 'item 2', 'item 3', 'item 4', 'item 5'], actual)
+    assertEquals(['item 1', 'item 2', 'item 3', 'item 4', 'item 5'], actual)
   }
 
   void test_list_ordered() {
@@ -408,6 +427,14 @@ class WebDslTest extends GroovyTestCase {
     web.do {
       actual = myOrderedList.value
     }
-    assertEquals( ['item 1', 'item 2', 'item 3'], actual)
+    assertEquals(['item 1', 'item 2', 'item 3'], actual)
+  }
+
+  def assertEquals(List expected, List actual) {
+    def message = {"\nexpected list:${expected}\nactual list  :${actual}\n"}
+    assertEquals message(), expected.size(), actual ? actual.size() : 0
+    expected.size().times {
+      assertEquals message(), expected[it].toString(), actual[it].toString()
+    }
   }
 }

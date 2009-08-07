@@ -7,6 +7,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell
 
 
 class TableDsl {
+
   private HtmlTable table
 
   TableDsl(table) {
@@ -37,8 +38,8 @@ class TableDsl {
     result
   }
 
-  def columns(columnNames) {
-    def result = []
+  /*
+
     table.allHtmlChildElements.each { row ->
       if(row instanceof HtmlTableRow) {
         def map = [:]
@@ -50,9 +51,58 @@ class TableDsl {
           }
         }
         (i..<columnNames.size()).each { index -> map[columnNames[index]] = "" }
-        result << map
+   */
+
+
+
+
+
+  def columns(columnNames) {
+    def result = []
+    def map = [:]
+    def finalize = {
+      (map.size()..<columnNames.size()).each { index -> map[columnNames[index]] = "" }
+      result << map
+    }
+    process { row, column, content ->
+      if(row != 0 && column == 0) {
+        finalize()
+        map = [:]
+      }
+      if(column < columnNames.size()) {
+        map[columnNames[column]] = content
+      }
+    }
+    finalize()
+    result
+  }
+
+  def asObject() {
+    def result = [:]
+    def attribute
+    process { row, column, content ->
+      if(column == 0) {
+        attribute = content
+      } else {
+        result[attribute] = content
       }
     }
     result
+  }
+
+  def process(closure) {
+    int rowIndex = 0
+    table.allHtmlChildElements.each { row ->
+      if(row instanceof HtmlTableRow) {
+        int columnIndex = 0
+        row.allHtmlChildElements.each { td ->
+          if(td instanceof HtmlTableDataCell) {
+            closure rowIndex, columnIndex, td.textContent
+            ++columnIndex
+          }
+        }
+        ++rowIndex
+      }
+    }
   }
 }

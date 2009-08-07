@@ -55,19 +55,42 @@ class WebDsl {
     try {
       getProperty(elementName)
       return true
-    } catch(MissingPropertyException e) {
+    } catch (MissingPropertyException e) {
       return false
     }
   }
 
   def methodMissing(String name, args) {
-    switch(name) {
+    switch (name) {
       case "for":
-        return _for(*args)
+        return _for(* args)
       case "do":
-        return _do(*args)
+        return _do(* args)
     }
     this[name].do args[0]
+  }
+
+  static def camel(String string) {
+    def buffer = new StringBuffer()
+
+    int match = 0
+    def matcher = string =~ /\b(.)(\w*)\s*/
+    while(matcher.find()) {
+      def toCase = match == 0 ? "toLowerCase" : "toUpperCase"
+      matcher.appendReplacement(buffer, matcher.group(1)."$toCase"() + matcher.group(2).toLowerCase())
+      ++match
+    }
+    matcher.appendTail(buffer)
+
+    buffer.toString()
+  }
+
+  static def camel(Map map) {
+    def result = [:]
+    map.each {k, v ->
+      result[camel(k)] = v
+    }
+    result
   }
 
   static def click(String string) {

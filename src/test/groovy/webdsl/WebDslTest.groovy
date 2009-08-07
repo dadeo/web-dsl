@@ -5,6 +5,7 @@ import webdsl.support.ElementDsl
 import webdsl.support.SelectDsl
 import webdsl.WebDsl
 import webdsl.JettyRunner
+import junit.framework.AssertionFailedError
 
 class WebDslTest extends GroovyTestCase {
   public static final PORT = 8081
@@ -39,6 +40,13 @@ class WebDslTest extends GroovyTestCase {
     assertEquals([key2: 'value'], map)
   }
 
+  void test_assertions_in_dsl() {
+    shouldFail {
+      web.do {
+        fail("should fail")
+      }
+    }
+  }
 
   void test_page_resets_getters() {
     web.do {
@@ -319,7 +327,7 @@ class WebDslTest extends GroovyTestCase {
   void test_fillInWith() {
     web.do {
       form {
-        fillInWith([name:'henry', auto:'audi', checkbox1:true])
+        fillInWith([name: 'henry', auto: 'audi', checkbox1: true])
         submit
       }
     }
@@ -331,7 +339,7 @@ class WebDslTest extends GroovyTestCase {
   void test_fillInWith_allows_extra_values_in_map() {
     web.do {
       form {
-        fillInWith([name:'henry', other:"xxxx"])
+        fillInWith([name: 'henry', other: "xxxx"])
         submit
       }
     }
@@ -454,10 +462,36 @@ class WebDslTest extends GroovyTestCase {
     assertEquals(['item 1', 'item 2', 'item 3'], actual)
   }
 
+  void test_camel_string() {
+    assertEquals "firstName", web.camel("First Name")
+    assertEquals "firstName", web.camel("first name")
+    assertEquals "a", web.camel("A")
+    assertEquals "a", web.camel("a")
+    assertEquals "ssn", web.camel("SSN")
+    assertEquals "ipAddress", web.camel("IP Address")
+    assertEquals "ipAddress", web.camel("IP ADDRESS")
+    assertEquals "externalIpAddress", web.camel("EXTERNAL IP ADDRESS")
+    assertEquals "aBC", web.camel("A B C")
+  }
+
+  void test_camel_map() {
+    def original = ["first name": "john", "last name": "doe"]
+    def actual = web.camel(original)
+    assertEquals(["firstName": "john", "lastName": "doe"], actual)
+  }
+
+  void test_camel_map_extended() {
+    def original = ["first name": "john", "last name": "doe"]
+    web.do {
+      def actual = original.camel()
+      assertEquals(["firstName": "john", "lastName": "doe"], actual)
+    }
+  }
+
   def assertEquals(Map expected, Map actual) {
     def message = {"\n\nexpected list:${expected}\nactual list  :${actual}\nkey          :${it}\n"}
     assertEquals message(), expected.size(), actual ? actual.size() : 0
-    expected.each { k, v ->
+    expected.each {k, v ->
       assertEquals message(k), v?.toString(), actual[k]?.toString()
     }
   }

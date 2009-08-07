@@ -206,9 +206,7 @@ class WebDslTest extends GroovyTestCase {
 
   void test_click_button_by_name() {
     web.do {
-      form {
-        namedSubmit1.click()
-      }
+      namedSubmit1.click()
     }
     assertEquals "TestServlet form0", web.title
     assertEquals "form0", server.path
@@ -217,9 +215,7 @@ class WebDslTest extends GroovyTestCase {
 
   void test_click_button_by_id() {
     web.do {
-      form {
-        submit1.click()
-      }
+      submit1.click()
     }
     assertEquals "form0", server.path
     assertTrue server.params.containsKey('namedSubmit1')
@@ -227,9 +223,7 @@ class WebDslTest extends GroovyTestCase {
 
   void test_click_button_by_value() {
     web.do {
-      form {
-        'Submit 1'.click()
-      }
+      'Submit 1'.click()
     }
     assertEquals "form0", server.path
     assertTrue server.params.containsKey('namedSubmit1')
@@ -237,11 +231,9 @@ class WebDslTest extends GroovyTestCase {
 
   void test_click_checkbox_by_name() {
     web.do {
-      form {
-        namedCheckbox1.click()
-        namedCheckbox2.click()
-        submit
-      }
+      namedCheckbox1.click()
+      namedCheckbox2.click()
+      form.submit
     }
     assertEquals "form0", server.path
     assertEquals "Checkbox 1", server.params.namedCheckbox1[0]
@@ -250,11 +242,9 @@ class WebDslTest extends GroovyTestCase {
 
   void test_click_checkbox_by_id() {
     web.do {
-      form {
-        checkbox1.click()
-        checkbox2.click()
-        submit
-      }
+      checkbox1.click()
+      checkbox2.click()
+      form.submit
     }
     assertEquals "form0", server.path
     assertEquals "Checkbox 1", server.params.namedCheckbox1[0]
@@ -263,47 +253,39 @@ class WebDslTest extends GroovyTestCase {
 
   void test_form_text_by_id() {
     web.do {
-      form {
-        assertEquals 'a default value', nameId.value
-        nameId.value = 'henry'
-        submit
-      }
+      assertEquals 'a default value', nameId.value
+      nameId.value = 'henry'
+      form.submit
     }
     assertEquals "henry", server.params.name[0]
   }
 
   void test_form_text_by_name() {
     web.do {
-      form {
-        assertTrue name instanceof ElementDsl
-        assertEquals 'a default value', name.value
-        name.value = 'henry'
-        submit
-      }
+      assertTrue name instanceof ElementDsl
+      assertEquals 'a default value', name.value
+      name.value = 'henry'
+      form.submit
     }
     assertEquals "henry", server.params.name[0]
   }
 
   void test_form_select_by_id() {
     web.do {
-      form {
-        assertTrue auto instanceof SelectDsl
-        assertEquals 'Volvo', autoId.value
-        autoId.value = 'audi'
-        submit
-      }
+      assertTrue auto instanceof SelectDsl
+      assertEquals 'Volvo', autoId.value
+      autoId.value = 'audi'
+      form.submit
     }
     assertEquals "audi", server.params.auto[0]
   }
 
   void test_form_select_by_name() {
     web.do {
-      form {
-        assertTrue auto instanceof SelectDsl
-        assertEquals 'Volvo', auto.value
-        auto.value = 'audi'
-        submit
-      }
+      assertTrue auto instanceof SelectDsl
+      assertEquals 'Volvo', auto.value
+      auto.value = 'audi'
+      form.submit
     }
     assertEquals "audi", server.params.auto[0]
   }
@@ -321,32 +303,26 @@ class WebDslTest extends GroovyTestCase {
   void test_valuesById() {
     Map actual
     web.do {
-      form {
-        actual = valuesById()
-      }
+      actual = form.valuesById()
     }
     assertEquals([nameId: "a default value", autoId: "Volvo", checkbox1: false, checkbox2: true, radio1_1: false, radio1_2: false, radio1_3: true], actual)
   }
 
   void test_radio_with_label() {
     web.do {
-      form {
-        assertEquals "radio content 3", radio1.text
-        assertEquals "radio 1 value 3", radio1.value
-        assertEquals true, radio1.checked
-        radio1_2.click()
-        submit
-      }
+      assertEquals "radio content 3", radio1.text
+      assertEquals "radio 1 value 3", radio1.value
+      assertEquals true, radio1.checked
+      radio1_2.click()
+      form.submit
     }
     assertEquals 'radio 1 value 2', server.params.radio1[0]
   }
 
   void test_radio_with_no_label() {
     web.do {
-      form {
-        assertEquals "", radio1_2.text
-        assertEquals "radio 1 value 2", radio1_2.value
-      }
+      assertEquals "", radio1_2.text
+      assertEquals "radio 1 value 2", radio1_2.value
     }
   }
 

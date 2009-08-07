@@ -50,6 +50,16 @@ class FormDsl {
     result
   }
 
+  def fillInWith(Map values) {
+    pageContainer.do {
+      values.each {k, v ->
+        if(pageContainer.metaClass.hasProperty(pageContainer, k)) {
+          getProperty(k).value = v
+        }
+      }
+    }
+  }
+
   def findLabelFor(what) {
     form.allHtmlChildElements.find {element ->
       element instanceof HtmlLabel && element.getAttribute("for") == what

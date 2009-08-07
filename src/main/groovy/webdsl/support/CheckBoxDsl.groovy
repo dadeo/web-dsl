@@ -13,4 +13,9 @@ class CheckBoxDsl extends ElementDsl {
   def tableValue(attributeName) {
     checked
   }
+
+  @Override
+  def setValue(value) {
+    pageContainer.page = element.setChecked(value)    
+  }
 }

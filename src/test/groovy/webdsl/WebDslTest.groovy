@@ -251,6 +251,32 @@ class WebDslTest extends GroovyTestCase {
     assertEquals null, server.params.namedCheckbox2
   }
 
+  void test_checkbox_setValue_to_opposite_values() {
+    web.do {
+      checkbox1.value = true
+      checkbox2.value = false
+      form.submit
+    }
+    assertEquals "Checkbox 1", server.params.namedCheckbox1[0]
+    assertEquals null, server.params.namedCheckbox2
+  }
+
+  void test_checkbox_setValue_defaulted_as_false_set_to_false() {
+    web.do {
+      checkbox1.value = false
+      form.submit
+    }
+    assertEquals null, server.params.namedCheckbox1
+  }
+
+  void test_checkbox_setValue_defaulted_as_true_set_to_true() {
+    web.do {
+      checkbox2.value = true
+      form.submit
+    }
+    assertEquals "Checkbox 2", server.params.namedCheckbox2[0]
+  }
+
   void test_form_text_by_id() {
     web.do {
       assertEquals 'a default value', nameId.value
@@ -290,6 +316,28 @@ class WebDslTest extends GroovyTestCase {
     assertEquals "audi", server.params.auto[0]
   }
 
+  void test_fillInWith() {
+    web.do {
+      form {
+        fillInWith([name:'henry', auto:'audi', checkbox1:true])
+        submit
+      }
+    }
+    assertEquals "henry", server.params.name[0]
+    assertEquals "audi", server.params.auto[0]
+    assertEquals "Checkbox 1", server.params.namedCheckbox1[0]
+  }
+
+  void test_fillInWith_allows_extra_values_in_map() {
+    web.do {
+      form {
+        fillInWith([name:'henry', other:"xxxx"])
+        submit
+      }
+    }
+    assertEquals "henry", server.params.name[0]
+  }
+
   void test_values() {
     Map actual
     web.do {
@@ -297,7 +345,7 @@ class WebDslTest extends GroovyTestCase {
         actual = values()
       }
     }
-    assertEquals([name: "a default value", auto: "Volvo", namedCheckbox1: false, namedCheckbox2: true, radio1: "radio content 3"], actual)
+    assertEquals([name: "a default value", auto: "Volvo", namedCheckbox1: false, namedCheckbox2: true, namedCheckbox3: true, radio1: "radio content 3"], actual)
   }
 
   void test_valuesById() {
@@ -305,7 +353,7 @@ class WebDslTest extends GroovyTestCase {
     web.do {
       actual = form.valuesById()
     }
-    assertEquals([nameId: "a default value", autoId: "Volvo", checkbox1: false, checkbox2: true, radio1_1: false, radio1_2: false, radio1_3: true], actual)
+    assertEquals([nameId: "a default value", autoId: "Volvo", checkbox1: false, checkbox2: true, checkbox3: true, radio1_1: false, radio1_2: false, radio1_3: true], actual)
   }
 
   void test_radio_with_label() {
@@ -406,8 +454,16 @@ class WebDslTest extends GroovyTestCase {
     assertEquals(['item 1', 'item 2', 'item 3'], actual)
   }
 
+  def assertEquals(Map expected, Map actual) {
+    def message = {"\n\nexpected list:${expected}\nactual list  :${actual}\nkey          :${it}\n"}
+    assertEquals message(), expected.size(), actual ? actual.size() : 0
+    expected.each { k, v ->
+      assertEquals message(k), v?.toString(), actual[k]?.toString()
+    }
+  }
+
   def assertEquals(List expected, List actual) {
-    def message = {"\nexpected list:${expected}\nactual list  :${actual}\n"}
+    def message = {"\n\nexpected list:${expected}\nactual list  :${actual}\n"}
     assertEquals message(), expected.size(), actual ? actual.size() : 0
     expected.size().times {
       assertEquals message(), expected[it].toString(), actual[it].toString()

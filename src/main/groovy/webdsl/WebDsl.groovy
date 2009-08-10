@@ -10,7 +10,7 @@ import org.codehaus.groovy.runtime.metaclass.ClosureMetaMethod
 
 class WebDsl {
 
-  def final WebClient _webClient = new WebClient();
+  def WebClient webClient = new WebClient();
   private static final ThreadLocal container = new ThreadLocal()
   def HtmlPage page
 
@@ -19,7 +19,7 @@ class WebDsl {
 
   def _for(where) {
     container.set this
-    setPage _webClient.getPage(where)
+    setPage webClient.getPage(where)
     this
   }
 
@@ -29,6 +29,11 @@ class WebDsl {
     use(WebDsl) {
       closure()
     }
+  }
+
+  def openNewClient(where) {
+    webClient = new WebClient()
+    _for(where)
   }
 
   def form(closure) {

@@ -51,6 +51,15 @@ class WebDslTest extends GroovyTestCase {
     }
   }
 
+  void test_openNewClient() {
+    web.do {
+      def oldClient = webClient
+      openNewClient("http://localhost:$PORT/cloud.html")
+      assertNotSame oldClient, webClient
+      assertEquals "Cloud", title
+    }
+  }
+
   void test_page_resets_getters() {
     web.do {
       assertTrue(exists('namedRainbow'))

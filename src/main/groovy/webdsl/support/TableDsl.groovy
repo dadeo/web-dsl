@@ -89,7 +89,7 @@ class TableDsl {
         int columnIndex = 0
         row.allHtmlChildElements.each { td ->
           if(td instanceof HtmlTableDataCell) {
-            closure rowIndex, columnIndex, td.textContent
+            closure rowIndex, columnIndex, td.textContent.trim()
             ++columnIndex
           }
         }

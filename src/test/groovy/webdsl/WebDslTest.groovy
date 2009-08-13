@@ -109,6 +109,14 @@ class WebDslTest extends GroovyTestCase {
     assertEquals "Rainbow Page", web.title
   }
 
+  void test_click_element_by_id_as_dynamic_string() {
+    web.do {
+      assertTrue rainbow instanceof ElementDsl
+      "rain${'bow'}".click()
+    }
+    assertEquals "Rainbow Page", web.title
+  }
+
   void test_click_anchor_by_href() {
     web.do {
       "rainbow.html".click()

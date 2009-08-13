@@ -94,14 +94,19 @@ class WebDsl {
   }
 
   static def click(String string) {
-    def found = container.get().page.getAllHtmlChildElements().find {HtmlElement element ->
+    def dsl = container.get()
+    def found = dsl.page.getAllHtmlChildElements().find {HtmlElement element ->
       element.getTextContent() == string || element.getAttribute("value") == string || element.getAttribute("href") == string
     }
 
     if (found) {
-      container.get().setPage found.click()
+      dsl.setPage found.click()
     } else {
-      throw new RuntimeException("No element found for '$string'")
+      if(dsl.hasProperty(string)) {
+        container.get().getProperty(string).click()
+      } else {
+        throw new RuntimeException("No element found for '$string'")
+      }
     }
   }
 

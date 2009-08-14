@@ -6,6 +6,9 @@ import webdsl.support.SelectDsl
 import webdsl.WebDsl
 import webdsl.JettyRunner
 import junit.framework.AssertionFailedError
+import sun.awt.color.CMM
+import org.codehaus.groovy.runtime.metaclass.ClosureMetaMethod
+import org.codehaus.groovy.reflection.CachedMethod
 
 class WebDslTest extends GroovyTestCase {
   public static final PORT = 8081
@@ -448,7 +451,7 @@ class WebDslTest extends GroovyTestCase {
   void test_table_list_offset() {
     def result
     web.do {
-      result = table3.list(offset:2)
+      result = table3.list(offset: 2)
     }
     def expected = ["dinky", "linky", "stinky"]
     assertEquals expected, result
@@ -457,7 +460,7 @@ class WebDslTest extends GroovyTestCase {
   void test_table_list_column() {
     def result
     web.do {
-      result = table3.list(column:1)
+      result = table3.list(column: 1)
     }
     def expected = ["jones1", "jones2", "jones3", "jones4", "jones5"]
     assertEquals expected, result
@@ -466,7 +469,7 @@ class WebDslTest extends GroovyTestCase {
   void test_table_list_column_and_offset() {
     def result
     web.do {
-      result = table3.list(column:1, offset:1)
+      result = table3.list(column: 1, offset: 1)
     }
     def expected = ["jones2", "jones3", "jones4", "jones5"]
     assertEquals expected, result
@@ -504,6 +507,44 @@ class WebDslTest extends GroovyTestCase {
       actual = myOrderedList.value
     }
     assertEquals(['item 1', 'item 2', 'item 3'], actual)
+  }
+
+  void test_properties() {
+    web.do {
+      def props = properties()
+      assertTrue props.contains('auto')
+      assertTrue props.contains('table1')
+      assertTrue props.contains('table2')
+      assertTrue props.contains('table3')
+      assertTrue props.contains('form1')
+    }
+  }
+
+  void test_ids_starting_with_upper_case_letters() {
+    web.do {
+      assertEquals "upper", upper.text
+      assertEquals "UPPER", Upper.text
+    }
+  }
+
+  void test_intern() {
+    web.do {
+      assertEquals "upper", "upper".intern.text
+      assertEquals "UPPER", "Upper".intern.text
+    }
+  }
+
+  void test_string_value() {
+    web.do {
+      assertEquals 'a default value', "nameId".value
+    }
+  }
+
+  void test_string_text() {
+    web.do {
+      assertEquals "upper", "upper".text
+      assertEquals "UPPER", "Upper".text
+    }
   }
 
   void test_camel_string() {

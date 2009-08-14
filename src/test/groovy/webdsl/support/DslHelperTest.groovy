@@ -38,6 +38,20 @@ class DslHelperTest extends GroovyTestCase {
     }
   }
 
+  void test_toGetter() {
+    assertEquals "getName", DslHelper.toGetter("name")
+    assertEquals "getN", DslHelper.toGetter("n")
+    assertEquals 'get$Name', DslHelper.toGetter("Name")
+    assertEquals 'get$N', DslHelper.toGetter("N")
+  }
+
+  void test_fromGetter() {
+    assertEquals "name", DslHelper.fromGetter("getName")
+    assertEquals "n", DslHelper.fromGetter("getN")
+    assertEquals "Name", DslHelper.fromGetter('get$Name')
+    assertEquals "N", DslHelper.fromGetter('get$N')
+  }
+
   def createElement(int number, value) {
     createElement "element$number", "namedElement$number", value
   }

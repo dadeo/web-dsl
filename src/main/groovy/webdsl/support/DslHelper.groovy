@@ -17,10 +17,30 @@ class DslHelper {
     attributes.each {attribute ->
       def methodName = element.getAttribute(attribute)
       if (methodName) {
-        methodName = methodName[0].toUpperCase() + (methodName.size() > 1 ? methodName[1..-1] : "")
-        emc."get$methodName" = method
+        emc[toGetter(methodName)] = method
       }
     }
   }
 
+  static def toGetter(name) {
+    def start = name[0]
+    if(start =~ /[A-Z]/) {
+     start = '$' + start
+    } else {
+      start = start.toUpperCase()
+    }
+    "get" + start + (name.size() > 1 ? name[1..-1] : "")
+  }
+
+  static def fromGetter(name) {
+    name -= 'get'
+    def start
+    if(name.startsWith('$')) {
+      name -= '$'
+      start = name[0]
+    } else {
+      start = name[0].toLowerCase()
+    }
+    start + (name.size() > 1 ? name[1..-1] : "")
+  }
 }

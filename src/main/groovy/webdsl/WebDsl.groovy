@@ -6,6 +6,7 @@ import webdsl.support.FormDsl
 import webdsl.support.DslFactory
 import webdsl.support.DslHelper
 import com.gargoylesoftware.htmlunit.html.HtmlPage
+import org.codehaus.groovy.runtime.metaclass.ClosureMetaMethod
 
 class WebDsl {
 
@@ -70,12 +71,30 @@ class WebDsl {
     this[name].do args[0]
   }
 
+  def propertyMissing(String name) {
+    def possibleName = '$' + name
+    if (hasProperty(possibleName)) {
+      return getProperty(possibleName)
+    }
+    throw new MissingPropertyException(name, WebDsl)
+  }
+
+  def properties() {
+    def result = []
+    metaClass.methods.each {method ->
+      if (method instanceof ClosureMetaMethod && !method.closure.parameterTypes) {
+        result << DslHelper.fromGetter(method.name)
+      }
+    }
+    result
+  }
+
   static def camel(String string) {
     def buffer = new StringBuffer()
 
     int match = 0
     def matcher = string =~ /\b(.)(\w*)\s*/
-    while(matcher.find()) {
+    while (matcher.find()) {
       def toCase = match == 0 ? "toLowerCase" : "toUpperCase"
       matcher.appendReplacement(buffer, matcher.group(1)."$toCase"() + matcher.group(2).toLowerCase())
       ++match
@@ -102,10 +121,28 @@ class WebDsl {
     if (found) {
       dsl.setPage found.click()
     } else {
-      if(dsl.hasProperty(string)) {
-        container.get().getProperty(string).click()
+      getIntern(string).click()
+    }
+  }
+
+  static def getText(String string) {
+    getIntern(string).text
+  }
+
+  static def getValue(String string) {
+    getIntern(string).value
+  }
+
+  static def getIntern(String name) {
+    def dsl = container.get()
+    if (dsl.hasProperty(name)) {
+      return container.get().getProperty(name)
+    } else {
+      def possibleProperty = "\$${name}"
+      if (dsl.hasProperty(possibleProperty)) {
+        return container.get().getProperty(possibleProperty)
       } else {
-        throw new RuntimeException("No element found for '$string'")
+        throw new RuntimeException("No element found for '$name'")
       }
     }
   }

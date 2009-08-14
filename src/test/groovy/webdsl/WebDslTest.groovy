@@ -436,6 +436,42 @@ class WebDslTest extends GroovyTestCase {
     assertEquals expected, result
   }
 
+  void test_table_list() {
+    def result
+    web.do {
+      result = table3.list()
+    }
+    def expected = ["pinky", "winky", "dinky", "linky", "stinky"]
+    assertEquals expected, result
+  }
+
+  void test_table_list_offset() {
+    def result
+    web.do {
+      result = table3.list(offset:2)
+    }
+    def expected = ["dinky", "linky", "stinky"]
+    assertEquals expected, result
+  }
+
+  void test_table_list_column() {
+    def result
+    web.do {
+      result = table3.list(column:1)
+    }
+    def expected = ["jones1", "jones2", "jones3", "jones4", "jones5"]
+    assertEquals expected, result
+  }
+
+  void test_table_list_column_and_offset() {
+    def result
+    web.do {
+      result = table3.list(column:1, offset:1)
+    }
+    def expected = ["jones2", "jones3", "jones4", "jones5"]
+    assertEquals expected, result
+  }
+
   void test_table_process() {
     def result = []
     web.do {

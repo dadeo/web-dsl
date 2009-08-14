@@ -71,6 +71,17 @@ class TableDsl {
     result
   }
 
+  def list(options) {
+    def selectColumn = options?.column ?: 0
+    def result = []
+    process { row, column, content ->
+      if(column == selectColumn && (!options?.offset || row >= options.offset)) {
+        result << content
+      }
+    }
+    result
+  }
+
   def process(closure) {
     int rowIndex = 0
     table.allHtmlChildElements.each { row ->

@@ -78,7 +78,7 @@ class WebDsl {
 
   def propertyMissing(String name) {
     def possibleName = '$' + name
-    if (hasProperty(possibleName)) {
+    if (metaClass.hasProperty(this, possibleName)) {0
       return getProperty(possibleName)
     }
     throw new MissingPropertyException(name, WebDsl)
@@ -140,11 +140,11 @@ class WebDsl {
 
   static def getIntern(String name) {
     def dsl = container.get()
-    if (dsl.hasProperty(name)) {
+    if (dsl.metaClass.hasProperty(dsl, name)) {
       return container.get().getProperty(name)
     } else {
       def possibleProperty = "\$${name}"
-      if (dsl.hasProperty(possibleProperty)) {
+      if (dsl.metaClass.hasProperty(dsl, possibleProperty)) {
         return container.get().getProperty(possibleProperty)
       } else {
         throw new RuntimeException("No element found for '$name'")

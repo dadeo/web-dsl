@@ -6,7 +6,7 @@
     <groupId>web-dsl</groupId>
     <artifactId>web-dsl</artifactId>
     <name>Web Dsl</name>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
 
     <scm>
         <developerConnection>scm:git:git://github.com/dadeo/web-dsl.git</developerConnection>

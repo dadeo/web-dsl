@@ -6,7 +6,7 @@
 
     <groupId>web-dsl</groupId>
     <artifactId>web-dsl</artifactId>
-    <name>Example Project</name>
+    <name>Web Dsl</name>
     <version>1.0-SNAPSHOT</version>
 
     <scm>

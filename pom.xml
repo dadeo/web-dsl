@@ -12,7 +12,21 @@
         <developerConnection>scm:git:git://github.com/dadeo/web-dsl.git</developerConnection>
     </scm>
 
-    <dependencies>
+	<distributionManagement>
+	        <repository>
+	            <id>google-code</id>
+	            <name>Local Maven repository of releases</name>
+	            <url>dav:https://web-dsl.googlecode.com/svn/mvn-repo/release</url>
+	        </repository>
+	        <snapshotRepository>
+	            <id>google-code</id>
+	            <name>Local Maven repository of snapshots</name>
+	            <url>dav:https://web-dsl.googlecode.com/svn/mvn-repo/snapshot</url>
+	            <uniqueVersion>false</uniqueVersion>
+	        </snapshotRepository>
+	</distributionManagement>
+	
+	<dependencies>
         <dependency>
             <groupId>org.codehaus.groovy.maven.runtime</groupId>
             <artifactId>gmaven-runtime-default</artifactId>
@@ -53,6 +67,13 @@
     </dependencies>
 
     <build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-webdav</artifactId>
+            </extension>
+        </extensions>
+
         <plugins>
             <plugin>
                 <groupId>org.codehaus.groovy.maven</groupId>

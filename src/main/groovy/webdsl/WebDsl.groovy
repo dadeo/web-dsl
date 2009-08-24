@@ -19,15 +19,20 @@ import webdsl.support.DslFactory
 import webdsl.support.DslHelper
 import com.gargoylesoftware.htmlunit.html.HtmlPage
 import org.codehaus.groovy.runtime.metaclass.ClosureMetaMethod
+import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController
 
 class WebDsl {
 
-  def WebClient webClient = new WebClient();
+  def WebClient webClient
   private static final ThreadLocal container = new ThreadLocal()
   def HtmlPage page
 
   def bind = [:]
   private factory = new DslFactory()
+
+  WebDsl() {
+    initWebClient()
+  }
 
   def _for(where) {
     container.set this
@@ -44,8 +49,13 @@ class WebDsl {
   }
 
   def openNewClient(where) {
-    webClient = new WebClient()
+    initWebClient()
     _for(where)
+  }
+
+  private def initWebClient() {
+    webClient = new WebClient()
+    webClient.setAjaxController(new NicelyResynchronizingAjaxController())
   }
 
   def form(closure) {

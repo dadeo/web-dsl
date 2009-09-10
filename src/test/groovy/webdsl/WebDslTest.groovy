@@ -17,10 +17,6 @@ import webdsl.support.ElementDsl
 import webdsl.support.SelectDsl
 import webdsl.WebDsl
 import webdsl.JettyRunner
-import junit.framework.AssertionFailedError
-import sun.awt.color.CMM
-import org.codehaus.groovy.runtime.metaclass.ClosureMetaMethod
-import org.codehaus.groovy.reflection.CachedMethod
 
 class WebDslTest extends GroovyTestCase {
   public static final PORT = 8081
@@ -415,103 +411,131 @@ class WebDslTest extends GroovyTestCase {
   }
 
   void test_table() {
-    List result
     web.do {
       assertTrue table1 instanceof TableDsl
-      result = table1.by.span
+      def expected = [[firstName: "pinky", lastName: "jones"], [firstName: "john", lastName: "doe"]]
+      assertEquals expected, table1.by.span
     }
-    def expected = [[firstName: "pinky", lastName: "jones"], [firstName: "john", lastName: "doe"]]
-    assertEquals expected, result
   }
 
   void test_table_column() {
-    List result
     web.do {
-      result = table1.by.columns(['first', 'last'])
+      def expected = [[first: "pinky", last: "jones"], [first: "john", last: "doe"]]
+      assertEquals expected, table1.by.columns('first', 'last')
     }
-    def expected = [[first: "pinky", last: "jones"], [first: "john", last: "doe"]]
-    assertEquals expected, result
   }
 
   void test_table_columns_not_all_columns_requested() {
-    List result
     web.do {
-      result = table1.by.columns(['first'])
+      def expected = [[first: "pinky"], [first: "john"]]
+      assertEquals expected, table1.by.columns('first')
     }
-    def expected = [[first: "pinky"], [first: "john"]]
-    assertEquals expected, result
   }
 
   void test_table_columns_extra_columns_requested() {
-    List result
     web.do {
-      result = table1.by.columns(['first', 'last', 'ssn'])
+      def expected = [[first: "pinky", last: "jones", ssn: ""], [first: "john", last: "doe", ssn: ""]]
+      assertEquals expected, table1.by.columns('first', 'last', 'ssn')
     }
-    def expected = [[first: "pinky", last: "jones", ssn: ""], [first: "john", last: "doe", ssn: ""]]
-    assertEquals expected, result
   }
 
-  void test_table_asObject() {
+  void test_table_as_objects_with_names() {
+    web.do {
+      def expected = [
+          [first: "pinky", last:"jones1"],
+          [first: "winky", last:"jones2"],
+          [first: "dinky", last:"jones3"],
+          [first: "linky", last:"jones4"],
+          [first: "stinky", last:"jones5"],
+      ]
+      assertEquals expected, table3.as.objects('first', 'last')
+    }
+  }
+
+  void test_table_as_object() {
+    web.do {
+      def expected = ["firstName": "john", "lastName": "doe", "ssn": "555-55-5555"]
+      assertEquals expected, table2.as.object
+    }
+  }
+
+  void test_table_as_objects() {
+    web.do {
+      def expected = [
+          [firstName: "pinky", lastName:"jones1"],
+          [firstName: "winky", lastName:"jones2"],
+          [firstName: "dinky", lastName:"jones3"],
+          [firstName: "linky", lastName:"jones4"],
+          [firstName: "stinky", lastName:"jones5"],
+      ]
+      assertEquals expected, table3.as.objects
+    }
+  }
+
+  void test_table_as_objects_with_offset() {
     def result
     web.do {
-      result = table2.asObject()
+      result = table4(offset:1).as.objects
     }
-    def expected = ["First Name": "john", "Last Name": "doe", "SSN": "555-55-5555"]
+    def expected = [
+        [firstName: "pinky", lastName:"jones1"],
+        [firstName: "winky", lastName:"jones2"],
+    ]
     assertEquals expected, result
   }
 
   void test_table_list() {
     def result
     web.do {
-      result = table3.list()
+      result = table3.as.list
     }
-    def expected = ["pinky", "winky", "dinky", "linky", "stinky"]
+    def expected = ["first name", "pinky", "winky", "dinky", "linky", "stinky"]
     assertEquals expected, result
   }
 
   void test_table_list_offset() {
     def result
     web.do {
-      result = table3.list(offset: 2)
+      result = table3(offset:2).as.list
     }
-    def expected = ["dinky", "linky", "stinky"]
+    def expected = ["winky", "dinky", "linky", "stinky"]
     assertEquals expected, result
   }
 
   void test_table_list_column() {
     def result
     web.do {
-      result = table3.list(column: 1)
+      result = table3(column: 1).as.list
     }
-    def expected = ["jones1", "jones2", "jones3", "jones4", "jones5"]
+    def expected = ["last name", "jones1", "jones2", "jones3", "jones4", "jones5"]
     assertEquals expected, result
   }
 
   void test_table_list_column_and_offset() {
     def result
     web.do {
-      result = table3.list(column: 1, offset: 1)
+      result = table3(column: 1, offset: 1).as.list
     }
-    def expected = ["jones2", "jones3", "jones4", "jones5"]
+    def expected = ["jones1", "jones2", "jones3", "jones4", "jones5"]
     assertEquals expected, result
   }
 
   void test_table_process() {
-    def result = []
     web.do {
-      table2.process {row, column, content ->
-        result << [rowIndex: row, columnIndex: column, content: content]
+      def result = []
+      table2.process {row, column, td ->
+        result << [rowIndex: row, columnIndex: column, content: td.textContent.trim()]
       }
+      def expected = [
+          [rowIndex: 0, columnIndex: 0, content: "First Name"],
+          [rowIndex: 0, columnIndex: 1, content: "john"],
+          [rowIndex: 1, columnIndex: 0, content: "Last Name"],
+          [rowIndex: 1, columnIndex: 1, content: "doe"],
+          [rowIndex: 2, columnIndex: 0, content: "SSN"],
+          [rowIndex: 2, columnIndex: 1, content: "555-55-5555"],
+      ]
+      assertEquals expected, result
     }
-    def expected = [
-        [rowIndex: 0, columnIndex: 0, content: "First Name"],
-        [rowIndex: 0, columnIndex: 1, content: "john"],
-        [rowIndex: 1, columnIndex: 0, content: "Last Name"],
-        [rowIndex: 1, columnIndex: 1, content: "doe"],
-        [rowIndex: 2, columnIndex: 0, content: "SSN"],
-        [rowIndex: 2, columnIndex: 1, content: "555-55-5555"],
-    ]
-    assertEquals expected, result
   }
 
   void test_list_unordered() {

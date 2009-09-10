@@ -16,6 +16,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTable
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow
 import com.gargoylesoftware.htmlunit.html.HtmlSpan
 import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell
+import webdsl.WebDsl
 
 
 class TableDsl {
@@ -31,67 +32,11 @@ class TableDsl {
   }
 
   def getBy() {
-    this
+    "do"()
   }
 
-  def getSpan() {
-    def result = []
-    table.allHtmlChildElements.each { row ->
-      if(row instanceof HtmlTableRow) {
-        def map = [:]
-        row.allHtmlChildElements.each { span ->
-          if(span instanceof HtmlSpan && span.getAttribute("name")) {
-            map[span.getAttribute("name")] = span.getTextContent()
-          }
-        }
-        result << map
-      }
-    }
-    result
-  }
-
-  def columns(columnNames) {
-    def result = []
-    def map = [:]
-    def finalize = {
-      (map.size()..<columnNames.size()).each { index -> map[columnNames[index]] = "" }
-      result << map
-    }
-    process { row, column, content ->
-      if(row != 0 && column == 0) {
-        finalize()
-        map = [:]
-      }
-      if(column < columnNames.size()) {
-        map[columnNames[column]] = content
-      }
-    }
-    finalize()
-    result
-  }
-
-  def asObject() {
-    def result = [:]
-    def attribute
-    process { row, column, content ->
-      if(column == 0) {
-        attribute = content
-      } else {
-        result[attribute] = content
-      }
-    }
-    result
-  }
-
-  def list(options) {
-    def selectColumn = options?.column ?: 0
-    def result = []
-    process { row, column, content ->
-      if(column == selectColumn && (!options?.offset || row >= options.offset)) {
-        result << content
-      }
-    }
-    result
+  def getAs() {
+    "do"()
   }
 
   def process(closure) {
@@ -101,12 +46,30 @@ class TableDsl {
         int columnIndex = 0
         row.allHtmlChildElements.each { td ->
           if(td instanceof HtmlTableDataCell) {
-            closure rowIndex, columnIndex, td.textContent.trim()
+            closure rowIndex, columnIndex, td
             ++columnIndex
           }
         }
         ++rowIndex
       }
     }
+  }
+
+  def "do"(options) {
+    def grid = new GridDsl()
+    def startIndex = options?.offset ?: 0
+    def startColumn = options?.column ?: 0
+    process { row, column, td ->
+      if(row < startIndex) {
+        // do nothing
+      } else if (column < startColumn) {
+        // do nothing
+      } else if (column == startColumn) {
+        grid.nextRow td
+      } else {
+        grid.appendColumn td
+      }
+    }
+    grid
   }
 }

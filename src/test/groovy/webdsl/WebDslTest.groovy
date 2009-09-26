@@ -15,49 +15,8 @@ package webdsl
 import webdsl.support.TableDsl
 import webdsl.support.ElementDsl
 import webdsl.support.SelectDsl
-import webdsl.WebDsl
-import webdsl.JettyRunner
 
-class WebDslTest extends AbstractTest {
-  public static final PORT = 8081
-  def web
-  def server = new JettyRunner(port: PORT)
-  def map
-
-  void setUp() {
-    map = [key: 'value']
-    server.start()
-    web = new WebDsl().for("http://localhost:$PORT/main.html")
-  }
-
-  void tearDown() {
-    server.stop()
-  }
-
-  void test_closure_result_returned() {
-    assertEquals 3, web.do {3}
-  }
-
-  void test_access_field() {
-    web.do {
-      assertEquals 'value', map.key
-    }
-  }
-
-  void test_modify_field() {
-    web.do {
-      map = [key2: 'value']
-    }
-    assertEquals([key2: 'value'], map)
-  }
-
-  void test_assertions_in_dsl() {
-    shouldFail {
-      web.do {
-        fail("should fail")
-      }
-    }
-  }
+class WebDslTest extends AbstractServerTests {
 
   void test_openNewClient() {
     web.do {
@@ -65,30 +24,6 @@ class WebDslTest extends AbstractTest {
       openNewClient("http://localhost:$PORT/cloud.html")
       assertNotSame oldClient, webClient
       assertEquals "Cloud", title
-    }
-  }
-
-  void test_page_resets_getters() {
-    web.do {
-      assertTrue(exists('namedRainbow'))
-
-      assertFalse exists('namedMain')
-
-      namedRainbow.click()
-
-      assertFalse exists('namedRainbow')
-
-      assertTrue exists('namedMain')
-    }
-  }
-
-  void test_page_resets_getters_when_string_properties_are_used() {
-    web.do {
-      assertTrue exists('namedRainbow')
-
-      'Submit 1'.click()
-
-      assertFalse exists('namedRainbow')
     }
   }
 

@@ -13,7 +13,7 @@
 package webdsl
 
 
-class DslFunctionTests extends AbstractTest {
+class DslFunctionTests extends AbstractTests {
   def web
 
   void setUp() {

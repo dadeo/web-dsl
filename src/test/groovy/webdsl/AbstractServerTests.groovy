@@ -13,22 +13,18 @@
 package webdsl
 
 
-abstract class AbstractTests extends GroovyTestCase {
+abstract class AbstractServerTests extends AbstractTests {
+  public static final PORT = 8081
+  def web
+  def server = new JettyRunner(port: PORT)
 
-  def assertEquals(Map expected, Map actual) {
-    def message = {"\n\nexpected list:${expected}\nactual list  :${actual}\nkey          :${it}\n"}
-    assertEquals message(), expected.size(), actual ? actual.size() : 0
-    expected.each {k, v ->
-      assertEquals message(k), v?.toString(), actual[k]?.toString()
-    }
+  void setUp() {
+    server.start()
+    web = new WebDsl().for("http://localhost:$PORT/main.html")
   }
 
-  def assertEquals(List expected, List actual) {
-    def message = {"\n\nexpected list:${expected}\nactual list  :${actual}\n"}
-    assertEquals message(), expected.size(), actual ? actual.size() : 0
-    expected.size().times {
-      assertEquals message(), expected[it].toString(), actual[it].toString()
-    }
+  void tearDown() {
+    server.stop()
   }
 
 }

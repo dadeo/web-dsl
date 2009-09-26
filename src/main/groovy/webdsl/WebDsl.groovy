@@ -101,7 +101,8 @@ class WebDsl {
 
   def propertyMissing(String name) {
     def possibleName = '$' + name
-    if (metaClass.hasProperty(this, possibleName)) {0
+    if (metaClass.hasProperty(this, possibleName)) {
+      0
       return getProperty(possibleName)
     }
     throw new MissingPropertyException(name, WebDsl)
@@ -175,6 +176,15 @@ class WebDsl {
 
   static def setValue(GStringImpl string, value) {
     getIntern(string).value = value
+  }
+
+  static def map(Map target, mappings) {
+    def result = [:]
+    target.each {k, v ->
+      def newKey = mappings[k]
+      result[newKey ?: k] = v
+    }
+    result
   }
 
   static def getIntern(String name) {

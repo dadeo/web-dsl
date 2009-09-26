@@ -18,7 +18,7 @@ import webdsl.support.SelectDsl
 import webdsl.WebDsl
 import webdsl.JettyRunner
 
-class WebDslTest extends GroovyTestCase {
+class WebDslTest extends AbstractTest {
   public static final PORT = 8081
   def web
   def server = new JettyRunner(port: PORT)
@@ -618,48 +618,6 @@ class WebDslTest extends GroovyTestCase {
     web.do {
       assertEquals "upper", "uppe${'r'}".text
       assertEquals "UPPER", "Upper".text
-    }
-  }
-
-  void test_camel_string() {
-    assertEquals "firstName", web.camel("First Name")
-    assertEquals "firstName", web.camel("first name")
-    assertEquals "a", web.camel("A")
-    assertEquals "a", web.camel("a")
-    assertEquals "ssn", web.camel("SSN")
-    assertEquals "ipAddress", web.camel("IP Address")
-    assertEquals "ipAddress", web.camel("IP ADDRESS")
-    assertEquals "externalIpAddress", web.camel("EXTERNAL IP ADDRESS")
-    assertEquals "aBC", web.camel("A B C")
-  }
-
-  void test_camel_map() {
-    def original = ["first name": "john", "last name": "doe"]
-    def actual = web.camel(original)
-    assertEquals(["firstName": "john", "lastName": "doe"], actual)
-  }
-
-  void test_camel_map_extended() {
-    def original = ["first name": "john", "last name": "doe"]
-    web.do {
-      def actual = original.camel()
-      assertEquals(["firstName": "john", "lastName": "doe"], actual)
-    }
-  }
-
-  def assertEquals(Map expected, Map actual) {
-    def message = {"\n\nexpected list:${expected}\nactual list  :${actual}\nkey          :${it}\n"}
-    assertEquals message(), expected.size(), actual ? actual.size() : 0
-    expected.each {k, v ->
-      assertEquals message(k), v?.toString(), actual[k]?.toString()
-    }
-  }
-
-  def assertEquals(List expected, List actual) {
-    def message = {"\n\nexpected list:${expected}\nactual list  :${actual}\n"}
-    assertEquals message(), expected.size(), actual ? actual.size() : 0
-    expected.size().times {
-      assertEquals message(), expected[it].toString(), actual[it].toString()
     }
   }
 }

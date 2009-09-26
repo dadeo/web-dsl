@@ -332,6 +332,22 @@ class WebDslTest extends GroovyTestCase {
     assertEquals "henry", server.params.name[0]
   }
 
+  void test_form_text_by_name_as_string() {
+    web.do {
+      "name".value = 'henry'
+      form.submit
+    }
+    assertEquals "henry", server.params.name[0]
+  }
+
+  void test_form_text_by_name_as_gstring() {
+    web.do {
+      "na${'me'}".value = 'henry'
+      form.submit
+    }
+    assertEquals "henry", server.params.name[0]
+  }
+
   void test_form_select_by_id() {
     web.do {
       assertTrue auto instanceof SelectDsl
@@ -585,9 +601,22 @@ class WebDslTest extends GroovyTestCase {
     }
   }
 
+  void test_gstring_value() {
+    web.do {
+      assertEquals 'a default value', "name${"Id"}".value
+    }
+  }
+
   void test_string_text() {
     web.do {
       assertEquals "upper", "upper".text
+      assertEquals "UPPER", "Upper".text
+    }
+  }
+
+  void test_gstring_text() {
+    web.do {
+      assertEquals "upper", "uppe${'r'}".text
       assertEquals "UPPER", "Upper".text
     }
   }

@@ -20,6 +20,7 @@ import webdsl.support.DslHelper
 import com.gargoylesoftware.htmlunit.html.HtmlPage
 import org.codehaus.groovy.runtime.metaclass.ClosureMetaMethod
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController
+import org.codehaus.groovy.runtime.GStringImpl
 
 class WebDsl {
 
@@ -156,8 +157,24 @@ class WebDsl {
     getIntern(string).text
   }
 
+  static def getText(GStringImpl string) {
+    getIntern(string).text
+  }
+
   static def getValue(String string) {
     getIntern(string).value
+  }
+
+  static def getValue(GStringImpl string) {
+    getIntern(string).value
+  }
+
+  static def setValue(String string, value) {
+    getIntern(string).value = value
+  }
+
+  static def setValue(GStringImpl string, value) {
+    getIntern(string).value = value
   }
 
   static def getIntern(String name) {

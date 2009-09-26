@@ -13,7 +13,7 @@
 package webdsl
 
 
-abstract class AbstractTest extends GroovyTestCase {
+abstract class AbstractTests extends GroovyTestCase {
 
   def assertEquals(Map expected, Map actual) {
     def message = {"\n\nexpected list:${expected}\nactual list  :${actual}\nkey          :${it}\n"}

@@ -283,6 +283,13 @@ class WebDslTest extends AbstractServerTests {
     assertEquals "henry", server.params.name[0]
   }
 
+  void test_form_text_changes_updates_page_tracking() {
+    web.do {
+      textToEcho.value = 'abcd'
+      assert echoedText.value == 'abcd'
+    }
+  }
+
   void test_form_select_by_id() {
     web.do {
       assertTrue auto instanceof SelectDsl

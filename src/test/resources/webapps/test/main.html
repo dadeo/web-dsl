@@ -1,6 +1,13 @@
 <html>
 <head>
     <title>Main Page 1</title>
+    <script>
+        function echo() {
+            var textToEcho = document.getElementById('textToEcho');
+            if (textToEcho.value != "")
+                document.getElementById('echoedText').value = textToEcho.value;
+        }
+    </script>
 </head>
 <body>
 
@@ -49,22 +56,28 @@
 
 <table id="table3">
     <tr>
-        <td>first name</td><td>last name</td>
+        <td>first name</td>
+        <td>last name</td>
     </tr>
     <tr>
-        <td>pinky</td><td>jones1</td>
+        <td>pinky</td>
+        <td>jones1</td>
     </tr>
     <tr>
-        <td>winky</td><td>jones2</td>
+        <td>winky</td>
+        <td>jones2</td>
     </tr>
     <tr>
-        <td>dinky</td><td>jones3</td>
+        <td>dinky</td>
+        <td>jones3</td>
     </tr>
     <tr>
-        <td>linky</td><td>jones4</td>
+        <td>linky</td>
+        <td>jones4</td>
     </tr>
     <tr>
-        <td>stinky</td><td>jones5</td>
+        <td>stinky</td>
+        <td>jones5</td>
     </tr>
 </table>
 
@@ -73,13 +86,16 @@
         <td colspan="2">poorly desinged layout</td>
     </tr>
     <tr>
-        <td>first name</td><td>last name</td>
+        <td>first name</td>
+        <td>last name</td>
     </tr>
     <tr>
-        <td>pinky</td><td>jones1</td>
+        <td>pinky</td>
+        <td>jones1</td>
     </tr>
     <tr>
-        <td>winky</td><td>jones2</td>
+        <td>winky</td>
+        <td>jones2</td>
     </tr>
 </table>
 
@@ -134,6 +150,14 @@
     <fieldset>
         <legend>form 2</legend>
         <input type="submit" value="OK"/>
+    </fieldset>
+</form>
+
+<form id="form3" name="namedForm3" action="testit/form3">
+    <fieldset>
+        <legend>form 3</legend>
+        <input id="textToEcho" onchange="echo();" type="text" value=""/>
+        <input id="echoedText" type="text" value=""/>
     </fieldset>
 </form>
 

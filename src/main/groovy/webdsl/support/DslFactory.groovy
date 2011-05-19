@@ -19,6 +19,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlRadioButtonInput
 import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput
 import com.gargoylesoftware.htmlunit.html.HtmlUnorderedList
 import com.gargoylesoftware.htmlunit.html.HtmlOrderedList
+import com.gargoylesoftware.htmlunit.html.HtmlInput
 
 
 class DslFactory {
@@ -35,6 +36,8 @@ class DslFactory {
       return new CheckBoxDsl(pageContainer, element)
     } else if (element instanceof HtmlUnorderedList || element instanceof HtmlOrderedList) {
       return new ListDsl(pageContainer, element)
+    } else if (element instanceof HtmlInput) {
+      return new InputDsl(pageContainer, element)
     }
     new ElementDsl(pageContainer, element)
   }

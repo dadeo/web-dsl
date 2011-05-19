@@ -10,25 +10,20 @@
  * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package webdsl
+package webdsl.support
 
 
-abstract class AbstractServerTests extends AbstractTests {
-  public static final PORT = 8081
-  def web
-  def server = new JettyRunner(port: PORT)
+class SelectorDsl {
+  private dsl
+  private factory
+  private selected = []
 
-  void setUp() {
-    server.start()
-    web = new WebDsl().for("http://localhost:$PORT/${defaultPage()}.html")
+  SelectorDsl(dsl, factory) {
+    this.dsl = dsl
+    this.factory = factory
   }
 
-  protected String defaultPage() {
-    return "main"
-  }
-
-  void tearDown() {
-    server.stop()
-  }
-
+  def leftShift(item) { selected << factory.create(dsl, item) }
+  def size() { selected.size() }
+  def getAt(index) { selected[index] }
 }

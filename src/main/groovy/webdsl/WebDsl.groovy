@@ -21,6 +21,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage
 import org.codehaus.groovy.runtime.metaclass.ClosureMetaMethod
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController
 import org.codehaus.groovy.runtime.GStringImpl
+import webdsl.support.SelectorDsl
 
 class WebDsl {
 
@@ -102,10 +103,23 @@ class WebDsl {
   def propertyMissing(String name) {
     def possibleName = '$' + name
     if (metaClass.hasProperty(this, possibleName)) {
-      0
       return getProperty(possibleName)
     }
+    def selectors = findSelectorsFor(name)
+    if (selectors) {
+      return selectors
+    }
     throw new MissingPropertyException(name, WebDsl)
+  }
+
+  def findSelectorsFor(name) {
+    def result = new SelectorDsl(this, factory)
+    page.body.children.each { element ->
+      if(element.tagName == name) {
+        result << element
+      }
+    }
+    result
   }
 
   def properties() {

@@ -88,4 +88,23 @@ class ElementDsl {
   def tableValue(attributeName) {
     value
   }
+
+  def propertyMissing(String name) {
+    def selectors = findSelectorsFor(name)
+    if (selectors.size()) {
+      return selectors
+    }
+    throw new MissingPropertyException(name, ElementDsl)
+  }
+
+  def findSelectorsFor(name) {
+    def result = new SelectorDsl(pageContainer, factory)
+    element.children.each { element ->
+      if(element.tagName == name) {
+        result << element
+      }
+    }
+    result
+  }
+  
 }

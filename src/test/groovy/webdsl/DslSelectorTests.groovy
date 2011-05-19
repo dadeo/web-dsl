@@ -13,22 +13,20 @@
 package webdsl
 
 
-abstract class AbstractServerTests extends AbstractTests {
-  public static final PORT = 8081
-  def web
-  def server = new JettyRunner(port: PORT)
-
-  void setUp() {
-    server.start()
-    web = new WebDsl().for("http://localhost:$PORT/${defaultPage()}.html")
-  }
+class DslSelectorTests extends AbstractServerTests {
 
   protected String defaultPage() {
-    return "main"
+    return "selector"
   }
 
-  void tearDown() {
-    server.stop()
+  void test_() {
+    web.do {
+      assertEquals 3, div.size()
+      assertEquals 2, div[1].div.size()
+      assertEquals "2.1", div[1].div[0].text
+      assertEquals "2.2", div[1].div[1].text
+      assertEquals "2.2", div2.div[1].text
+    }
   }
 
 }

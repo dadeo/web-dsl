@@ -18,14 +18,36 @@ class SelectDsl extends ElementDsl {
     super(pageContainer, element)
   }
 
+  private createOptions = { [value: it.getValueAttribute(), text: it.text]}
+
   @Override
   def getValue() {
-    element.getSelectedOptions()[0].getTextContent()
+    def selected = values
+    if(!selected) {
+      null
+    } else if (!element.isMultipleSelectEnabled() || selected.size() == 1) {
+      selected[0]
+    } else {
+      selected
+    }
   }
 
   @Override
   def setValue(value) {
-    pageContainer.page = element.setSelectedAttribute(value, true)
+    setValues([value])
+  }
+
+  def getValues() {
+    selectedOptions.value
+  }
+
+  def setValues(List<String> values) {
+    if(values.size() > 1 && !element.isMultipleSelectEnabled())
+      throw new RuntimeException("html select element does not have multiple select enabled")
+
+    pageContainer.page = element.selectedOptions.inject(null) { page, option -> option.setSelected(false) }
+    if(values)
+      pageContainer.page = values.inject(null) { page, value -> element.getOptionByValue(value).setSelected(true) }
   }
 
   def tableValue(attributeName) {
@@ -33,7 +55,14 @@ class SelectDsl extends ElementDsl {
   }
 
   def getOptions() {
-    element.getOptions().collect { [value: it.getValueAttribute(), text: it.text]}
+    element.getOptions().collect createOptions
   }
-  
+
+  def getSelectedOptions() {
+    element.getSelectedOptions().collect createOptions
+  }
+
+  def deselectAll() {
+    setValues([])
+  }
 }

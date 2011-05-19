@@ -293,7 +293,7 @@ class WebDslTest extends AbstractServerTests {
   void test_form_select_by_id() {
     web.do {
       assertTrue auto instanceof SelectDsl
-      assertEquals 'Volvo', autoId.value
+      assert 'volvo' == autoId.value
       autoId.value = 'audi'
       form.submit
     }
@@ -303,11 +303,76 @@ class WebDslTest extends AbstractServerTests {
   void test_form_select_by_name() {
     web.do {
       assertTrue auto instanceof SelectDsl
-      assertEquals 'Volvo', auto.value
+      assert 'volvo' == auto.value
       auto.value = 'audi'
       form.submit
     }
     assertEquals "audi", server.params.auto[0]
+  }
+
+  void test_form_select__multiple_options() {
+    web.do {
+      assert ['volvo'] == auto2.values
+      auto2.values = ['audi', 'mercedes', 'saab']
+      assert auto2.values == ['saab', 'mercedes', 'audi']
+      form3.submit
+    }
+    assert ['saab', 'mercedes', 'audi'] == server.params.auto2
+  }
+
+  void test_form_select__multiple_options__assign_empty_list() {
+    web.do {
+      assert ['volvo'] == auto2.values
+      auto2.values = []
+      assert auto2.values == []
+      form3.submit
+    }
+    assertNull server.params.auto2
+  }
+
+  void test_form_select__multiple_options__deselectAll() {
+    web.do {
+      assert ['volvo'] == auto2.values
+      auto2.deselectAll()
+      assert auto2.values == []
+      form3.submit
+    }
+    assertNull server.params.auto2
+  }
+
+  void test_form_select__multiple_options__set__not_supported() {
+    shouldFail {
+      web.auto.values = ['audi', 'mercedes', 'saab']
+    }
+  }
+
+  void test_form_select__multiple_options__supported__value_called() {
+    web.do {
+      auto2.values = ['audi', 'mercedes', 'saab']
+      assert auto2.value == ['saab', 'mercedes', 'audi']
+    }
+  }
+
+  void test_form_select__multiple_options__supported__no_selection() {
+    web.do {
+      auto2.values = []
+      assert auto2.value == null
+      assert auto2.values == []
+      assert auto2.selectedOptions == []
+    }
+  }
+
+  void test_form_select__multiple_options__unsupported__no_selection() {
+    web.do {
+      auto.values = []
+      assert auto.value == null
+      assert auto.values == []
+      assert auto.selectedOptions == []
+    }
+  }
+
+  void test_form_select__multiple_options__get__not_supported() {
+    assert web.auto.values == ['volvo']
   }
 
   void test_form_select_get_option_values() {
@@ -319,6 +384,20 @@ class WebDslTest extends AbstractServerTests {
   void test_form_select_get_option_text() {
     web.do {
       assert auto.options.text == ['Volvo', 'Saab', 'Mercedes', 'Audi']
+    }
+  }
+
+  void test_form_select_get_selectedOption_values() {
+    web.do {
+      auto2.values = ['mercedes', 'volvo']
+      assert auto2.selectedOptions.value == ['volvo', 'mercedes']
+    }
+  }
+
+  void test_form_select_get_selectedOption_text() {
+    web.do {
+      auto2.values = ['mercedes', 'volvo']
+      assert auto2.selectedOptions.text == ['Volvo', 'Mercedes']
     }
   }
 
@@ -351,7 +430,7 @@ class WebDslTest extends AbstractServerTests {
         actual = values()
       }
     }
-    assertEquals([name: "a default value", auto: "Volvo", namedCheckbox1: false, namedCheckbox2: true, namedCheckbox3: true, radio1: "radio content 3"], actual)
+    assertEquals([name: "a default value", auto: "volvo", namedCheckbox1: false, namedCheckbox2: true, namedCheckbox3: true, radio1: "radio content 3"], actual)
   }
 
   void test_valuesById() {
@@ -359,7 +438,15 @@ class WebDslTest extends AbstractServerTests {
     web.do {
       actual = form.valuesById()
     }
-    assertEquals([nameId: "a default value", autoId: "Volvo", checkbox1: false, checkbox2: true, checkbox3: true, radio1_1: false, radio1_2: false, radio1_3: true], actual)
+    assertEquals([nameId: "a default value", autoId: "volvo", checkbox1: false, checkbox2: true, checkbox3: true, radio1_1: false, radio1_2: false, radio1_3: true], actual)
+  }
+
+  void test_values_with_multiple_select() {
+    web.do {
+      auto2.values = ['volvo', 'saab']
+      Map actual = form3.values()
+      assertEquals([auto2: ["volvo", "saab"]], actual)
+    }
   }
 
   void test_radio_with_label() {
@@ -412,11 +499,11 @@ class WebDslTest extends AbstractServerTests {
   void test_table_as_objects_with_names() {
     web.do {
       def expected = [
-          [first: "pinky", last:"jones1"],
-          [first: "winky", last:"jones2"],
-          [first: "dinky", last:"jones3"],
-          [first: "linky", last:"jones4"],
-          [first: "stinky", last:"jones5"],
+          [first: "pinky", last: "jones1"],
+          [first: "winky", last: "jones2"],
+          [first: "dinky", last: "jones3"],
+          [first: "linky", last: "jones4"],
+          [first: "stinky", last: "jones5"],
       ]
       assertEquals expected, table3.as.objects('first', 'last')
     }
@@ -432,11 +519,11 @@ class WebDslTest extends AbstractServerTests {
   void test_table_as_objects() {
     web.do {
       def expected = [
-          [firstName: "pinky", lastName:"jones1"],
-          [firstName: "winky", lastName:"jones2"],
-          [firstName: "dinky", lastName:"jones3"],
-          [firstName: "linky", lastName:"jones4"],
-          [firstName: "stinky", lastName:"jones5"],
+          [firstName: "pinky", lastName: "jones1"],
+          [firstName: "winky", lastName: "jones2"],
+          [firstName: "dinky", lastName: "jones3"],
+          [firstName: "linky", lastName: "jones4"],
+          [firstName: "stinky", lastName: "jones5"],
       ]
       assertEquals expected, table3.as.objects
     }
@@ -445,11 +532,11 @@ class WebDslTest extends AbstractServerTests {
   void test_table_as_objects_with_offset() {
     def result
     web.do {
-      result = table4(offset:1).as.objects
+      result = table4(offset: 1).as.objects
     }
     def expected = [
-        [firstName: "pinky", lastName:"jones1"],
-        [firstName: "winky", lastName:"jones2"],
+        [firstName: "pinky", lastName: "jones1"],
+        [firstName: "winky", lastName: "jones2"],
     ]
     assertEquals expected, result
   }
@@ -466,7 +553,7 @@ class WebDslTest extends AbstractServerTests {
   void test_table_list_offset() {
     def result
     web.do {
-      result = table3(offset:2).as.list
+      result = table3(offset: 2).as.list
     }
     def expected = ["winky", "dinky", "linky", "stinky"]
     assertEquals expected, result

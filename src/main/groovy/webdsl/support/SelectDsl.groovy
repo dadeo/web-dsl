@@ -31,5 +31,9 @@ class SelectDsl extends ElementDsl {
   def tableValue(attributeName) {
     value
   }
+
+  def getOptions() {
+    element.getOptions().collect { [value: it.getValueAttribute(), text: it.text]}
+  }
   
 }

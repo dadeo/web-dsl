@@ -310,6 +310,18 @@ class WebDslTest extends AbstractServerTests {
     assertEquals "audi", server.params.auto[0]
   }
 
+  void test_form_select_get_option_values() {
+    web.do {
+      assert auto.options.value == ['volvo', 'saab', 'mercedes', 'audi']
+    }
+  }
+
+  void test_form_select_get_option_text() {
+    web.do {
+      assert auto.options.text == ['Volvo', 'Saab', 'Mercedes', 'Audi']
+    }
+  }
+
   void test_fillInWith() {
     web.do {
       form {

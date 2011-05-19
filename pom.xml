@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -12,29 +13,33 @@
         <developerConnection>scm:git:git://github.com/dadeo/web-dsl.git</developerConnection>
     </scm>
 
-	<distributionManagement>
-	        <repository>
-	            <id>google-code</id>
-	            <name>Local Maven repository of releases</name>
-	            <url>dav:https://web-dsl.googlecode.com/svn/mvn-repo/release</url>
-	        </repository>
-	        <snapshotRepository>
-	            <id>google-code</id>
-	            <name>Local Maven repository of snapshots</name>
-	            <url>dav:https://web-dsl.googlecode.com/svn/mvn-repo/snapshot</url>
-	            <uniqueVersion>false</uniqueVersion>
-	        </snapshotRepository>
-	</distributionManagement>
-	
-	<dependencies>
+    <properties>
+        <groovy.version>1.7.10</groovy.version>
+    </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>google-code</id>
+            <name>Local Maven repository of releases</name>
+            <url>dav:https://web-dsl.googlecode.com/svn/mvn-repo/release</url>
+        </repository>
+        <snapshotRepository>
+            <id>google-code</id>
+            <name>Local Maven repository of snapshots</name>
+            <url>dav:https://web-dsl.googlecode.com/svn/mvn-repo/snapshot</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <dependencies>
         <dependency>
-            <groupId>org.codehaus.groovy.maven.runtime</groupId>
-            <artifactId>gmaven-runtime-default</artifactId>
-            <version>1.0-rc-3</version>
+            <groupId>org.codehaus.gmaven.runtime</groupId>
+            <artifactId>gmaven-runtime-1.7</artifactId>
+            <version>1.3</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.codehaus.groovy</groupId>
-                    <artifactId>groovy-all-minimal</artifactId>
+                    <artifactId>groovy-all</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -42,7 +47,7 @@
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>1.6.2</version>
+            <version>${groovy.version}</version>
         </dependency>
 
         <dependency>
@@ -55,7 +60,7 @@
         <dependency>
             <groupId>net.sourceforge.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>
-            <version>2.4</version>
+            <version>2.8</version>
         </dependency>
 
         <dependency>
@@ -76,14 +81,35 @@
 
         <plugins>
             <plugin>
-                <groupId>org.codehaus.groovy.maven</groupId>
+                <groupId>org.codehaus.gmaven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
-                <version>1.0-rc-3</version>
+                <version>1.3</version>
+                <configuration>
+                    <providerSelection>1.7</providerSelection>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.gmaven.runtime</groupId>
+                        <artifactId>gmaven-runtime-1.7</artifactId>
+                        <version>1.3</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>org.codehaus.groovy</groupId>
+                                <artifactId>groovy-all</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-all</artifactId>
+                        <version>${groovy.version}</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <goals>
+                            <goal>generateStubs</goal>
                             <goal>compile</goal>
-                            <goal>generateTestStubs</goal>
                             <goal>testCompile</goal>
                         </goals>
                     </execution>

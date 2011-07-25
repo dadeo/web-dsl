@@ -16,12 +16,10 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement
 import com.gargoylesoftware.htmlunit.html.HtmlLabel
 
 
-class ElementDsl {
-  def HtmlElement element
-  def pageContainer
-  def factory = new DslFactory()
+class ElementDsl extends BaseElementDsl {
 
   ElementDsl(pageContainer, element) {
+    super(pageContainer, element)
     this.element = element
     this.pageContainer = pageContainer
   }
@@ -89,22 +87,4 @@ class ElementDsl {
     value
   }
 
-  def propertyMissing(String name) {
-    def selectors = findSelectorsFor(name)
-    if (selectors.size()) {
-      return selectors
-    }
-    throw new MissingPropertyException(name, ElementDsl)
-  }
-
-  def findSelectorsFor(name) {
-    def result = new SelectorDsl(pageContainer, factory)
-    element.children.each { element ->
-      if(element.tagName == name) {
-        result << element
-      }
-    }
-    result
-  }
-  
 }

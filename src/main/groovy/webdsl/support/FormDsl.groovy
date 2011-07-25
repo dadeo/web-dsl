@@ -17,13 +17,14 @@ import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput
 import com.gargoylesoftware.htmlunit.html.HtmlLabel
 
 
-class FormDsl {
+class FormDsl extends BaseElementDsl {
   private HtmlForm form
   private pageContainer
   private target
   private factory = new DslFactory()
 
   FormDsl(pageContainer, form) {
+    super(pageContainer, form)
     this.pageContainer = pageContainer
     this.target = form
     this.form = form

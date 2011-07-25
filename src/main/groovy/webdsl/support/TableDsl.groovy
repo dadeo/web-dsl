@@ -19,11 +19,11 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell
 import webdsl.WebDsl
 
 
-class TableDsl {
-
+class TableDsl extends BaseElementDsl {
   private HtmlTable table
 
-  TableDsl(table) {
+  TableDsl(pageContainer, table) {
+    super(pageContainer, table)
     this.table = table
   }
 
@@ -72,4 +72,13 @@ class TableDsl {
     }
     grid
   }
+
+  def propertyMissing(String name) {
+    if(name == "tbody" || name == "thead") {
+      super.propertyMissing(name)
+    } else {
+      super.propertyMissing("tbody")[0][name]
+    }
+  }
+
 }

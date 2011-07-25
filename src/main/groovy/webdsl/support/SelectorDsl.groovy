@@ -23,7 +23,33 @@ class SelectorDsl {
     this.factory = factory
   }
 
+  SelectorDsl(dsl, factory, selected) {
+    this.dsl = dsl
+    this.factory = factory
+    this.selected = selected
+  }
+
   def leftShift(item) { selected << factory.create(dsl, item) }
   def size() { selected.size() }
   def getAt(index) { selected[index] }
+
+  def propertyMissing(String name) {
+    def result = selected[name]
+    if(result && result[0] instanceof SelectorDsl) {
+      result = new SelectorDsl(dsl, factory, extractResultsFrom(result))
+    }
+    result
+  }
+
+  void each(Closure closure) {
+    selected.each(closure)
+  }
+
+  List collect(Closure closure) {
+    selected.collect(closure)
+  }
+
+  private extractResultsFrom(List<SelectorDsl> selectors) {
+    selectors.collect { it.selected }.flatten()
+  }
 }

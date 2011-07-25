@@ -27,7 +27,7 @@ class DslFactory {
     if (element instanceof HtmlForm) {
       return new FormDsl(pageContainer, element)
     } else if (element instanceof HtmlTable) {
-      return new TableDsl(element)
+      return new TableDsl(pageContainer, element)
     } else if (element instanceof HtmlSelect) {
       return new SelectDsl(pageContainer, element)
     } else if (element instanceof HtmlRadioButtonInput) {

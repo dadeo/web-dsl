@@ -12,6 +12,9 @@
  */
 package webdsl
 
+import webdsl.support.SelectorDsl
+import webdsl.support.BaseElementDsl
+
 
 class DslSelectorTests extends AbstractServerTests {
 
@@ -19,7 +22,7 @@ class DslSelectorTests extends AbstractServerTests {
     return "selector"
   }
 
-  void test_() {
+  void test_divs() {
     web.do {
       assertEquals 3, div.size()
       assertEquals 2, div[1].div.size()
@@ -27,6 +30,37 @@ class DslSelectorTests extends AbstractServerTests {
       assertEquals "2.2", div[1].div[1].text
       assertEquals "2.2", div2.div[1].text
     }
+  }
+
+  void test_selector_built_correctly() {
+    web.do {
+      assertElementTagNames(3, "tr", names.tbody[0].tr)
+      assertElementTagNames(6, "td", names.tbody[0].tr.td)
+    }
+  }
+
+  void test_table_tbody_optional() {
+    web.do {
+      assertEquals(["first", "last", "Pinky", "Jones", "Winky", "Jones"], names.tbody[0].tr.td.text)
+      assertEquals(["first", "last", "Pinky", "Jones", "Winky", "Jones"], names.tr.td.text)
+    }
+  }
+
+  void test_selector_supports_collect_method() {
+    web.do {
+      assertEquals(["first", "last", "Pinky", "Jones", "Winky", "Jones"], names.tr.td.collect { it.text })
+      assertEquals(["imageFirst.gif", "imageLast.gif"], names.tr[0].td.img.collect { it.attr("src") })
+    }
+  }
+
+  private assertElementTagNames(int expectedCount, String name, SelectorDsl selector) {
+    int count = 0
+    selector.each { item ->
+      assert item instanceof BaseElementDsl
+      assert item.tagName == name
+      ++count
+    }
+    assert count == expectedCount
   }
 
 }

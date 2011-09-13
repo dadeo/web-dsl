@@ -157,7 +157,7 @@ class WebDsl {
 
   static def click(String string) {
     def dsl = container.get()
-    def found = dsl.page.getAllHtmlChildElements().find {HtmlElement element ->
+    def found = dsl.page.tabbableElements.find {HtmlElement element ->
       element.getTextContent() == string || element.getAttribute("value") == string || element.getAttribute("href") == string
     }
 

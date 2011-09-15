@@ -13,11 +13,11 @@
 package webdsl
 
 
-class AnchorMatchesTitleTests extends AbstractServerTests {
+class SubmitMatchesTitleTest extends AbstractServerTest {
 
   @Override
   protected String defaultPage() {
-    "anchorMatchesTitle"
+    "submitMatchesTitle"
   }
 
   void test_submit() {

@@ -16,7 +16,7 @@ import webdsl.support.SelectorDsl
 import webdsl.support.BaseElementDsl
 
 
-class DslSelectorTests extends AbstractServerTests {
+class DslSelectorTest extends AbstractServerTest {
 
   protected String defaultPage() {
     return "selector"

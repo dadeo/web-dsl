@@ -16,7 +16,7 @@ import webdsl.support.TableDsl
 import webdsl.support.ElementDsl
 import webdsl.support.SelectDsl
 
-class WebDslTest extends AbstractServerTests {
+class WebDslTest extends AbstractServerTest {
 
   void test_openNewClient() {
     web.do {

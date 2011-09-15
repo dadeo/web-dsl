@@ -13,7 +13,7 @@
 package webdsl
 
 
-class DslHousekeepingTests extends AbstractServerTests {
+class DslHousekeepingTest extends AbstractServerTest {
   def map
 
   void setUp() {
@@ -60,14 +60,15 @@ class DslHousekeepingTests extends AbstractServerTests {
     }
   }
 
-  void test_page_resets_getters_when_string_properties_are_used() {
-    web.do {
-      assertTrue exists('namedRainbow')
-
-      'Submit 1'.click()
-
-      assertFalse exists('namedRainbow')
-    }
-  }
+//  void test_page_resets_getters_when_string_properties_are_used() {
+//    web.do {
+//      assertTrue exists('namedRainbow')
+//
+//      'Submit 1'.click()
+//
+//      println page.asXml()
+//      assertFalse exists('namedRainbow')
+//    }
+//  }
 
 }

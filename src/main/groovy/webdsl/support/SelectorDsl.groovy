@@ -30,23 +30,46 @@ class SelectorDsl {
   }
 
   def leftShift(item) { selected << factory.create(dsl, item) }
+
   def size() { selected.size() }
+
   def getAt(index) { selected[index] }
 
   def propertyMissing(String name) {
     def result = selected[name]
-    if(result && result[0] instanceof SelectorDsl) {
+    if (result && result[0] instanceof SelectorDsl) {
       result = new SelectorDsl(dsl, factory, extractResultsFrom(result))
     }
     result
   }
 
   void each(Closure closure) {
-    selected.each(closure)
+    executeClosureWith(selected.&each, closure)
   }
 
   List collect(Closure closure) {
-    selected.collect(closure)
+    executeClosureWith(selected.&collect, closure)
+  }
+
+  def find(Closure closure) {
+    executeClosureWith(selected.&find, closure)
+  }
+
+  List findAll(Closure closure) {
+    executeClosureWith(selected.&findAll, closure)
+  }
+
+  List findResult(Closure closure) {
+    executeClosureWith(selected.&collect, closure).findAll { it }
+  }
+
+  private executeClosureWith(method, closure) {
+    Closure c = closure.clone()
+    c.resolveStrategy = Closure.DELEGATE_FIRST
+    method {
+      c.delegate = it
+      c(it)
+    }
   }
 
   private extractResultsFrom(List<SelectorDsl> selectors) {

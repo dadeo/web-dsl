@@ -48,8 +48,35 @@ class DslSelectorTest extends AbstractServerTest {
 
   void test_selector_supports_collect_method() {
     web.do {
-      assertEquals(["first", "last", "Pinky", "Jones", "Winky", "Jones"], names.tr.td.collect { it.text })
-      assertEquals(["imageFirst.gif", "imageLast.gif"], names.tr[0].td.img.collect { it.attr("src") })
+      assertEquals(["first", "last", "Pinky", "Jones", "Winky", "Jones"], names.tr.td.collect { text })
+      assertEquals(["imageFirst.gif", "imageLast.gif"], names.tr[0].td.img.collect { attr("src") })
+    }
+  }
+
+  void test_selector_each() {
+    web.do {
+      def names = []
+      table[0].tr.td.each { names << text }
+      assert ['first', 'last', 'Pinky', 'Jones', 'Winky', 'Jones'] == names
+    }
+  }
+
+  void test_selector_find() {
+    web.do {
+      assert "WinkyJones" == table[0].tr.find { td.find { text == "Winky" } }.text
+      assert "PinkyJones" == table[0].tr.find { td.find { text == "Jones" } }.text
+    }
+  }
+
+  void test_selector_findAll() {
+    web.do {
+      assert ['1.2', '2.1', '2.2', '3.2'] == div.div.findAll { text.contains('2') }.text
+    }
+  }
+
+  void test_selector_findResult() {
+    web.do {
+      assert ['1.2', '2.1', '2.2', '3.2'] == div.div.findResult { text.contains('2') ? text : null }
     }
   }
 

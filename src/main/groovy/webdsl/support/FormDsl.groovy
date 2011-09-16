@@ -66,8 +66,8 @@ class FormDsl extends BaseElementDsl {
   def fillInWith(Map values) {
     pageContainer.do {
       values.each {k, v ->
-        if(pageContainer.metaClass.hasProperty(pageContainer, k)) {
-          getProperty(k).value = v
+        if(exists(k)) {
+          k.value = v
         }
       }
     }

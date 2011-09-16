@@ -12,15 +12,13 @@
  */
 package webdsl
 
+import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController
 import com.gargoylesoftware.htmlunit.WebClient
 import com.gargoylesoftware.htmlunit.html.HtmlElement
-import webdsl.support.FormDsl
-import webdsl.support.DslFactory
-import webdsl.support.DslHelper
 import com.gargoylesoftware.htmlunit.html.HtmlPage
-import org.codehaus.groovy.runtime.metaclass.ClosureMetaMethod
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController
 import org.codehaus.groovy.runtime.GStringImpl
+import webdsl.support.DslFactory
+import webdsl.support.FormDsl
 import webdsl.support.SelectorDsl
 
 class WebDsl {
@@ -70,11 +68,6 @@ class WebDsl {
 
   protected void setPage(HtmlPage newPage) {
     page = newPage
-    applyNewMetaClassWithDynamicMethods()
-  }
-
-  private def applyNewMetaClassWithDynamicMethods() {
-    new DslHelper().addGetterMethodsForAll(page.allHtmlChildElements, ['id', 'name'], this)
   }
 
   private getTitle() {
@@ -101,6 +94,8 @@ class WebDsl {
   }
 
   def propertyMissing(String name) {
+    def element = createDslForElement(name)
+    if(element) return factory.create(this, element)
     def possibleName = '$' + name
     if (metaClass.hasProperty(this, possibleName)) {
       return getProperty(possibleName)
@@ -110,6 +105,12 @@ class WebDsl {
       return selectors
     }
     throw new MissingPropertyException(name, WebDsl)
+  }
+
+  private createDslForElement(String name) {
+    page.allHtmlChildElements.find {
+      it.getAttribute('id') == name || it.getAttribute('name') == name
+    }
   }
 
   def findSelectorsFor(name) {
@@ -124,12 +125,20 @@ class WebDsl {
 
   def properties() {
     def result = []
-    metaClass.methods.each {method ->
-      if (method instanceof ClosureMetaMethod && !method.closure.parameterTypes) {
-        result << DslHelper.fromGetter(method.name)
-      }
+    page.allHtmlChildElements.each {
+      String id = it.getAttribute('id')
+      if(id) result << id
+
+      String name = it.getAttribute('name')
+      if(name) result << name
     }
     result
+  }
+
+  List<HtmlElement> findElementsByNameOrId(String nameOrId) {
+    page.allHtmlChildElements.findAll {
+      it.getAttribute('id') == nameOrId || it.getAttribute('name') == nameOrId
+    }
   }
 
   static def camel(String string) {
@@ -202,17 +211,7 @@ class WebDsl {
   }
 
   static def getIntern(String name) {
-    def dsl = container.get()
-    if (dsl.metaClass.hasProperty(dsl, name)) {
-      return container.get().getProperty(name)
-    } else {
-      def possibleProperty = "\$${name}"
-      if (dsl.metaClass.hasProperty(dsl, possibleProperty)) {
-        return container.get().getProperty(possibleProperty)
-      } else {
-        throw new RuntimeException("No element found for '$name'")
-      }
-    }
+    container.get()."$name"
   }
 
 }

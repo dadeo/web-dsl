@@ -74,11 +74,15 @@ class ElementDsl extends BaseElementDsl {
     element.tagName == type
   }
 
+  def getLabel() {
+    findLabelFor(id)?.getTextContent() ?: ""
+  }
+
   def findLabelFor(what) {
     if (!(what instanceof String)) {
       what = what.getAttribute("id")
     }
-    pageContainer.getForm().target.allHtmlChildElements.find {element ->
+    pageContainer.page.allHtmlChildElements.find {element ->
       element instanceof HtmlLabel && element.getAttribute("for") == what
     }
   }

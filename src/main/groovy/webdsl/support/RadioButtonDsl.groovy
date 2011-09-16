@@ -18,19 +18,22 @@ class RadioButtonDsl extends ElementDsl {
     super(pageContainer, element)
   }
 
-  @Override
-  def getText() {
-      findLabelFor(element.getAttribute("id"))?.getTextContent() ?: ""
+  def getChecked() {
+    element.isChecked()
   }
 
-  def getChecked() {
-    element.isDefaultChecked()
+  def getValue() {
+    checked ? super.value : pageContainer.findElementsByNameOrId(name).findResult {
+      if (it.checked) {
+        it.valueAttribute
+      }
+    }
   }
 
   @Override
   def tableValue(attributeName) {
     if (attributeName == "name") {
-      return checked ? text : null
+      return checked ? value : null
     } else {
       return checked
     }

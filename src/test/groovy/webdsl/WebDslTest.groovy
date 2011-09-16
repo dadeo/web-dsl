@@ -430,7 +430,7 @@ class WebDslTest extends AbstractServerTest {
         actual = values()
       }
     }
-    assertEquals([name: "a default value", auto: "volvo", namedCheckbox1: false, namedCheckbox2: true, namedCheckbox3: true, radio1: "radio content 3"], actual)
+    assertEquals([name: "a default value", auto: "volvo", namedCheckbox1: false, namedCheckbox2: true, namedCheckbox3: true, radio1: "radio 1 value 3"], actual)
   }
 
   void test_valuesById() {
@@ -451,20 +451,33 @@ class WebDslTest extends AbstractServerTest {
 
   void test_radio_with_label() {
     web.do {
-      assertEquals "radio content 3", radio1.text
-      assertEquals "radio 1 value 3", radio1.value
-      assertEquals true, radio1.checked
-      radio1_2.click()
-      form.submit
+      assert "radio content 3" == radio1_3.label
     }
-    assertEquals 'radio 1 value 2', server.params.radio1[0]
   }
 
   void test_radio_with_no_label() {
     web.do {
-      assertEquals "", radio1_2.text
-      assertEquals "radio 1 value 2", radio1_2.value
+      assert "" == radio1_1.label
     }
+  }
+
+  void test_radio() {
+    web.do {
+      assert !radio1_1.checked
+      assert !radio1_2.checked
+      assert radio1_3.checked
+      assert "radio 1 value 3" == radio1.value
+
+      radio1_2.click()
+
+      assert !radio1_1.checked
+      assert radio1_2.checked
+      assert !radio1_3.checked
+      assert "radio 1 value 2" == radio1.value
+
+      form.submit
+    }
+    assertEquals 'radio 1 value 2', server.params.radio1[0]
   }
 
   void test_table() {
@@ -619,6 +632,8 @@ class WebDslTest extends AbstractServerTest {
       assertTrue props.contains('table2')
       assertTrue props.contains('table3')
       assertTrue props.contains('form1')
+      assertTrue props.contains('radio1')
+      assertTrue props.contains('radio1_1')
     }
   }
 

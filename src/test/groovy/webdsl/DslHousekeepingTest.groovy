@@ -46,29 +46,4 @@ class DslHousekeepingTest extends AbstractServerTest {
     }
   }
 
-  void test_page_resets_getters() {
-    web.do {
-      assertTrue(exists('namedRainbow'))
-
-      assertFalse exists('namedMain')
-
-      namedRainbow.click()
-
-      assertFalse exists('namedRainbow')
-
-      assertTrue exists('namedMain')
-    }
-  }
-
-//  void test_page_resets_getters_when_string_properties_are_used() {
-//    web.do {
-//      assertTrue exists('namedRainbow')
-//
-//      'Submit 1'.click()
-//
-//      println page.asXml()
-//      assertFalse exists('namedRainbow')
-//    }
-//  }
-
 }

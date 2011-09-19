@@ -737,4 +737,14 @@ class WebDslTest extends AbstractServerTest {
       assert valueWithSpaces.untrimmedValue == " abc "
     }
   }
+
+  void test_back() {
+    web.do {
+      assert title == "Main Page 1"
+      rainbow.click()
+      assert title == "Rainbow Page"
+      back()
+      assert title == "Main Page 1"
+    }
+  }
 }

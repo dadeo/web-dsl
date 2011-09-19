@@ -74,6 +74,11 @@ class WebDsl {
     page.getTitleText()
   }
 
+  def back() {
+    webClient.currentWindow.getHistory().back()
+    page = webClient.currentWindow.enclosedPage
+  }
+
   private boolean exists(String elementName) {
     try {
       getProperty(elementName)

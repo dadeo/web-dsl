@@ -676,4 +676,19 @@ class WebDslTest extends AbstractServerTest {
       assertEquals "UPPER", "Upper".text
     }
   }
+
+  void test_tagName() {
+    web.do {
+      assert errors.tagName == "div"
+      assert table1.tagName == "table"
+      assert myUnorderedList.tagName == "ul"
+      assert myOrderedList.tagName == "ol"
+      assert form0.tagName == "form"
+      assert nameId.tagName == "input"
+      assert autoId.tagName == "select"
+      assert checkbox1.tagName == "input"
+      assert radio1_1.tagName == "input"
+      assert submit1.tagName == "input"
+    }
+  }
 }

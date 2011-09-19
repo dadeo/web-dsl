@@ -49,6 +49,10 @@ class ElementDsl extends BaseElementDsl {
   }
 
   def getValue() {
+    untrimmedValue.trim()
+  }
+
+  def getUntrimmedValue() {
     element.getAttribute("value")
   }
 

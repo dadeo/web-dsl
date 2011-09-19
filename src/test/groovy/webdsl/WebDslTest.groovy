@@ -703,4 +703,16 @@ class WebDslTest extends AbstractServerTest {
       assert multiline.untrimmedText == "\n    multi-line text\n"
     }
   }
+
+  void test_value_is_trimmed() {
+    web.do {
+      assert valueWithSpaces.value == "abc"
+    }
+  }
+
+  void test_untrimmedValue() {
+    web.do {
+      assert valueWithSpaces.untrimmedValue == " abc "
+    }
+  }
 }

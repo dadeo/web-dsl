@@ -27,7 +27,7 @@ class WebDslTest extends AbstractServerTest {
     }
   }
 
-  void test_exists() {
+  void test_exists_navigation() {
     web.do {
       assertTrue exists('namedRainbow')
 
@@ -38,6 +38,28 @@ class WebDslTest extends AbstractServerTest {
       assertFalse exists('namedRainbow')
 
       assertTrue exists('namedMain')
+    }
+  }
+
+  void test_exists_true() {
+    web.do {
+      assert exists('form0')
+      assert exists('table4')
+      assert exists('table4')
+      assert exists('myOrderedList')
+      assert exists('errors')
+      assert exists('rainbow')
+      assert exists('auto2Id')
+      assert exists('textToEcho')
+    }
+  }
+
+  void test_exists_false() {
+    web.do {
+      assert !exists('table')
+      assert !exists('table5')
+      assert !exists('form4')
+      assert !exists('orderedList')
     }
   }
 

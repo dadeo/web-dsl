@@ -691,4 +691,16 @@ class WebDslTest extends AbstractServerTest {
       assert submit1.tagName == "input"
     }
   }
+
+  void test_text_is_trimmed() {
+    web.do {
+      assert multiline.text == "multi-line text"
+    }
+  }
+
+  void test_untrimmedText() {
+    web.do {
+      assert multiline.untrimmedText == "\n    multi-line text\n"
+    }
+  }
 }

@@ -41,6 +41,10 @@ class ElementDsl extends BaseElementDsl {
   }
 
   def getText() {
+    untrimmedText.trim()
+  }
+
+  def getUntrimmedText() {
     element.getTextContent()
   }
 

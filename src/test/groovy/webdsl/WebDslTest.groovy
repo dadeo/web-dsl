@@ -120,33 +120,6 @@ class WebDslTest extends AbstractServerTest {
     }
   }
 
-  void test_textOfChildren() {
-    def expected = ["message 0", "message 1message 2message 3", "message 1", "message 2", "message 3"]
-    web.do {
-      bind.actual = errors.children.text
-    }
-    assertEquals expected.size(), web.bind.actual.size()
-    assertEquals expected, web.bind.actual
-  }
-
-  void test_textOfChildren_of_type() {
-    def expected = ["message 1", "message 2", "message 3"]
-    web.do {
-      bind.actual = errors.children(type: "li").text
-    }
-    assertEquals expected.size(), web.bind.actual.size()
-    assertEquals expected, web.bind.actual
-  }
-
-  void test_textOfChildren_of_types() {
-    def expected = ["message 0", "message 1", "message 2", "message 3"]
-    web.do {
-      bind.actual = errors.children(types: ["li", "div"]).text
-    }
-    assertEquals expected.size(), web.bind.actual.size()
-    assertEquals expected, web.bind.actual
-  }
-
   void test_form_defaults_to_first_form_on_page() {
     web.do {
       form {

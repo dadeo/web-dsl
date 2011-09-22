@@ -20,6 +20,7 @@ import org.codehaus.groovy.runtime.GStringImpl
 import webdsl.support.DslFactory
 import webdsl.support.FormDsl
 import webdsl.support.SelectorDsl
+import webdsl.support.ChildrenDsl
 
 class WebDsl {
 
@@ -146,30 +147,12 @@ class WebDsl {
     }
   }
 
-  //TODO: children logic is duplicated in ElementDsl
   def getChildren() {
-    page.allHtmlChildElements.collect { factory.create(this, it) }
+    new ChildrenDsl().children(this, page)
   }
 
   def children(options) {
-    def result = []
-    page.getAllHtmlChildElements().each {HtmlElement child ->
-      def types = []
-      if (options?.type) types.addAll(options.type)
-      if (options?.types) types.addAll(options.types)
-
-      if (types && !isInTypes(types, child)) return
-      result << factory.create(this, child)
-    }
-    result
-  }
-
-  private boolean isInTypes(types, element) {
-    types.find { isType it, element }
-  }
-
-  private boolean isType(type, HtmlElement element) {
-    element.tagName == type
+    new ChildrenDsl().children(this, page, options)
   }
 
   static def camel(String string) {

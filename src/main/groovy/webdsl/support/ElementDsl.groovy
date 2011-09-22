@@ -61,25 +61,11 @@ class ElementDsl extends BaseElementDsl {
   }
 
   def getChildren() {
-    element.allHtmlChildElements.collect { factory.create(pageContainer, it) }
+    new ChildrenDsl().children(pageContainer, element)
   }
 
   def children(options) {
-    def result = []
-    element.getAllHtmlChildElements().each {HtmlElement child ->
-      if (options?.type && !isType(options.type, child)) return
-      if (options?.types && !isInTypes(options.types, child)) return
-      result << factory.create(pageContainer, child)
-    }
-    result
-  }
-
-  private boolean isInTypes(types, element) {
-    types.find { isType it, element }
-  }
-
-  private boolean isType(type, HtmlElement element) {
-    element.tagName == type
+    new ChildrenDsl().children(pageContainer, element, options)
   }
 
   def getLabel() {

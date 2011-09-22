@@ -20,14 +20,14 @@ class DslChildrenTest extends AbstractServerTest {
 
   void test_children() {
     web.do {
-      assert(['html', 'head', 'title', 'body', 'div', 'span', 'span'] == children.tagName)
+      assert(['html', 'head', 'title', 'body', 'div', 'span', 'span', 'div', 'div', 'ul', 'li', 'li', 'li'] == children.tagName)
     }
   }
 
   void test_children_of_type() {
     web.do {
       assert(['hello', 'world'] == children(type:'span').text)
-      assert(['yo dog'] == children(type:'div').text)
+      assert(['yo dog', 'message 0message 1message 2message 3', 'message 0'] == children(type:'div').text)
     }
   }
 
@@ -40,8 +40,8 @@ class DslChildrenTest extends AbstractServerTest {
   void test_children_of_types() {
     web.do {
       assert(['hello', 'world'] == children(types:['span']).text)
-      assert(['yo dog'] == children(types:['div']).text)
-      assert(['yo dog', 'hello', 'world'] == children(types:['span', 'div']).text)
+      assert(['yo dog', 'message 0message 1message 2message 3', 'message 0'] == children(types:['div']).text)
+      assert(['yo dog', 'hello', 'world', 'message 0message 1message 2message 3', 'message 0'] == children(types:['span', 'div']).text)
     }
   }
 
@@ -56,5 +56,24 @@ class DslChildrenTest extends AbstractServerTest {
       assert([] == children(types: 'table').text)
     }
   }
+
+  void test_element_children() {
+    web.do {
+      assert errors.children.text == ["message 0", "message 1message 2message 3", "message 1", "message 2", "message 3"]
+    }
+  }
+
+  void test_element_children_of_type() {
+    web.do {
+      assert errors.children(type: "li").text == ["message 1", "message 2", "message 3"]
+    }
+  }
+
+  void test_element_children_of_types() {
+    web.do {
+      assert errors.children(types: ["li", "div"]).text == ["message 0", "message 1", "message 2", "message 3"]
+    }
+  }
+
 
 }

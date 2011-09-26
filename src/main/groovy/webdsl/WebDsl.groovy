@@ -21,6 +21,7 @@ import webdsl.support.DslFactory
 import webdsl.support.FormDsl
 import webdsl.support.SelectorDsl
 import webdsl.support.ChildrenDsl
+import com.gargoylesoftware.htmlunit.html.DomText
 
 class WebDsl {
 
@@ -122,10 +123,11 @@ class WebDsl {
   def findSelectorsFor(name) {
     def result = new SelectorDsl(this, factory)
     page.body.children.each { element ->
-      if(element.tagName == name) {
+      if(element.class != DomText && element.tagName == name) {
         result << element
       }
     }
+    if(!result.selected) throw new MissingPropertyException(name, this.class)
     result
   }
 

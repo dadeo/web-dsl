@@ -49,7 +49,7 @@ class DslSelectorTest extends AbstractServerTest {
   void test_selector_supports_collect_method() {
     web.do {
       assertEquals(["first", "last", "Pinky", "Jones", "Winky", "Jones"], names.tr.td.collect { text })
-      assertEquals(["imageFirst.gif", "imageLast.gif"], names.tr[0].td.img.collect { attr("src") })
+      assertEquals(['div3_1', 'div3_2', 'div3_3', 'div3_4'], div[2].div.collect { attr("id") })
     }
   }
 

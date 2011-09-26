@@ -43,6 +43,20 @@ class SelectorDsl {
     result
   }
 
+  def getChildren() {
+    def collected = selected.collect {
+      new ChildrenDsl().children(dsl, it.element)
+    }
+    collected.flatten()
+  }
+
+  def children(options) {
+    def collected = selected.collect {
+      new ChildrenDsl().children(dsl, it.element, options)
+    }
+    collected.flatten()
+  }
+
   void each(Closure closure) {
     executeClosureWith(selected.&each, closure)
   }

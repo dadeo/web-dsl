@@ -37,7 +37,7 @@ class FormDsl extends BaseElementDsl {
   }
 
   def getSubmit() {
-    pageContainer.page = form.getAllHtmlChildElements().find {it.getAttribute("type") == "submit"}.click()
+    pageContainer.page = form.htmlElementDescendants.find {it.getAttribute("type") == "submit"}.click()
   }
 
   public Map values() {
@@ -53,7 +53,7 @@ class FormDsl extends BaseElementDsl {
 
   private Map grabValuesFor(attributeName) {
     def result = [:]
-    form.allHtmlChildElements.each {element ->
+    form.htmlElementDescendants.each {element ->
       def item = factory.create(pageContainer, element)
       def attributeValue = item[attributeName]
       if (attributeValue && !(element instanceof HtmlSubmitInput)) {
@@ -74,7 +74,7 @@ class FormDsl extends BaseElementDsl {
   }
 
   def findLabelFor(what) {
-    form.allHtmlChildElements.find {element ->
+    form.htmlElementDescendants.find {element ->
       element instanceof HtmlLabel && element.getAttribute("for") == what
     }
   }

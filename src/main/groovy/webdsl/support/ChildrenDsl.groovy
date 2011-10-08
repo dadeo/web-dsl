@@ -19,12 +19,12 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement
 class ChildrenDsl {
 
   def children(WebDsl dsl, start) {
-    start.allHtmlChildElements.collect { dsl.factory.create(dsl, it) }
+    start.htmlElementDescendants.collect { dsl.factory.create(dsl, it) }
   }
 
   def children(WebDsl dsl, start, options) {
     def result = []
-    start.allHtmlChildElements.each {HtmlElement child ->
+    start.htmlElementDescendants.each {HtmlElement child ->
       def types = []
       if (options?.type) types.addAll(options.type)
       if (options?.types) types.addAll(options.types)

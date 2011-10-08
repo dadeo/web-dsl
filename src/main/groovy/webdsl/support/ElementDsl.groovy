@@ -76,7 +76,7 @@ class ElementDsl extends BaseElementDsl {
     if (!(what instanceof String)) {
       what = what.getAttribute("id")
     }
-    pageContainer.page.allHtmlChildElements.find {element ->
+    pageContainer.page.htmlElementDescendants.find {element ->
       element instanceof HtmlLabel && element.getAttribute("for") == what
     }
   }

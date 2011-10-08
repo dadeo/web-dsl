@@ -23,7 +23,7 @@ class ListDsl extends ElementDsl {
   @Override
   def getValue() {
     def result = []
-    element.allHtmlChildElements.each { child ->
+    element.htmlElementDescendants.each { child ->
       if(child instanceof HtmlListItem) {
         result << child.getTextContent()
       }

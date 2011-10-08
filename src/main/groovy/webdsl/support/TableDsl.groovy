@@ -41,10 +41,10 @@ class TableDsl extends BaseElementDsl {
 
   def process(closure) {
     int rowIndex = 0
-    table.allHtmlChildElements.each { row ->
+    table.htmlElementDescendants.each { row ->
       if(row instanceof HtmlTableRow) {
         int columnIndex = 0
-        row.allHtmlChildElements.each { td ->
+        row.htmlElementDescendants.each { td ->
           if(td instanceof HtmlTableDataCell) {
             closure rowIndex, columnIndex, td
             ++columnIndex

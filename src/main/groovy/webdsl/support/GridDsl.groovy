@@ -37,7 +37,7 @@ class GridDsl {
       if(column == 0) {
         result << [:]
       }
-      td.allHtmlChildElements.each { span ->
+      td.htmlElementDescendants.each { span ->
         if(span instanceof HtmlSpan && span.getAttribute("name")) {
           result[-1][span.getAttribute("name")] = span.getTextContent()
         }

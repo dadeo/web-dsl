@@ -14,14 +14,14 @@ package webdsl
 
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController
 import com.gargoylesoftware.htmlunit.WebClient
+import com.gargoylesoftware.htmlunit.html.DomText
 import com.gargoylesoftware.htmlunit.html.HtmlElement
 import com.gargoylesoftware.htmlunit.html.HtmlPage
 import org.codehaus.groovy.runtime.GStringImpl
+import webdsl.support.ChildrenDsl
 import webdsl.support.DslFactory
 import webdsl.support.FormDsl
 import webdsl.support.SelectorDsl
-import webdsl.support.ChildrenDsl
-import com.gargoylesoftware.htmlunit.html.DomText
 
 class WebDsl {
 
@@ -102,7 +102,7 @@ class WebDsl {
 
   def propertyMissing(String name) {
     def element = createDslForElement(name)
-    if(element) return factory.create(this, element)
+    if (element) return factory.create(this, element)
     def possibleName = '$' + name
     if (metaClass.hasProperty(this, possibleName)) {
       return getProperty(possibleName)
@@ -115,7 +115,7 @@ class WebDsl {
   }
 
   private createDslForElement(String name) {
-    page.allHtmlChildElements.find {
+    page.htmlElementDescendants.find {
       it.getAttribute('id') == name || it.getAttribute('name') == name
     }
   }
@@ -123,30 +123,28 @@ class WebDsl {
   def findSelectorsFor(name) {
     def result = new SelectorDsl(this, factory)
     page.body.children.each { element ->
-      if(element.class != DomText && element.tagName == name) {
+      if (element.class != DomText && element.tagName == name) {
         result << element
       }
     }
-    if(!result.selected) throw new MissingPropertyException(name, this.class)
+    if (!result.selected) throw new MissingPropertyException(name, this.class)
     result
   }
 
   def properties() {
     def result = []
-    page.allHtmlChildElements.each {
+    page.htmlElementDescendants.each {
       String id = it.getAttribute('id')
-      if(id) result << id
+      if (id) result << id
 
       String name = it.getAttribute('name')
-      if(name) result << name
+      if (name) result << name
     }
     result
   }
 
   List<HtmlElement> findElementsByNameOrId(String nameOrId) {
-    page.allHtmlChildElements.findAll {
-      it.getAttribute('id') == nameOrId || it.getAttribute('name') == nameOrId
-    }
+    page.getElementsByIdAndOrName(nameOrId)
   }
 
   def getChildren() {

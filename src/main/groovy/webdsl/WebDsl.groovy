@@ -65,7 +65,7 @@ class WebDsl {
   }
 
   def getForm() {
-    new FormDsl(this, page.getForms()[0])
+    new FormDsl(this, factory, page.getForms()[0])
   }
 
   protected void setPage(HtmlPage newPage) {

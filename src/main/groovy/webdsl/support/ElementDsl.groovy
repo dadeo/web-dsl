@@ -18,8 +18,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlLabel
 
 class ElementDsl extends BaseElementDsl {
 
-  ElementDsl(pageContainer, element) {
-    super(pageContainer, element)
+  ElementDsl(pageContainer, DslFactory factory, element) {
+    super(pageContainer, factory, element)
     this.element = element
     this.pageContainer = pageContainer
   }

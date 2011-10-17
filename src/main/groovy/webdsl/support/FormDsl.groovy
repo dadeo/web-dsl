@@ -21,10 +21,9 @@ class FormDsl extends BaseElementDsl {
   private HtmlForm form
   private pageContainer
   private target
-  private factory = new DslFactory()
 
-  FormDsl(pageContainer, form) {
-    super(pageContainer, form)
+  FormDsl(pageContainer, DslFactory factory, form) {
+    super(pageContainer, factory, form)
     this.pageContainer = pageContainer
     this.target = form
     this.form = form

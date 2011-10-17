@@ -25,20 +25,20 @@ import com.gargoylesoftware.htmlunit.html.HtmlInput
 class DslFactory {
   def create(pageContainer, element) {
     if (element instanceof HtmlForm) {
-      return new FormDsl(pageContainer, element)
+      return new FormDsl(pageContainer, this, element)
     } else if (element instanceof HtmlTable) {
-      return new TableDsl(pageContainer, element)
+      return new TableDsl(pageContainer, this, element)
     } else if (element instanceof HtmlSelect) {
-      return new SelectDsl(pageContainer, element)
+      return new SelectDsl(pageContainer, this, element)
     } else if (element instanceof HtmlRadioButtonInput) {
-      return new RadioButtonDsl(pageContainer, element)
+      return new RadioButtonDsl(pageContainer, this, element)
     } else if (element instanceof HtmlCheckBoxInput) {
-      return new CheckBoxDsl(pageContainer, element)
+      return new CheckBoxDsl(pageContainer, this, element)
     } else if (element instanceof HtmlUnorderedList || element instanceof HtmlOrderedList) {
-      return new ListDsl(pageContainer, element)
+      return new ListDsl(pageContainer, this, element)
     } else if (element instanceof HtmlInput) {
-      return new InputDsl(pageContainer, element)
+      return new InputDsl(pageContainer, this, element)
     }
-    new ElementDsl(pageContainer, element)
+    new ElementDsl(pageContainer, this, element)
   }
 }

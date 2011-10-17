@@ -14,8 +14,8 @@ package webdsl.support
 
 
 class CheckBoxDsl extends ElementDsl {
-  CheckBoxDsl(pageContainer, element) {
-    super(pageContainer, element)
+  CheckBoxDsl(pageContainer, DslFactory factory, element) {
+    super(pageContainer, factory, element)
   }
 
   def getChecked() {

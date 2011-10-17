@@ -14,8 +14,8 @@ package webdsl.support
 
 
 class InputDsl  extends ElementDsl {
-  InputDsl(pageContainer, element) {
-    super(pageContainer, element)
+  InputDsl(pageContainer, DslFactory factory, element) {
+    super(pageContainer, factory, element)
   }
 
   def setValue(value) {

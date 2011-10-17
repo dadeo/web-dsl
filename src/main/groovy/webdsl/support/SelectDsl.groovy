@@ -16,8 +16,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement
 
 
 class SelectDsl extends ElementDsl {
-  SelectDsl(pageContainer, element) {
-    super(pageContainer, element)
+  SelectDsl(pageContainer, DslFactory factory, element) {
+    super(pageContainer, factory, element)
   }
 
   private createOptions = { [value: it.getValueAttribute(), text: it.text]}

@@ -14,8 +14,8 @@ package webdsl.support
 
 
 class RadioButtonDsl extends ElementDsl {
-  RadioButtonDsl(pageContainer, element) {
-    super(pageContainer, element)
+  RadioButtonDsl(pageContainer, DslFactory factory, element) {
+    super(pageContainer, factory, element)
   }
 
   def getChecked() {

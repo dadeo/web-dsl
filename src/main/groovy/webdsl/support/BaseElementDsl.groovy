@@ -17,10 +17,11 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement
 class BaseElementDsl {
   HtmlElement element
   def pageContainer
-  def factory = new DslFactory()
+  DslFactory factory
 
-  BaseElementDsl(pageContainer, element) {
+  BaseElementDsl(pageContainer, DslFactory factory, element) {
     this.pageContainer = pageContainer
+    this.factory = factory
     this.element = element
   }
   

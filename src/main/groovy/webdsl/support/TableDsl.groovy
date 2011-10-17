@@ -22,8 +22,8 @@ import webdsl.WebDsl
 class TableDsl extends BaseElementDsl {
   private HtmlTable table
 
-  TableDsl(pageContainer, table) {
-    super(pageContainer, table)
+  TableDsl(pageContainer, DslFactory factory, table) {
+    super(pageContainer, factory, table)
     this.table = table
   }
 

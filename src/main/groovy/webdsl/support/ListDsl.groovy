@@ -16,8 +16,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlListItem
 
 
 class ListDsl extends ElementDsl {
-  ListDsl(pageContainer, element) {
-    super(pageContainer, element)
+  ListDsl(pageContainer, DslFactory factory, element) {
+    super(pageContainer, factory, element)
   }
 
   @Override

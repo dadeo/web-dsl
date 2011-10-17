@@ -12,6 +12,8 @@
  */
 package webdsl.support
 
+import com.gargoylesoftware.htmlunit.html.HtmlElement
+
 
 class SelectDsl extends ElementDsl {
   SelectDsl(pageContainer, element) {
@@ -47,7 +49,27 @@ class SelectDsl extends ElementDsl {
 
     pageContainer.page = element.selectedOptions.inject(null) { page, option -> option.setSelected(false) }
     if(values)
-      pageContainer.page = values.inject(null) { page, value -> element.getOptionByValue(value).setSelected(true) }
+      pageContainer.page = values.inject(null) { page, value ->
+        def option = findOptionByValue(element, value) ?: findOptionByText(element, value)
+        if(!option) throw new RuntimeException("Unable to find Option(name: '$value') or Option(text: '$value') in Select(id: '$id', name: '$name').")
+        option.setSelected(true)
+      }
+  }
+
+  protected def findOptionByValue(HtmlElement element, String value) {
+    try {
+      element.getOptionByValue(value)
+    } catch (e) {
+      // allowed
+    }
+  }
+
+  protected def findOptionByText(HtmlElement element, String value) {
+    try {
+      element.getOptionByText(value)
+    } catch (e) {
+      // allowed
+    }
   }
 
   def tableValue(attributeName) {

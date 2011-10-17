@@ -395,6 +395,25 @@ class WebDslTest extends AbstractServerTest {
     }
   }
 
+  void test_form_select_set_value_by_label_text() {
+    web.do {
+      auto.value = 'Volvo'
+      assert 'volvo' == auto.value
+    }
+  }
+
+  void test_form_select_set_value_by_label_text_not_found() {
+    try {
+      web.do {
+        auto.value = 'VolvoII'
+        assert 'volvo' == auto.value
+      }
+      fail('not expected to pass')
+    } catch (RuntimeException e) {
+      assert e.message == '''Unable to find Option(name: 'VolvoII') or Option(text: 'VolvoII') in Select(id: 'autoId', name: 'auto').'''
+    }
+  }
+
   void test_fillInWith() {
     web.do {
       form {

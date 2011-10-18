@@ -24,13 +24,14 @@ import webdsl.support.FormDsl
 import webdsl.support.SelectorDsl
 
 class WebDsl {
-
-  def WebClient webClient
   private static final ThreadLocal container = new ThreadLocal()
-  def HtmlPage page
 
+  WebClient webClient
+  HtmlPage page
   def bind = [:]
-  private factory = new DslFactory()
+
+  private boolean factoryResets = true
+  private DslFactory factory = new DslFactory()
 
   WebDsl() {
     initWebClient()
@@ -43,6 +44,10 @@ class WebDsl {
   }
 
   def _do(closure) {
+    if(factoryResets) {
+      factory = new DslFactory()
+    }
+      
     closure.delegate = this
     closure.resolveStrategy = Closure.DELEGATE_FIRST
     use(WebDsl) {
@@ -153,6 +158,14 @@ class WebDsl {
 
   def children(options) {
     new ChildrenDsl().children(this, page, options)
+  }
+
+  def handle(Class elementClass) {
+    [
+        with: { dslClass ->
+          factory.register(dslClass, elementClass)
+        }
+    ]
   }
 
   static def camel(String string) {

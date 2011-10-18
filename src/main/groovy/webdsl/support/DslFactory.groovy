@@ -12,33 +12,30 @@
  */
 package webdsl.support
 
-import com.gargoylesoftware.htmlunit.html.HtmlForm
-import com.gargoylesoftware.htmlunit.html.HtmlTable
-import com.gargoylesoftware.htmlunit.html.HtmlSelect
-import com.gargoylesoftware.htmlunit.html.HtmlRadioButtonInput
-import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput
-import com.gargoylesoftware.htmlunit.html.HtmlUnorderedList
-import com.gargoylesoftware.htmlunit.html.HtmlOrderedList
-import com.gargoylesoftware.htmlunit.html.HtmlInput
-
+import com.gargoylesoftware.htmlunit.html.*
 
 class DslFactory {
+  private registry = [
+      (HtmlForm):FormDsl,
+      (HtmlTable):TableDsl,
+      (HtmlSelect):SelectDsl,
+      (HtmlRadioButtonInput):RadioButtonDsl,
+      (HtmlCheckBoxInput):CheckBoxDsl,
+      (HtmlUnorderedList):ListDsl,
+      (HtmlOrderedList):ListDsl,
+      (HtmlInput):InputDsl,
+      (HtmlElement):ElementDsl
+  ]
+
   def create(pageContainer, element) {
-    if (element instanceof HtmlForm) {
-      return new FormDsl(pageContainer, this, element)
-    } else if (element instanceof HtmlTable) {
-      return new TableDsl(pageContainer, this, element)
-    } else if (element instanceof HtmlSelect) {
-      return new SelectDsl(pageContainer, this, element)
-    } else if (element instanceof HtmlRadioButtonInput) {
-      return new RadioButtonDsl(pageContainer, this, element)
-    } else if (element instanceof HtmlCheckBoxInput) {
-      return new CheckBoxDsl(pageContainer, this, element)
-    } else if (element instanceof HtmlUnorderedList || element instanceof HtmlOrderedList) {
-      return new ListDsl(pageContainer, this, element)
-    } else if (element instanceof HtmlInput) {
-      return new InputDsl(pageContainer, this, element)
+    registry.findResult { Class elementClazz, Class dslClazz ->
+      if(elementClazz.isInstance(element)) {
+        dslClazz.newInstance([pageContainer, this, element] as Object[])
+      }
     }
-    new ElementDsl(pageContainer, this, element)
+  }
+
+  void register(Class dslClass, Class elementClass) {
+    registry[elementClass] = dslClass
   }
 }

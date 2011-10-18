@@ -15,7 +15,7 @@ package webdsl
 
 abstract class AbstractServerTest extends AbstractTest {
   public static final PORT = 8081
-  def web
+  WebDsl web
   def server = new JettyRunner(port: PORT)
 
   void setUp() {

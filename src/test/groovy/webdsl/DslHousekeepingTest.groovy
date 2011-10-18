@@ -12,6 +12,10 @@
  */
 package webdsl
 
+import webdsl.support.SelectDsl
+import webdsl.support.DslFactory
+import com.gargoylesoftware.htmlunit.html.HtmlSelect
+
 
 class DslHousekeepingTest extends AbstractServerTest {
   def map
@@ -46,4 +50,49 @@ class DslHousekeepingTest extends AbstractServerTest {
     }
   }
 
+  void test_factory_no_override_of_select() {
+    web.do {
+      assert auto instanceof SelectDsl
+    }
+  }
+
+  void test_factory_override_of_select() {
+    web.do {
+      handle HtmlSelect with OtherDsl
+
+      assert auto instanceof OtherDsl
+    }
+  }
+
+  void test_factory_defaults_to_reset() {
+    web.do {
+      handle HtmlSelect with OtherDsl
+
+      assert auto instanceof OtherDsl
+    }
+
+    web.do {
+      assert auto instanceof SelectDsl
+    }
+  }
+
+  void test_factory_reset_can_be_overridden() {
+    web.do {
+      factoryResets = false
+
+      handle HtmlSelect with OtherDsl
+
+      assert auto instanceof OtherDsl
+    }
+
+    web.do {
+      assert auto instanceof OtherDsl
+    }
+  }
+
+
+  static class OtherDsl {
+    OtherDsl(pageContainer, DslFactory factory, element) {
+    }
+  }
 }

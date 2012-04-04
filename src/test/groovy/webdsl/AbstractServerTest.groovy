@@ -12,23 +12,32 @@
  */
 package webdsl
 
-
-abstract class AbstractServerTest extends AbstractTest {
+abstract class AbstractServerTest extends GroovyTestCase {
   public static final PORT = 8081
-  WebDsl web
-  def server = new JettyRunner(port: PORT)
-
-  void setUp() {
-    server.start()
-    web = new WebDsl().for("http://localhost:$PORT/${defaultPage()}.html")
-  }
+  protected server
 
   protected String defaultPage() {
     return "main"
   }
 
-  void tearDown() {
-    server.stop()
+  def webdsl(Closure... closures) {
+    webdsl null, closures
   }
 
+  def webdsl(String page, Closure... closures) {
+    server = new JettyRunner(port: PORT)
+    server.start()
+    WebDsl web = new WebDsl().for("http://localhost:$PORT/${page ?: defaultPage()}.html")
+    def result
+    try {
+      closures.each { closure ->
+        def c = closure.clone()
+        c.delegate = [server: server]
+        result = web.do(c)
+      }
+    } finally {
+      server.stop()
+    }
+    result
+  }
 }

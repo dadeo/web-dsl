@@ -19,30 +19,30 @@ import webdsl.support.SelectDsl
 class WebDslTest extends AbstractServerTest {
 
   void test_openNewClient() {
-    web.do {
+    webdsl {
       def oldClient = webClient
       openNewClient("http://localhost:$PORT/cloud.html")
-      assertNotSame oldClient, webClient
-      assertEquals "Cloud", title
+      assert !oldClient.is(webClient)
+      assert title == "Cloud"
     }
   }
 
   void test_exists_navigation() {
-    web.do {
-      assertTrue exists('namedRainbow')
+    webdsl {
+      assert exists('namedRainbow')
 
-      assertFalse exists('namedMain')
+      assert !exists('namedMain')
 
       namedRainbow.click()
 
-      assertFalse exists('namedRainbow')
+      assert !exists('namedRainbow')
 
-      assertTrue exists('namedMain')
+      assert exists('namedMain')
     }
   }
 
   void test_exists_true() {
-    web.do {
+    webdsl {
       assert exists('form0')
       assert exists('table')
       assert exists('table4')
@@ -55,7 +55,7 @@ class WebDslTest extends AbstractServerTest {
   }
 
   void test_exists_false() {
-    web.do {
+    webdsl {
       assert !exists('table5')
       assert !exists('form4')
       assert !exists('orderedList')
@@ -63,292 +63,301 @@ class WebDslTest extends AbstractServerTest {
   }
 
   void test_title() {
-    web.do {
-      assertEquals "Main Page 1", title
+    webdsl {
+      assert title == "Main Page 1"
     }
   }
 
   void test_click_anchor_by_name() {
-    web.do {
-      assertTrue namedRainbow instanceof ElementDsl
-      assertEquals "the rainbow", namedRainbow.text
+    webdsl {
+      assert namedRainbow instanceof ElementDsl
+      assert namedRainbow.text == "the rainbow"
       namedRainbow.click()
+      assert title == "Rainbow Page"
     }
-    assertEquals "Rainbow Page", web.title
   }
 
   void test_click_anchor_by_id() {
-    web.do {
-      assertTrue rainbow instanceof ElementDsl
+    webdsl {
+      assert rainbow instanceof ElementDsl
       rainbow.click()
+      assert title == "Rainbow Page"
     }
-    assertEquals "Rainbow Page", web.title
   }
 
   void test_click_element_by_id_as_dynamic_string() {
-    web.do {
-      assertTrue rainbow instanceof ElementDsl
+    webdsl {
+      assert rainbow instanceof ElementDsl
       "rain${'bow'}".click()
+      assert title == "Rainbow Page"
     }
-    assertEquals "Rainbow Page", web.title
   }
 
   void test_click_anchor_by_href() {
-    web.do {
+    webdsl {
       "rainbow.html".click()
+      assert title == "Rainbow Page"
     }
-    assertEquals "Rainbow Page", web.title
   }
 
   void test_click_anchor_by_text() {
-    web.do {
+    webdsl {
       "the rainbow".click()
+      assert title == "Rainbow Page", web
     }
-    assertEquals "Rainbow Page", web.title
   }
 
   void test_text_from_line_item() {
-    web.do {
-      assertEquals "message 3", message3.text
+    webdsl {
+      assert message3.text == "message 3"
     }
   }
 
   void test_text_from_div() {
-    web.do {
-      assertEquals "message 0", message0.text
+    webdsl {
+      assert message0.text == "message 0"
     }
   }
 
   void test_form_defaults_to_first_form_on_page() {
-    web.do {
+    webdsl {
       form {
         submit
       }
+      assert title == "TestServlet form0"
+      assert server.path == "form0"
     }
-    assertEquals "TestServlet form0", web.title
-    assertEquals "form0", server.path
   }
 
   void test_form_defaults_to_first_form_on_page_with_do() {
-    web.do {
+    webdsl {
       form.do {
         submit
       }
+      assert title == "TestServlet form0"
+      assert server.path == "form0"
     }
-    assertEquals "TestServlet form0", web.title
-    assertEquals "form0", server.path
   }
 
   void test_form_by_id() {
-    web.do {
+    webdsl {
       form1 {
         submit
       }
+      assert title == "TestServlet form1"
+      assert server.path == "form1"
     }
-    assertEquals "TestServlet form1", web.title
-    assertEquals "form1", server.path
   }
 
   void test_form_by_name_getter() {
-    web.do {
+    webdsl {
       namedForm2 {
         submit
       }
+      assert title == "TestServlet form2"
+      assert server.path == "form2"
     }
-    assertEquals "TestServlet form2", web.title
-    assertEquals "form2", server.path
   }
 
   void test_form_has_do() {
-    web.do {
+    webdsl {
       namedForm2.do {
         submit
       }
+      assert title == "TestServlet form2"
+      assert server.path == "form2"
     }
-    assertEquals "TestServlet form2", web.title
-    assertEquals "form2", server.path
   }
 
   void test_click_button_by_name() {
-    web.do {
+    webdsl {
       namedSubmit1.click()
+      assert title == "TestServlet form0"
+      assert server.path == "form0"
+      assert server.params.containsKey('namedSubmit1')
     }
-    assertEquals "TestServlet form0", web.title
-    assertEquals "form0", server.path
-    assertTrue server.params.containsKey('namedSubmit1')
   }
 
   void test_click_button_by_id() {
-    web.do {
+    webdsl {
       submit1.click()
+      assert server.path == "form0"
+      assert server.params.containsKey('namedSubmit1')
     }
-    assertEquals "form0", server.path
-    assertTrue server.params.containsKey('namedSubmit1')
   }
 
   void test_click_button_by_value() {
-    web.do {
+    webdsl {
       'Submit 1'.click()
     }
-    assertEquals "form0", server.path
-    assertTrue server.params.containsKey('namedSubmit1')
+    assert server.path == "form0"
+    assert server.params.containsKey('namedSubmit1')
   }
 
   void test_click_checkbox_by_name() {
-    web.do {
+    webdsl {
       namedCheckbox1.click()
       namedCheckbox2.click()
+
       form.submit
+
+      assert server.path == "form0", server.path
+      assert server.params.namedCheckbox1[0] == "Checkbox 1"
+      assert !server.params.namedCheckbox2
     }
-    assertEquals "form0", server.path
-    assertEquals "Checkbox 1", server.params.namedCheckbox1[0]
-    assertEquals null, server.params.namedCheckbox2
   }
 
   void test_click_checkbox_by_id() {
-    web.do {
+    webdsl {
       checkbox1.click()
       checkbox2.click()
+
       form.submit
+
+      assert server.path == "form0", server.path
+      assert server.params.namedCheckbox1[0] == "Checkbox 1"
+      assert !server.params.namedCheckbox2
     }
-    assertEquals "form0", server.path
-    assertEquals "Checkbox 1", server.params.namedCheckbox1[0]
-    assertEquals null, server.params.namedCheckbox2
   }
 
   void test_checkbox_setValue_to_opposite_values() {
-    web.do {
+    webdsl {
       checkbox1.value = true
       checkbox2.value = false
+
       form.submit
+
+      assert server.path == "form0", server.path
+      assert server.params.namedCheckbox1[0] == "Checkbox 1"
+      assert !server.params.namedCheckbox2
     }
-    assertEquals "Checkbox 1", server.params.namedCheckbox1[0]
-    assertEquals null, server.params.namedCheckbox2
   }
 
   void test_checkbox_setValue_defaulted_as_false_set_to_false() {
-    web.do {
+    webdsl {
       checkbox1.value = false
       form.submit
+      assert !server.params.namedCheckbox1
     }
-    assertEquals null, server.params.namedCheckbox1
   }
 
   void test_checkbox_setValue_defaulted_as_true_set_to_true() {
-    web.do {
+    webdsl {
       checkbox2.value = true
       form.submit
+      assert server.params.namedCheckbox2[0] == "Checkbox 2"
     }
-    assertEquals "Checkbox 2", server.params.namedCheckbox2[0]
   }
 
   void test_form_text_by_id() {
-    web.do {
-      assertEquals 'a default value', nameId.value
+    webdsl {
+      assert nameId.value == 'a default value'
       nameId.value = 'henry'
       form.submit
+      assert server.params.name[0] == "henry"
     }
-    assertEquals "henry", server.params.name[0]
   }
 
   void test_form_text_by_name() {
-    web.do {
-      assertTrue name instanceof ElementDsl
-      assertEquals 'a default value', name.value
+    webdsl {
+      assert name instanceof ElementDsl
+      assert name.value == 'a default value'
       name.value = 'henry'
       form.submit
+      assert server.params.name[0] == 'henry'
     }
-    assertEquals "henry", server.params.name[0]
   }
 
   void test_form_text_by_name_as_string() {
-    web.do {
+    webdsl {
       "name".value = 'henry'
       form.submit
     }
-    assertEquals "henry", server.params.name[0]
+    assert server.params.name[0] == 'henry'
   }
 
   void test_form_text_by_name_as_gstring() {
-    web.do {
+    webdsl {
       "na${'me'}".value = 'henry'
       form.submit
+      assert server.params.name[0] == 'henry'
     }
-    assertEquals "henry", server.params.name[0]
   }
 
   void test_form_text_changes_updates_page_tracking() {
-    web.do {
+    webdsl {
       textToEcho.value = 'abcd'
       assert echoedText.value == 'abcd'
     }
   }
 
   void test_form_select_by_id() {
-    web.do {
-      assertTrue auto instanceof SelectDsl
+    webdsl {
+      assert auto instanceof SelectDsl
       assert 'volvo' == autoId.value
       autoId.value = 'audi'
       form.submit
+      assert server.params.auto[0] == 'audi'
     }
-    assertEquals "audi", server.params.auto[0]
   }
 
   void test_form_select_by_name() {
-    web.do {
-      assertTrue auto instanceof SelectDsl
+    webdsl {
+      assert auto instanceof SelectDsl
       assert 'volvo' == auto.value
       auto.value = 'audi'
       form.submit
+      assert server.params.auto[0] == 'audi'
     }
-    assertEquals "audi", server.params.auto[0]
   }
 
   void test_form_select__multiple_options() {
-    web.do {
+    webdsl {
       assert ['volvo'] == auto2.values
       auto2.values = ['audi', 'mercedes', 'saab']
       assert auto2.values == ['saab', 'mercedes', 'audi']
       form3.submit
+      assert ['saab', 'mercedes', 'audi'] == server.params.auto2
     }
-    assert ['saab', 'mercedes', 'audi'] == server.params.auto2
   }
 
   void test_form_select__multiple_options__assign_empty_list() {
-    web.do {
+    webdsl {
       assert ['volvo'] == auto2.values
       auto2.values = []
       assert auto2.values == []
       form3.submit
+      assert !server.params.auto2
     }
-    assertNull server.params.auto2
   }
 
   void test_form_select__multiple_options__deselectAll() {
-    web.do {
+    webdsl {
       assert ['volvo'] == auto2.values
       auto2.deselectAll()
       assert auto2.values == []
       form3.submit
+      assert !server.params.auto2
     }
-    assertNull server.params.auto2
   }
 
   void test_form_select__multiple_options__set__not_supported() {
     shouldFail {
-      web.auto.values = ['audi', 'mercedes', 'saab']
+      webdsl {
+        auto.values = ['audi', 'mercedes', 'saab']
+      }
     }
   }
 
   void test_form_select__multiple_options__supported__value_called() {
-    web.do {
+    webdsl {
       auto2.values = ['audi', 'mercedes', 'saab']
       assert auto2.value == ['saab', 'mercedes', 'audi']
     }
   }
 
   void test_form_select__multiple_options__supported__no_selection() {
-    web.do {
+    webdsl {
       auto2.values = []
       assert auto2.value == null
       assert auto2.values == []
@@ -357,7 +366,7 @@ class WebDslTest extends AbstractServerTest {
   }
 
   void test_form_select__multiple_options__unsupported__no_selection() {
-    web.do {
+    webdsl {
       auto.values = []
       assert auto.value == null
       assert auto.values == []
@@ -366,37 +375,39 @@ class WebDslTest extends AbstractServerTest {
   }
 
   void test_form_select__multiple_options__get__not_supported() {
-    assert web.auto.values == ['volvo']
+    webdsl {
+      assert auto.values == ['volvo']
+    }
   }
 
   void test_form_select_get_option_values() {
-    web.do {
+    webdsl {
       assert auto.options.value == ['volvo', 'saab', 'mercedes', 'audi']
     }
   }
 
   void test_form_select_get_option_text() {
-    web.do {
+    webdsl {
       assert auto.options.text == ['Volvo', 'Saab', 'Mercedes', 'Audi']
     }
   }
 
   void test_form_select_get_selectedOption_values() {
-    web.do {
+    webdsl {
       auto2.values = ['mercedes', 'volvo']
       assert auto2.selectedOptions.value == ['volvo', 'mercedes']
     }
   }
 
   void test_form_select_get_selectedOption_text() {
-    web.do {
+    webdsl {
       auto2.values = ['mercedes', 'volvo']
       assert auto2.selectedOptions.text == ['Volvo', 'Mercedes']
     }
   }
 
   void test_form_select_set_value_by_label_text() {
-    web.do {
+    webdsl {
       auto.value = 'Volvo'
       assert 'volvo' == auto.value
     }
@@ -404,7 +415,7 @@ class WebDslTest extends AbstractServerTest {
 
   void test_form_select_set_value_by_label_text_not_found() {
     try {
-      web.do {
+      webdsl {
         auto.value = 'VolvoII'
         assert 'volvo' == auto.value
       }
@@ -415,67 +426,67 @@ class WebDslTest extends AbstractServerTest {
   }
 
   void test_fillInWith() {
-    web.do {
+    webdsl {
       form {
         fillInWith([name: 'henry', auto: 'audi', checkbox1: true])
         submit
       }
+
+      assert server.params.name[0] == 'henry'
+      assert server.params.auto[0] == 'audi'
+      assert server.params.namedCheckbox1[0] == 'Checkbox 1'
     }
-    assertEquals "henry", server.params.name[0]
-    assertEquals "audi", server.params.auto[0]
-    assertEquals "Checkbox 1", server.params.namedCheckbox1[0]
   }
 
   void test_fillInWith_allows_extra_values_in_map() {
-    web.do {
+    webdsl {
       form {
         fillInWith([name: 'henry', other: "xxxx"])
         submit
       }
+      assert server.params.name[0] == 'henry'
     }
-    assertEquals "henry", server.params.name[0]
   }
 
   void test_values() {
     Map actual
-    web.do {
+    webdsl {
       form {
         actual = values()
       }
     }
-    assertEquals([name: "a default value", auto: "volvo", namedCheckbox1: false, namedCheckbox2: true, namedCheckbox3: true, radio1: "radio 1 value 3"], actual)
+    assert actual == [name: "a default value", auto: "volvo", namedCheckbox1: false, namedCheckbox2: true, namedCheckbox3: true, radio1: "radio 1 value 3"]
   }
 
   void test_valuesById() {
-    Map actual
-    web.do {
-      actual = form.valuesById()
+    webdsl {
+      Map actual = form.valuesById()
+      assert actual == [nameId: "a default value", autoId: "volvo", checkbox1: false, checkbox2: true, checkbox3: true, radio1_1: false, radio1_2: false, radio1_3: true], actual
     }
-    assertEquals([nameId: "a default value", autoId: "volvo", checkbox1: false, checkbox2: true, checkbox3: true, radio1_1: false, radio1_2: false, radio1_3: true], actual)
   }
 
   void test_values_with_multiple_select() {
-    web.do {
+    webdsl {
       auto2.values = ['volvo', 'saab']
       Map actual = form3.values()
-      assertEquals([auto2: ["volvo", "saab"]], actual)
+      assert actual == [auto2: ["volvo", "saab"]]
     }
   }
 
   void test_radio_with_label() {
-    web.do {
+    webdsl {
       assert "radio content 3" == radio1_3.label
     }
   }
 
   void test_radio_with_no_label() {
-    web.do {
+    webdsl {
       assert "" == radio1_1.label
     }
   }
 
   void test_radio() {
-    web.do {
+    webdsl {
       assert !radio1_1.checked
       assert !radio1_2.checked
       assert radio1_3.checked
@@ -490,40 +501,40 @@ class WebDslTest extends AbstractServerTest {
 
       form.submit
     }
-    assertEquals 'radio 1 value 2', server.params.radio1[0]
+    assert server.params.radio1[0] == 'radio 1 value 2'
   }
 
   void test_table() {
-    web.do {
-      assertTrue table1 instanceof TableDsl
+    webdsl {
+      assert table1 instanceof TableDsl
       def expected = [[firstName: "pinky", lastName: "jones"], [firstName: "john", lastName: "doe"]]
-      assertEquals expected, table1.by.span
+      assert table1.by.span == expected
     }
   }
 
   void test_table_column() {
-    web.do {
+    webdsl {
       def expected = [[first: "pinky", last: "jones"], [first: "john", last: "doe"]]
-      assertEquals expected, table1.by.columns('first', 'last')
+      assert table1.by.columns('first', 'last') == expected
     }
   }
 
   void test_table_columns_not_all_columns_requested() {
-    web.do {
+    webdsl {
       def expected = [[first: "pinky"], [first: "john"]]
-      assertEquals expected, table1.by.columns('first')
+      assert table1.by.columns('first') == expected
     }
   }
 
   void test_table_columns_extra_columns_requested() {
-    web.do {
+    webdsl {
       def expected = [[first: "pinky", last: "jones", ssn: ""], [first: "john", last: "doe", ssn: ""]]
-      assertEquals expected, table1.by.columns('first', 'last', 'ssn')
+      assert table1.by.columns('first', 'last', 'ssn') == expected
     }
   }
 
   void test_table_as_objects_with_names() {
-    web.do {
+    webdsl {
       def expected = [
           [first: "pinky", last: "jones1"],
           [first: "winky", last: "jones2"],
@@ -531,19 +542,19 @@ class WebDslTest extends AbstractServerTest {
           [first: "linky", last: "jones4"],
           [first: "stinky", last: "jones5"],
       ]
-      assertEquals expected, table3.as.objects('first', 'last')
+      assert table3.as.objects('first', 'last') == expected
     }
   }
 
   void test_table_as_object() {
-    web.do {
+    webdsl {
       def expected = ["firstName": "john", "lastName": "doe", "ssn": "555-55-5555"]
-      assertEquals expected, table2.as.object
+      assert table2.as.object == expected
     }
   }
 
   void test_table_as_objects() {
-    web.do {
+    webdsl {
       def expected = [
           [firstName: "pinky", lastName: "jones1"],
           [firstName: "winky", lastName: "jones2"],
@@ -551,60 +562,60 @@ class WebDslTest extends AbstractServerTest {
           [firstName: "linky", lastName: "jones4"],
           [firstName: "stinky", lastName: "jones5"],
       ]
-      assertEquals expected, table3.as.objects
+      assert table3.as.objects == expected
     }
   }
 
   void test_table_as_objects_with_offset() {
     def result
-    web.do {
+    webdsl {
       result = table4(offset: 1).as.objects
     }
     def expected = [
         [firstName: "pinky", lastName: "jones1"],
         [firstName: "winky", lastName: "jones2"],
     ]
-    assertEquals expected, result
+    assert result == expected
   }
 
   void test_table_list() {
     def result
-    web.do {
+    webdsl {
       result = table3.as.list
     }
     def expected = ["first name", "pinky", "winky", "dinky", "linky", "stinky"]
-    assertEquals expected, result
+    assert result == expected
   }
 
   void test_table_list_offset() {
     def result
-    web.do {
+    webdsl {
       result = table3(offset: 2).as.list
     }
     def expected = ["winky", "dinky", "linky", "stinky"]
-    assertEquals expected, result
+    assert result == expected
   }
 
   void test_table_list_column() {
     def result
-    web.do {
+    webdsl {
       result = table3(column: 1).as.list
     }
     def expected = ["last name", "jones1", "jones2", "jones3", "jones4", "jones5"]
-    assertEquals expected, result
+    assert result == expected
   }
 
   void test_table_list_column_and_offset() {
     def result
-    web.do {
+    webdsl {
       result = table3(column: 1, offset: 1).as.list
     }
     def expected = ["jones1", "jones2", "jones3", "jones4", "jones5"]
-    assertEquals expected, result
+    assert result == expected
   }
 
   void test_table_process() {
-    web.do {
+    webdsl {
       def result = []
       table2.process {row, column, td ->
         result << [rowIndex: row, columnIndex: column, content: td.textContent.trim()]
@@ -617,81 +628,81 @@ class WebDslTest extends AbstractServerTest {
           [rowIndex: 2, columnIndex: 0, content: "SSN"],
           [rowIndex: 2, columnIndex: 1, content: "555-55-5555"],
       ]
-      assertEquals expected, result
+      assert result == expected
     }
   }
 
   void test_list_unordered() {
     def actual
-    web.do {
+    webdsl {
       actual = myUnorderedList.value
     }
-    assertEquals(['item 1', 'item 2', 'item 3', 'item 4', 'item 5'], actual)
+    assert actual == ['item 1', 'item 2', 'item 3', 'item 4', 'item 5']
   }
 
   void test_list_ordered() {
     def actual
-    web.do {
+    webdsl {
       actual = myOrderedList.value
     }
-    assertEquals(['item 1', 'item 2', 'item 3'], actual)
+    assert actual == ['item 1', 'item 2', 'item 3']
   }
 
   void test_properties() {
-    web.do {
+    webdsl {
       def props = properties()
-      assertTrue props.contains('auto')
-      assertTrue props.contains('table1')
-      assertTrue props.contains('table2')
-      assertTrue props.contains('table3')
-      assertTrue props.contains('form1')
-      assertTrue props.contains('radio1')
-      assertTrue props.contains('radio1_1')
+      assert props.contains('auto')
+      assert props.contains('table1')
+      assert props.contains('table2')
+      assert props.contains('table3')
+      assert props.contains('form1')
+      assert props.contains('radio1')
+      assert props.contains('radio1_1')
     }
   }
 
   void test_ids_starting_with_upper_case_letters() {
-    web.do {
-      assertEquals "upper", upper.text
-      assertEquals "UPPER", Upper.text
+    webdsl {
+      assert upper.text == 'upper'
+      assert Upper.text == 'UPPER'
     }
   }
 
   void test_intern() {
-    web.do {
-      assertEquals "upper", "upper".intern.text
-      assertEquals "UPPER", "Upper".intern.text
+    webdsl {
+      assert "upper".intern.text == 'upper'
+      assert "Upper".intern.text == 'UPPER'
     }
   }
 
   void test_string_value() {
-    web.do {
-      assertEquals 'a default value', "nameId".value
+    webdsl {
+      assert "nameId".value == 'a default value'
     }
   }
 
   void test_gstring_value() {
-    web.do {
-      assertEquals 'a default value', "name${"Id"}".value
+    webdsl {
+      assert "name${"Id"}".value == 'a default value'
     }
   }
 
   void test_string_text() {
-    web.do {
-      assertEquals "upper", "upper".text
-      assertEquals "UPPER", "Upper".text
+    webdsl {
+      assert "upper".text == 'upper'
+      assert "Upper".text == 'UPPER'
     }
   }
 
   void test_gstring_text() {
-    web.do {
-      assertEquals "upper", "uppe${'r'}".text
-      assertEquals "UPPER", "Upper".text
+    webdsl {
+      assert "uppe${'r'}".text == 'upper'
+      assert "Upper".text == 'UPPER'
     }
   }
 
   void test_tagName() {
-    web.do {
+    webdsl {
       assert errors.tagName == "div"
       assert table1.tagName == "table"
       assert myUnorderedList.tagName == "ul"
@@ -706,31 +717,31 @@ class WebDslTest extends AbstractServerTest {
   }
 
   void test_text_is_trimmed() {
-    web.do {
+    webdsl {
       assert multiline.text == "multi-line text"
     }
   }
 
   void test_untrimmedText() {
-    web.do {
+    webdsl {
       assert multiline.untrimmedText == "\n    multi-line text\n"
     }
   }
 
   void test_value_is_trimmed() {
-    web.do {
+    webdsl {
       assert valueWithSpaces.value == "abc"
     }
   }
 
   void test_untrimmedValue() {
-    web.do {
+    webdsl {
       assert valueWithSpaces.untrimmedValue == " abc "
     }
   }
 
   void test_back() {
-    web.do {
+    webdsl {
       assert title == "Main Page 1"
       rainbow.click()
       assert title == "Rainbow Page"

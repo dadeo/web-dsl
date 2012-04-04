@@ -12,10 +12,9 @@
  */
 package webdsl
 
-import webdsl.support.SelectDsl
-import webdsl.support.DslFactory
 import com.gargoylesoftware.htmlunit.html.HtmlSelect
-
+import webdsl.support.DslFactory
+import webdsl.support.SelectDsl
 
 class DslHousekeepingTest extends AbstractServerTest {
   def map
@@ -24,40 +23,40 @@ class DslHousekeepingTest extends AbstractServerTest {
     map = [key: 'value']
     super.setUp()
   }
-  
+
   void test_closure_result_returned() {
-    assertEquals 3, web.do {3}
+    assert webdsl {3} == 3
   }
 
   void test_access_field() {
-    web.do {
-      assertEquals 'value', map.key
+    webdsl {
+      assert map.key == 'value'
     }
   }
 
   void test_modify_field() {
-    web.do {
+    webdsl {
       map = [key2: 'value']
     }
-    assertEquals([key2: 'value'], map)
+    assert map == [key2: 'value']
   }
 
   void test_assertions_in_dsl() {
     shouldFail {
-      web.do {
+      webdsl {
         fail("should fail")
       }
     }
   }
 
   void test_factory_no_override_of_select() {
-    web.do {
+    webdsl {
       assert auto instanceof SelectDsl
     }
   }
 
   void test_factory_override_of_select() {
-    web.do {
+    webdsl {
       handle HtmlSelect with OtherDsl
 
       assert auto instanceof OtherDsl
@@ -65,29 +64,33 @@ class DslHousekeepingTest extends AbstractServerTest {
   }
 
   void test_factory_defaults_to_reset() {
-    web.do {
-      handle HtmlSelect with OtherDsl
+    webdsl(
+        {
+          handle HtmlSelect with OtherDsl
 
-      assert auto instanceof OtherDsl
-    }
+          assert auto instanceof OtherDsl
+        },
 
-    web.do {
-      assert auto instanceof SelectDsl
-    }
+        {
+          assert auto instanceof SelectDsl
+        }
+    )
   }
 
   void test_factory_reset_can_be_overridden() {
-    web.do {
-      factoryResets = false
+    webdsl(
+        {
+          factoryResets = false
 
-      handle HtmlSelect with OtherDsl
+          handle HtmlSelect with OtherDsl
 
-      assert auto instanceof OtherDsl
-    }
+          assert auto instanceof OtherDsl
+        },
 
-    web.do {
-      assert auto instanceof OtherDsl
-    }
+        {
+          assert auto instanceof OtherDsl
+        }
+    )
   }
 
 

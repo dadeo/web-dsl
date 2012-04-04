@@ -12,8 +12,10 @@
  */
 package webdsl
 
+import junit.framework.TestCase
 
-class DslFunctionTest extends AbstractTest {
+
+class DslFunctionTest extends TestCase {
   def web
 
   void setUp() {
@@ -21,15 +23,15 @@ class DslFunctionTest extends AbstractTest {
   }
   
   void test_camel_string() {
-    assertEquals "firstName", web.camel("First Name")
-    assertEquals "firstName", web.camel("first name")
-    assertEquals "a", web.camel("A")
-    assertEquals "a", web.camel("a")
-    assertEquals "ssn", web.camel("SSN")
-    assertEquals "ipAddress", web.camel("IP Address")
-    assertEquals "ipAddress", web.camel("IP ADDRESS")
-    assertEquals "externalIpAddress", web.camel("EXTERNAL IP ADDRESS")
-    assertEquals "aBC", web.camel("A B C")
+    assert "firstName" == web.camel("First Name")
+    assert "firstName" == web.camel("first name")
+    assert "a" == web.camel("A")
+    assert "a" == web.camel("a")
+    assert "ssn" == web.camel("SSN")
+    assert "ipAddress" == web.camel("IP Address")
+    assert "ipAddress" == web.camel("IP ADDRESS")
+    assert "externalIpAddress" == web.camel("EXTERNAL IP ADDRESS")
+    assert "aBC" == web.camel("A B C")
   }
 
   void test_camel_map() {

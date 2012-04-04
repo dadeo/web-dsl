@@ -21,7 +21,7 @@ class AnchorMatchesTitleTest extends AbstractServerTest {
   }
 
   void test_submit() {
-    web.do {
+    webdsl {
       assert title == "submit me"
       "submit me".click()
       assert title == "Main Page 1"

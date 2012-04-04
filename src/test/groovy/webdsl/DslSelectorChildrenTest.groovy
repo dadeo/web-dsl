@@ -19,13 +19,13 @@ class DslSelectorChildrenTest extends AbstractServerTest {
   }
 
   void test_selector_children() {
-    web.do {
+    webdsl {
       assert(['tbody', 'tr', 'td', 'td', 'tr', 'td', 'td', 'tr', 'td', 'td'] == table.children.tagName)
     }
   }
 
   void test_selector_children_with_options() {
-    web.do {
+    webdsl {
       assert(['value 1', 'value 2', 'value 4', 'value 4'] == span.children(type:'span').text)
     }
   }

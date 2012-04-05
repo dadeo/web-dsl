@@ -15,7 +15,7 @@ package webdsl
 import webdsl.support.BaseElementDsl
 import webdsl.support.SelectorDsl
 
-class InlineHtmlTest extends AbstractServerTest {
+class InlineHtmlServerTest extends AbstractServerTest {
 
   void test_test_invokes_closure() {
     def invoked
@@ -55,7 +55,7 @@ class InlineHtmlTest extends AbstractServerTest {
     }
   }
 
-  void test_test_with_htmlbuilder() {
+  void test_test_with_html_builder() {
     test {
       html {
         div(id:'mydiv', 'hello world')

@@ -18,6 +18,11 @@ import com.gargoylesoftware.htmlunit.html.HtmlSpan
 
 class GridDsl {
   def grid = []
+  def options
+
+  GridDsl(options = [:]) {
+    this.options = options
+  }
 
   def nextRow(td) {
     grid << [td]
@@ -49,7 +54,7 @@ class GridDsl {
   def getList() {
     def result = []
     process { row, column, td ->
-      if(column == 0) {
+      if(column == 0 && inRowRange(row, grid.size())){
         result << td.textContent.trim()
       }
     }
@@ -60,10 +65,12 @@ class GridDsl {
     def result = [:]
     def attribute
     process { row, column, td ->
-      if(column == 0) {
-        attribute = td.textContent.trim()
-      } else {
-        result[WebDsl.camel(attribute)] = td.textContent.trim()
+      if (inRowRange(row, grid.size())) {
+        if(column == 0) {
+          attribute = td.textContent.trim()
+        } else {
+          result[WebDsl.camel(attribute)] = td.textContent.trim()
+        }
       }
     }
     result
@@ -79,7 +86,7 @@ class GridDsl {
     process { row, column, td ->
       if (row == 0) {
         attributes[column] = names ? names[column] : td.textContent.trim()
-      } else {
+      } else if (inRowRange(row - 1, grid.size() - 1)){
         if(column == 0) {
           results << [:]
         }
@@ -96,13 +103,17 @@ class GridDsl {
       (map.size()..<columnNames.size()).each { index -> map[columnNames[index]] = "" }
       result << map
     }
+    def oldRow = -1
     process { row, column, td ->
-      if(row != 0 && column == 0) {
-        finalize()
-        map = [:]
-      }
-      if(column < columnNames.size()) {
-        map[columnNames[column]] = td.textContent.trim()
+      if (inRowRange(row, grid.size())) {
+        if(oldRow != -1 && row != oldRow && column == 0) {
+          finalize()
+          map = [:]
+        }
+        if(column < columnNames.size() && inRowRange(row, grid.size())) {
+          map[columnNames[column]] = td.textContent.trim()
+        }
+        oldRow = row
       }
     }
     finalize()
@@ -115,5 +126,9 @@ class GridDsl {
         closure(row, column, td)
       }
     }
+  }
+
+  boolean inRowRange(row, size) {
+    options.rowRange ? new RowRange(options.rowRange, size).contains(row) : true
   }
 }

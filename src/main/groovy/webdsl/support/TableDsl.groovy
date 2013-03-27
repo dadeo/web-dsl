@@ -13,11 +13,6 @@
 package webdsl.support
 
 import com.gargoylesoftware.htmlunit.html.HtmlTable
-import com.gargoylesoftware.htmlunit.html.HtmlTableRow
-import com.gargoylesoftware.htmlunit.html.HtmlSpan
-import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell
-import webdsl.WebDsl
-
 
 class TableDsl extends BaseElementDsl {
   private HtmlTable table
@@ -39,32 +34,28 @@ class TableDsl extends BaseElementDsl {
     "do"()
   }
 
-  def process(closure) {
+  def process(Closure closure) {
+    process null, closure
+  }
+
+  def process(Map options, Closure closure) {
+    def startIndex = options?.offset ?: 0
+    def startColumn = options?.column ?: 0
     int rowIndex = 0
-    table.htmlElementDescendants.each { row ->
-      if(row instanceof HtmlTableRow) {
-        int columnIndex = 0
-        row.htmlElementDescendants.each { td ->
-          if(td instanceof HtmlTableDataCell) {
-            closure rowIndex, columnIndex, td
-            ++columnIndex
-          }
-        }
-        ++rowIndex
+    table.rows[startIndex..-1].each { row ->
+      int columnIndex = 0
+      row.cells[startColumn..-1].each { td ->
+        closure rowIndex, columnIndex, td
+        ++columnIndex
       }
+      ++rowIndex
     }
   }
 
-  def "do"(options) {
-    def grid = new GridDsl()
-    def startIndex = options?.offset ?: 0
-    def startColumn = options?.column ?: 0
-    process { row, column, td ->
-      if(row < startIndex) {
-        // do nothing
-      } else if (column < startColumn) {
-        // do nothing
-      } else if (column == startColumn) {
+  def "do"(options = [:]) {
+    def grid = new GridDsl(options)
+    process options, { row, column, td ->
+      if (column == 0) {
         grid.nextRow td
       } else {
         grid.appendColumn td
@@ -74,7 +65,7 @@ class TableDsl extends BaseElementDsl {
   }
 
   def propertyMissing(String name) {
-    if(name == "tbody" || name == "thead") {
+    if (name == "tbody" || name == "thead") {
       super.propertyMissing(name)
     } else {
       super.propertyMissing("tbody")[0][name]

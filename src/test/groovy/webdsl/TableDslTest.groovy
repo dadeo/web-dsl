@@ -38,6 +38,30 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  void test_table_as_objects_with_names() {
+    html {
+      table(id: 'table3') {
+        tr { td('first name'); td('last name') }
+        tr { td('pinky'); td('jones1') }
+        tr { td('winky'); td('jones2') }
+        tr { td('dinky'); td('jones3') }
+        tr { td('linky'); td('jones4') }
+        tr { td('stinky'); td('jones5') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [first: "pinky", last: "jones1"],
+          [first: "winky", last: "jones2"],
+          [first: "dinky", last: "jones3"],
+          [first: "linky", last: "jones4"],
+          [first: "stinky", last: "jones5"],
+      ]
+      assert table3.as.objects('first', 'last') == expected
+    }
+  }
+
   void test_table_as_objects_rowRange() {
     html {
       table(id: 'table3') {
@@ -241,7 +265,7 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
-  void test_table_as_list_with_offset_and_row_range() {
+  void test_table_as_list_with_column_and_row_range() {
     html {
       table(id: 'table3') {
         tr { td('first name'); td('last name') }
@@ -286,6 +310,44 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  void test_table_as_columns_not_all_columns_requested() {
+    html {
+      table(id: 'table3') {
+        tr { td('pinky'); td('jones1') }
+        tr { td('winky'); td('jones2') }
+        tr { td('dinky'); td('jones3') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [first: "pinky"],
+          [first: "winky"],
+          [first: "dinky"],
+      ]
+      assert table3.as.columns('first') == expected
+    }
+  }
+
+  void test_table_as_columns_extra_columns_requested() {
+    html {
+      table(id: 'table3') {
+        tr { td('pinky'); td('jones1') }
+        tr { td('winky'); td('jones2') }
+        tr { td('dinky'); td('jones3') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [first: "pinky", last: "jones1", ssn:""],
+          [first: "winky", last: "jones2", ssn:""],
+          [first: "dinky", last: "jones3", ssn:""],
+      ]
+      assert table3.as.columns('first', 'last', 'ssn') == expected
+    }
+  }
+
   void test_table_as_columns_with_column_offset() {
     html {
       table(id: 'table3') {
@@ -305,7 +367,7 @@ class TableDslTest extends AbstractNonServerTest {
           [last: "jones4"],
           [last: "jones5"],
       ]
-      assert table3(column:1).as.columns('last') == expected
+      assert table3(column: 1).as.columns('last') == expected
     }
   }
 
@@ -326,7 +388,7 @@ class TableDslTest extends AbstractNonServerTest {
           [first: "dinky", last: "jones3"],
           [first: "linky", last: "jones4"],
       ]
-      assert table3(rowRange:1..3).as.columns('first', 'last') == expected
+      assert table3(rowRange: 1..3).as.columns('first', 'last') == expected
     }
   }
 
@@ -347,7 +409,7 @@ class TableDslTest extends AbstractNonServerTest {
           [last: "jones3"],
           [last: "jones4"],
       ]
-      assert table3(column: 1, rowRange:1..3).as.columns('last') == expected
+      assert table3(column: 1, rowRange: 1..3).as.columns('last') == expected
     }
   }
 
@@ -384,7 +446,7 @@ class TableDslTest extends AbstractNonServerTest {
           last: 'jones',
           ssn: '111-11-1111'
       ]
-      assert person(rowRange:1..2).as.object == expected
+      assert person(rowRange: 1..2).as.object == expected
     }
   }
 
@@ -399,12 +461,58 @@ class TableDslTest extends AbstractNonServerTest {
 
     webdsl {
       def expected = [
-          first:  'pinky',
+          first: 'pinky',
           last: 'jones',
           ssn: '111-11-1111'
       ]
-      assert person(column:1).as.object == expected
+      assert person(column: 1).as.object == expected
     }
   }
 
+  void test_table_process() {
+    html {
+      table(id: 'employees') {
+        tr { td('First Name'); td('Last Name') }
+        tr { td('pinky'); td('jones1') }
+        tr { td('winky'); td('jones2') }
+      }
+    }
+
+    webdsl {
+      def result = []
+
+      employees.process { row, column, td ->
+        result << [rowIndex: row, columnIndex: column, content: td.textContent.trim()]
+      }
+
+      def expected = [
+          [rowIndex: 0, columnIndex: 0, content: "First Name"],
+          [rowIndex: 0, columnIndex: 1, content: "Last Name"],
+          [rowIndex: 1, columnIndex: 0, content: "pinky"],
+          [rowIndex: 1, columnIndex: 1, content: "jones1"],
+          [rowIndex: 2, columnIndex: 0, content: "winky"],
+          [rowIndex: 2, columnIndex: 1, content: "jones2"],
+      ]
+
+      assert result == expected
+    }
+  }
+
+  void test_table_by_span() {
+    html {
+      table(id: 'employees') {
+        tr {
+          td { span(name: 'firstName', 'pinky') }; td { span(name: 'lastName', 'jones') }
+        }
+        tr {
+          td { span(name: 'firstName', 'john') }; td { span(name: 'lastName', 'doe') }
+        }
+      }
+    }
+
+    webdsl {
+      def expected = [[firstName: "pinky", lastName: "jones"], [firstName: "john", lastName: "doe"]]
+      assert employees.by.span == expected
+    }
+  }
 }

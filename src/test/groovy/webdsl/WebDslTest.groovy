@@ -504,68 +504,6 @@ class WebDslTest extends AbstractServerTest {
     assert server.params.radio1[0] == 'radio 1 value 2'
   }
 
-  void test_table() {
-    webdsl {
-      assert table1 instanceof TableDsl
-      def expected = [[firstName: "pinky", lastName: "jones"], [firstName: "john", lastName: "doe"]]
-      assert table1.by.span == expected
-    }
-  }
-
-  void test_table_column() {
-    webdsl {
-      def expected = [[first: "pinky", last: "jones"], [first: "john", last: "doe"]]
-      assert table1.by.columns('first', 'last') == expected
-    }
-  }
-
-  void test_table_columns_not_all_columns_requested() {
-    webdsl {
-      def expected = [[first: "pinky"], [first: "john"]]
-      assert table1.by.columns('first') == expected
-    }
-  }
-
-  void test_table_columns_extra_columns_requested() {
-    webdsl {
-      def expected = [[first: "pinky", last: "jones", ssn: ""], [first: "john", last: "doe", ssn: ""]]
-      assert table1.by.columns('first', 'last', 'ssn') == expected
-    }
-  }
-
-  void test_table_as_objects_with_names() {
-    webdsl {
-      def expected = [
-          [first: "pinky", last: "jones1"],
-          [first: "winky", last: "jones2"],
-          [first: "dinky", last: "jones3"],
-          [first: "linky", last: "jones4"],
-          [first: "stinky", last: "jones5"],
-      ]
-      assert table3.as.objects('first', 'last') == expected
-    }
-  }
-
-  void test_table_as_object() {
-    webdsl {
-      def expected = ["firstName": "john", "lastName": "doe", "ssn": "555-55-5555"]
-      assert table2.as.object == expected
-    }
-  }
-
-  void test_table_as_objects() {
-    webdsl {
-      def expected = [
-          [firstName: "pinky", lastName: "jones1"],
-          [firstName: "winky", lastName: "jones2"],
-          [firstName: "dinky", lastName: "jones3"],
-          [firstName: "linky", lastName: "jones4"],
-          [firstName: "stinky", lastName: "jones5"],
-      ]
-      assert table3.as.objects == expected
-    }
-  }
-
   void test_table_as_objects_with_offset() {
     def result
     webdsl {
@@ -578,30 +516,12 @@ class WebDslTest extends AbstractServerTest {
     assert result == expected
   }
 
-  void test_table_list() {
-    def result
-    webdsl {
-      result = table3.as.list
-    }
-    def expected = ["first name", "pinky", "winky", "dinky", "linky", "stinky"]
-    assert result == expected
-  }
-
   void test_table_list_offset() {
     def result
     webdsl {
       result = table3(offset: 2).as.list
     }
     def expected = ["winky", "dinky", "linky", "stinky"]
-    assert result == expected
-  }
-
-  void test_table_list_column() {
-    def result
-    webdsl {
-      result = table3(column: 1).as.list
-    }
-    def expected = ["last name", "jones1", "jones2", "jones3", "jones4", "jones5"]
     assert result == expected
   }
 
@@ -612,24 +532,6 @@ class WebDslTest extends AbstractServerTest {
     }
     def expected = ["jones1", "jones2", "jones3", "jones4", "jones5"]
     assert result == expected
-  }
-
-  void test_table_process() {
-    webdsl {
-      def result = []
-      table2.process {row, column, td ->
-        result << [rowIndex: row, columnIndex: column, content: td.textContent.trim()]
-      }
-      def expected = [
-          [rowIndex: 0, columnIndex: 0, content: "First Name"],
-          [rowIndex: 0, columnIndex: 1, content: "john"],
-          [rowIndex: 1, columnIndex: 0, content: "Last Name"],
-          [rowIndex: 1, columnIndex: 1, content: "doe"],
-          [rowIndex: 2, columnIndex: 0, content: "SSN"],
-          [rowIndex: 2, columnIndex: 1, content: "555-55-5555"],
-      ]
-      assert result == expected
-    }
   }
 
   void test_list_unordered() {

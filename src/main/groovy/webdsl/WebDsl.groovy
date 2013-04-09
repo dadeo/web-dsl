@@ -18,10 +18,7 @@ import com.gargoylesoftware.htmlunit.html.DomText
 import com.gargoylesoftware.htmlunit.html.HtmlElement
 import com.gargoylesoftware.htmlunit.html.HtmlPage
 import org.codehaus.groovy.runtime.GStringImpl
-import webdsl.support.ChildrenDsl
-import webdsl.support.DslFactory
-import webdsl.support.FormDsl
-import webdsl.support.SelectorDsl
+import webdsl.support.*
 
 class WebDsl {
   private static final ThreadLocal container = new ThreadLocal()
@@ -44,10 +41,10 @@ class WebDsl {
   }
 
   def _do(closure) {
-    if(factoryResets) {
+    if (factoryResets) {
       factory = new DslFactory()
     }
-      
+
     closure.delegate = this
     closure.resolveStrategy = Closure.DELEGATE_FIRST
     use(WebDsl) {
@@ -168,6 +165,43 @@ class WebDsl {
     ]
   }
 
+  def $(selector) {
+    List<CssSelector> cssSelectors = new CssSelectorParser().parse(selector)
+
+    def applySelector = { cssSelector, target ->
+      def predicates = []
+
+      if (cssSelector.id)
+        predicates << { it.id == cssSelector.id }
+
+      if (cssSelector.tagName)
+        predicates << { it.tagName == cssSelector.tagName }
+
+      if (cssSelector.attributes.class)
+        predicates << { it.getAttribute('class') == cssSelector.attributes.class }
+
+      if (target instanceof ElementDsl)
+        target = target.element
+
+      target.getHtmlElementDescendants()
+          .toList()
+          .findAll { element -> predicates.every { it(element) } }
+          .collect { factory.create(this, it) }
+    }
+
+    def applyAllSelectors = { selectors, target ->
+      def dslElements = applySelector selectors.head(), target
+      if (selectors.tail())
+        dslElements.collect curry(selectors.tail())
+      else
+        dslElements
+    }
+
+    def dslElements = applyAllSelectors cssSelectors, page
+
+    dslElements.size() > 1 ? dslElements : dslElements[0]
+  }
+
   static def camel(String string) {
     def buffer = new StringBuffer()
 
@@ -185,7 +219,7 @@ class WebDsl {
 
   static def camel(Map map) {
     def result = [:]
-    map.each {k, v ->
+    map.each { k, v ->
       result[camel(k)] = v
     }
     result
@@ -193,7 +227,7 @@ class WebDsl {
 
   static def click(String string) {
     def dsl = container.get()
-    def found = dsl.page.tabbableElements.find {HtmlElement element ->
+    def found = dsl.page.tabbableElements.find { HtmlElement element ->
       element.getTextContent() == string || element.getAttribute("value") == string || element.getAttribute("href") == string
     }
 
@@ -230,7 +264,7 @@ class WebDsl {
 
   static def map(Map target, mappings) {
     def result = [:]
-    target.each {k, v ->
+    target.each { k, v ->
       def newKey = mappings[k]
       result[newKey ?: k] = v
     }

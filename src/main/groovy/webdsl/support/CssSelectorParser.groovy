@@ -16,7 +16,7 @@ import java.util.regex.Matcher
 
 class CssSelectorParser {
   List<CssSelector> parse(String selector) {
-    String regex = /([^.#\s]+)?#?([^.\s]+)?[.]?([^\s]*)\s*/
+    String regex = /([^.#\s\[]+)?#?([^.\s\[]+)?[.]?([^\s\[]*)(?:\[(.+?)\])?\s*/
 
     List<CssSelector> result = []
 
@@ -25,12 +25,16 @@ class CssSelectorParser {
       String id = m.group(2)
       String tagName = m.group(1)
       String cssClass = m.group(3)
+      String attributeName = m.group(4)
 
       if (id || tagName || cssClass) {
         Map<String, String> attributes = [:]
 
         if (cssClass)
           attributes.class = cssClass
+
+        if (attributeName)
+          attributes[attributeName.intern()] = null
 
         result << new CssSelector(id, tagName, attributes)
       }

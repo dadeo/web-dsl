@@ -80,4 +80,24 @@ class CssSelectorParserTest {
         new CssSelector(tagName: 'div', attributes: [class: 'name'])]
   }
 
+  @Test
+  void test_parse_tag_with_attribute() {
+    assert parser.parse('li[foo]') == [new CssSelector(tagName: 'li', attributes: [foo: null])]
+  }
+
+  @Test
+  void test_parse_id_with_attribute() {
+    assert parser.parse('#bar[foo]') == [new CssSelector(id: 'bar', attributes: [foo: null])]
+  }
+
+  @Test
+  void test_parse_class_with_attribute() {
+    assert parser.parse('.bar[foo]') == [new CssSelector(attributes: [class: 'bar', foo: null])]
+  }
+
+  @Test
+  void test_parse_tag_id_class_with_attribute() {
+    assert parser.parse('baz#bam.bar[foo]') == [new CssSelector(tagName:'baz', id:'bam', attributes: [class: 'bar', foo: null])]
+  }
+
 }

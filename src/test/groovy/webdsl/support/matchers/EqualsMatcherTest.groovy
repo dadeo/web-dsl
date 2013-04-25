@@ -41,4 +41,9 @@ class EqualsMatcherTest {
   void test_equals_matcher_value_present_other_value_null() {
     assert !new EqualsMatcher('foo').matches(null)
   }
+
+  @Test
+  void test_toString() {
+    assert new EqualsMatcher('foo').toString() == "EQ(foo)"
+  }
 }

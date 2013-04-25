@@ -18,11 +18,11 @@ import groovy.transform.Immutable
 class EqualsMatcher {
   String value
 
-    String toString() {
-      "EQ($value)"
-    }
+  String toString() {
+    "EQ($value)"
+  }
 
-    boolean matches(String value) {
-      this.value == value
-    }
+  boolean matches(String value) {
+    this.value == value
+  }
 }

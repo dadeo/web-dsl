@@ -13,13 +13,16 @@
 package webdsl.support
 
 import webdsl.support.matchers.AlwaysMatcher
+import webdsl.support.matchers.ContainsMatcher
+import webdsl.support.matchers.EndsWithMatcher
 import webdsl.support.matchers.EqualsMatcher
+import webdsl.support.matchers.StartsWithMatcher
 
 import java.util.regex.Matcher
 
 class CssSelectorParser {
   List<CssSelector> parse(String selector) {
-    String regex = /([^.#\s\[]+)?#?([^.\s\[]+)?[.]?([^\s\[]*)(?:\[(.+?)(?:="(.+)")?\])?\s*/
+    String regex = /([^.#\s\[]+)?#?([^.\s\[]+)?[.]?([^\s\[]*)(?:\[(.+?)(?:([*^$])?="(.+)")?\])?\s*/
 
     List<CssSelector> result = []
 
@@ -29,7 +32,8 @@ class CssSelectorParser {
       String tagName = m.group(1)
       String cssClass = m.group(3)
       String attributeName = m.group(4)
-      String attributeValue = m.group(5)
+      String matchType = m.group(5)
+      String attributeValue = m.group(6)
 
       if (id || tagName || cssClass || attributeName) {
         Map<String, String> attributes = [:]
@@ -37,8 +41,24 @@ class CssSelectorParser {
         if (cssClass)
           attributes.class = EQ(cssClass)
 
-        if (attributeName)
-          attributes[attributeName.intern()] = attributeValue ? EQ(attributeValue) : ALWAYS()
+        def matcher
+        if (attributeName) {
+          switch (matchType) {
+            case '^':
+              matcher = STARTS_WITH(attributeValue)
+              break
+            case '$':
+              matcher = ENDS_WITH(attributeValue)
+              break
+            case '*':
+              matcher = CONTAINS(attributeValue)
+              break
+            default:
+              matcher = attributeValue ? EQ(attributeValue) : ALWAYS()
+
+          }
+          attributes[attributeName] = matcher
+        }
 
         result << new CssSelector(id, tagName, attributes)
       }
@@ -53,5 +73,17 @@ class CssSelectorParser {
 
   static ALWAYS() {
     new AlwaysMatcher()
+  }
+
+  static STARTS_WITH(String value) {
+    new StartsWithMatcher(value)
+  }
+
+  static ENDS_WITH(String value) {
+    new EndsWithMatcher(value)
+  }
+
+  static CONTAINS(String value) {
+    new ContainsMatcher(value)
   }
 }

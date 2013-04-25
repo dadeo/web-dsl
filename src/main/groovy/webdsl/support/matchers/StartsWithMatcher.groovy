@@ -12,16 +12,16 @@
  */
 package webdsl.support.matchers
 
-import groovy.transform.Immutable
 
-@Immutable
-class AlwaysMatcher {
+@groovy.transform.Immutable
+class StartsWithMatcher {
+  String value
+
   boolean matches(String value) {
-    true
+    this.value ? value?.startsWith(this.value) : false
   }
 
   String toString() {
-    "ALWAYS()"
+    "STARTS_WITH($value)"
   }
-
 }

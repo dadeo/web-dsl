@@ -26,4 +26,9 @@ class AlwaysMatcherTest {
   void test_matches_null() {
     assert new AlwaysMatcher().matches(null)
   }
+
+  @Test
+  void test_toString() {
+    assert new AlwaysMatcher().toString() == "ALWAYS()"
+  }
 }

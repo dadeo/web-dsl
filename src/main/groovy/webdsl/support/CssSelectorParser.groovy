@@ -12,6 +12,7 @@
  */
 package webdsl.support
 
+import webdsl.support.matchers.AlwaysMatcher
 import webdsl.support.matchers.EqualsMatcher
 
 import java.util.regex.Matcher
@@ -30,14 +31,14 @@ class CssSelectorParser {
       String attributeName = m.group(4)
       String attributeValue = m.group(5)
 
-      if (id || tagName || cssClass) {
+      if (id || tagName || cssClass || attributeName) {
         Map<String, String> attributes = [:]
 
         if (cssClass)
           attributes.class = EQ(cssClass)
 
         if (attributeName)
-          attributes[attributeName.intern()] = attributeValue ? EQ(attributeValue) : null
+          attributes[attributeName.intern()] = attributeValue ? EQ(attributeValue) : ALWAYS()
 
         result << new CssSelector(id, tagName, attributes)
       }
@@ -48,5 +49,9 @@ class CssSelectorParser {
 
   static EQ(String value) {
     new EqualsMatcher(value)
+  }
+
+  static ALWAYS() {
+    new AlwaysMatcher()
   }
 }

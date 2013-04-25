@@ -177,8 +177,11 @@ class WebDsl {
       if (cssSelector.tagName)
         predicates << { it.tagName == cssSelector.tagName }
 
-      if (cssSelector.attributes.class)
-        predicates << { cssSelector.attributes.class.matches(it.getAttribute('class')) }
+      cssSelector.attributes.each { attributeName, valueMatcher ->
+        predicates << {
+          it.hasAttribute(attributeName) && valueMatcher.matches(it.getAttribute(attributeName))
+        }
+      }
 
       if (target instanceof ElementDsl)
         target = target.element

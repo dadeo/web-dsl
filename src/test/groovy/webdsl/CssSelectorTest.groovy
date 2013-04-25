@@ -247,4 +247,54 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  void test_select_tag_with_attribute_by_name() {
+    html {
+      div(select: 'me', 'foo')
+      div('bar')
+      p(select: 'me', 'bak')
+      div(select: 'meToo', 'baz')
+      div {
+        div('foz')
+        div(select: 'me', 'fox')
+      }
+    }
+
+    webdsl {
+      assert $('div[select]')*.text == ['foo', 'baz', 'fox']
+    }
+  }
+
+  void test_select_tag_with_attribute_by_value() {
+    html {
+      div(select: 'me', 'foo')
+      div('bar')
+      div(select: 'meToo', 'baz')
+      p(select: 'me', 'bak')
+      div {
+        div('foz')
+        div(select: 'me', 'fox')
+      }
+    }
+
+    webdsl {
+      assert $('div[select="me"]')*.text == ['foo', 'fox']
+    }
+  }
+
+  void test_select_by_attribute_value() {
+    html {
+      div(select: 'me', 'foo')
+      div('bar')
+      div(select: 'meToo', 'baz')
+      p(select: 'me', 'bak')
+      div {
+        div('foz')
+        div(select: 'me', 'fox')
+      }
+    }
+
+    webdsl {
+      assert $('[select="me"]')*.text == ['foo', 'bak', 'fox']
+    }
+  }
 }

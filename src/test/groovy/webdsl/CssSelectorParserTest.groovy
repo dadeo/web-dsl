@@ -16,6 +16,7 @@ import org.junit.Before
 import org.junit.Test
 import webdsl.support.CssSelector
 import webdsl.support.CssSelectorParser
+import webdsl.support.matchers.AlwaysMatcher
 import webdsl.support.matchers.EqualsMatcher
 
 import static webdsl.support.CssSelectorParser.*
@@ -31,6 +32,11 @@ class CssSelectorParserTest {
   @Test
   void test_EQ() {
     assert EQ('value') == new EqualsMatcher('value')
+  }
+
+  @Test
+  void test_ALWAYS() {
+    assert ALWAYS() == new AlwaysMatcher()
   }
 
   @Test
@@ -89,23 +95,33 @@ class CssSelectorParserTest {
   }
 
   @Test
+  void test_parse_attribute_name() {
+    assert parser.parse('[foo]') == [new CssSelector(attributes: [foo: ALWAYS()])]
+  }
+
+  @Test
   void test_parse_tag_with_attribute() {
-    assert parser.parse('li[foo]') == [new CssSelector(tagName: 'li', attributes: [foo: null])]
+    assert parser.parse('li[foo]') == [new CssSelector(tagName: 'li', attributes: [foo: ALWAYS()])]
   }
 
   @Test
   void test_parse_id_with_attribute() {
-    assert parser.parse('#bar[foo]') == [new CssSelector(id: 'bar', attributes: [foo: null])]
+    assert parser.parse('#bar[foo]') == [new CssSelector(id: 'bar', attributes: [foo: ALWAYS()])]
   }
 
   @Test
   void test_parse_class_with_attribute() {
-    assert parser.parse('.bar[foo]') == [new CssSelector(attributes: [class: EQ('bar'), foo: null])]
+    assert parser.parse('.bar[foo]') == [new CssSelector(attributes: [class: EQ('bar'), foo: ALWAYS()])]
   }
 
   @Test
   void test_parse_tag_id_class_with_attribute() {
-    assert parser.parse('baz#bam.bar[foo]') == [new CssSelector(tagName:'baz', id:'bam', attributes: [class: EQ('bar'), foo: null])]
+    assert parser.parse('baz#bam.bar[foo]') == [new CssSelector(tagName:'baz', id:'bam', attributes: [class: EQ('bar'), foo: ALWAYS()])]
+  }
+
+  @Test
+  void test_parse_attribute_equals_value() {
+    assert parser.parse('[foo="bar"]') == [new CssSelector(attributes: [foo: EQ('bar')])]
   }
 
   @Test

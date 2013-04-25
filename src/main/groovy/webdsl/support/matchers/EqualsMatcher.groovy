@@ -10,13 +10,19 @@
  * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package webdsl.support
+package webdsl.support.matchers
 
 import groovy.transform.Immutable
 
 @Immutable
-class CssSelector {
-  String id
-  String tagName
-  Map<String, String> attributes = [:]
+class EqualsMatcher {
+  String value
+
+    String toString() {
+      "EQ($value)"
+    }
+
+    boolean matches(String value) {
+      this.value == value
+    }
 }

@@ -16,6 +16,9 @@ import org.junit.Before
 import org.junit.Test
 import webdsl.support.CssSelector
 import webdsl.support.CssSelectorParser
+import webdsl.support.matchers.EqualsMatcher
+
+import static webdsl.support.CssSelectorParser.*
 
 class CssSelectorParserTest {
   private CssSelectorParser parser
@@ -26,8 +29,13 @@ class CssSelectorParserTest {
   }
 
   @Test
+  void test_EQ() {
+    assert EQ('value') == new EqualsMatcher('value')
+  }
+
+  @Test
   void test_parse_class_only() {
-    assert parser.parse('.selected') == [new CssSelector(attributes: [class: 'selected'])]
+    assert parser.parse('.selected') == [new CssSelector(attributes: [class: EQ('selected')])]
   }
 
   @Test
@@ -37,7 +45,7 @@ class CssSelectorParserTest {
 
   @Test
   void test_parse_id_with_class() {
-    assert parser.parse('#myId.selected') == [new CssSelector(id: 'myId', attributes: [class: 'selected'])]
+    assert parser.parse('#myId.selected') == [new CssSelector(id: 'myId', attributes: [class: EQ('selected')])]
   }
 
   @Test
@@ -47,12 +55,12 @@ class CssSelectorParserTest {
 
   @Test
   void test_parse_tagName_with_class() {
-    assert parser.parse('div.selected') == [new CssSelector(tagName: 'div', attributes: [class: 'selected'])]
+    assert parser.parse('div.selected') == [new CssSelector(tagName: 'div', attributes: [class: EQ('selected')])]
   }
 
   @Test
   void test_parse_id_with_tagName_and_class() {
-    assert parser.parse('div#myId.selected') == [new CssSelector(id: 'myId', tagName: 'div', attributes: [class: 'selected'])]
+    assert parser.parse('div#myId.selected') == [new CssSelector(id: 'myId', tagName: 'div', attributes: [class: EQ('selected')])]
   }
 
   @Test
@@ -62,22 +70,22 @@ class CssSelectorParserTest {
 
   @Test
   void test_parse_multiple_selectors_by_tagName_then_class() {
-    assert parser.parse('p .selected') == [new CssSelector(tagName: 'p'), new CssSelector(attributes: [class: 'selected'])]
+    assert parser.parse('p .selected') == [new CssSelector(tagName: 'p'), new CssSelector(attributes: [class: EQ('selected')])]
   }
 
   @Test
   void test_parse_multiple_selectors_by_tagName_and_class_then_tagName_and_class() {
     assert parser.parse('p.selected div.name') == [
-        new CssSelector(tagName: 'p', attributes: [class: 'selected']),
-        new CssSelector(tagName: 'div', attributes: [class: 'name'])]
+        new CssSelector(tagName: 'p', attributes: [class: EQ('selected')]),
+        new CssSelector(tagName: 'div', attributes: [class: EQ('name')])]
   }
 
   @Test
   void test_parse_multiple_selectors_by_tagName_and_id_and_class_then_tagName_and_class_then_tagName_and_class() {
     assert parser.parse('li#owners.error p.selected div.name') == [
-        new CssSelector(id: 'owners', tagName: 'li', attributes: [class: 'error']),
-        new CssSelector(tagName: 'p', attributes: [class: 'selected']),
-        new CssSelector(tagName: 'div', attributes: [class: 'name'])]
+        new CssSelector(id: 'owners', tagName: 'li', attributes: [class: EQ('error')]),
+        new CssSelector(tagName: 'p', attributes: [class: EQ('selected')]),
+        new CssSelector(tagName: 'div', attributes: [class: EQ('name')])]
   }
 
   @Test
@@ -92,12 +100,38 @@ class CssSelectorParserTest {
 
   @Test
   void test_parse_class_with_attribute() {
-    assert parser.parse('.bar[foo]') == [new CssSelector(attributes: [class: 'bar', foo: null])]
+    assert parser.parse('.bar[foo]') == [new CssSelector(attributes: [class: EQ('bar'), foo: null])]
   }
 
   @Test
   void test_parse_tag_id_class_with_attribute() {
-    assert parser.parse('baz#bam.bar[foo]') == [new CssSelector(tagName:'baz', id:'bam', attributes: [class: 'bar', foo: null])]
+    assert parser.parse('baz#bam.bar[foo]') == [new CssSelector(tagName:'baz', id:'bam', attributes: [class: EQ('bar'), foo: null])]
   }
+
+  @Test
+  void test_parse_tag_with_attribute_equals_value() {
+    assert parser.parse('li[foo="bar"]') == [new CssSelector(tagName: 'li', attributes: [foo: EQ('bar')])]
+  }
+
+  @Test
+  void test_parse_id_with_attribute_equals_value() {
+    assert parser.parse('#bar[foo="bar"]') == [new CssSelector(id: 'bar', attributes: [foo:  EQ('bar')])]
+  }
+
+  @Test
+  void test_parse_class_with_attribute_equals_value() {
+    assert parser.parse('.bar[foo="bar"]') == [new CssSelector(attributes: [class: EQ('bar'), foo:  EQ('bar')])]
+  }
+
+  @Test
+  void test_parse_tag_id_class_with_attribute_equals_value() {
+    assert parser.parse('baz#bam.bar[foo="bar"]') == [new CssSelector(tagName:'baz', id:'bam', attributes: [class: EQ('bar'), foo:  EQ('bar')])]
+  }
+
+  @Test
+  void test_parse_tag_with_attribute_equals_value_can_use_half_quotes() {
+    assert parser.parse("li[foo='bar']") == [new CssSelector(tagName: 'li', attributes: [foo: EQ('bar')])]
+  }
+
 
 }

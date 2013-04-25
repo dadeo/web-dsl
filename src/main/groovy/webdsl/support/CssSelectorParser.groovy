@@ -12,34 +12,41 @@
  */
 package webdsl.support
 
+import webdsl.support.matchers.EqualsMatcher
+
 import java.util.regex.Matcher
 
 class CssSelectorParser {
   List<CssSelector> parse(String selector) {
-    String regex = /([^.#\s\[]+)?#?([^.\s\[]+)?[.]?([^\s\[]*)(?:\[(.+?)\])?\s*/
+    String regex = /([^.#\s\[]+)?#?([^.\s\[]+)?[.]?([^\s\[]*)(?:\[(.+?)(?:="(.+)")?\])?\s*/
 
     List<CssSelector> result = []
 
-    Matcher m = selector =~ regex
+    Matcher m = selector.replaceAll(/'/, /"/) =~ regex
     while (m.find()) {
       String id = m.group(2)
       String tagName = m.group(1)
       String cssClass = m.group(3)
       String attributeName = m.group(4)
+      String attributeValue = m.group(5)
 
       if (id || tagName || cssClass) {
         Map<String, String> attributes = [:]
 
         if (cssClass)
-          attributes.class = cssClass
+          attributes.class = EQ(cssClass)
 
         if (attributeName)
-          attributes[attributeName.intern()] = null
+          attributes[attributeName.intern()] = attributeValue ? EQ(attributeValue) : null
 
         result << new CssSelector(id, tagName, attributes)
       }
     }
 
     result
+  }
+
+  static EQ(String value) {
+    new EqualsMatcher(value)
   }
 }

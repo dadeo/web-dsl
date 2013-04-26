@@ -15,55 +15,55 @@ package webdsl.support.matchers
 import org.junit.Test
 
 
-class StartsWithMatcherTest {
+class StartsWithHyphenatedMatcherTest {
 
   @Test
   void test_matches_equal() {
-    assert new StartsWithMatcher('foo').matches('foo')
+    assert new StartsWithHyphenatedMatcher('foo').matches('foo')
   }
 
   @Test
   void test_matches_starts_with_value_followed_by_hyphen() {
-    assert new StartsWithMatcher('foo').matches('foo-')
+    assert new StartsWithHyphenatedMatcher('foo').matches('foo-')
   }
 
   @Test
-  void test_matches_starts_with_value_followed_by_hyphen_and_text() {
-    assert new StartsWithMatcher('foo').matches('foo-bar')
+  void test_matches_starts_with_value_followed_by_hyphenated_text() {
+    assert new StartsWithHyphenatedMatcher('foo').matches('foo-bar')
   }
 
   @Test
   void test_matches_starts_with_value() {
-    assert new StartsWithMatcher('foo').matches('foobar')
+    assert !new StartsWithHyphenatedMatcher('foo').matches('foobar')
   }
 
   @Test
   void test_matches_ends_with_value() {
-    assert !new StartsWithMatcher('foo').matches('barfoo')
+    assert !new StartsWithHyphenatedMatcher('foo').matches('barfoo')
   }
 
   @Test
   void test_matches_contains_value() {
-    assert !new StartsWithMatcher('foo').matches('barfoobaz')
+    assert !new StartsWithHyphenatedMatcher('foo').matches('barfoobaz')
   }
 
   @Test
   void test_matches_too_long() {
-    assert !new StartsWithMatcher('foo').matches('fo')
+    assert !new StartsWithHyphenatedMatcher('foo').matches('fo')
   }
 
   @Test
   void test_matches_check_value_null() {
-    assert !new StartsWithMatcher('foo').matches(null)
+    assert !new StartsWithHyphenatedMatcher('foo').matches(null)
   }
 
   @Test
   void test_matches_matcher_value_null() {
-    assert !new StartsWithMatcher(null).matches('foo')
+    assert !new StartsWithHyphenatedMatcher(null).matches('foo')
   }
 
   @Test
   void test_toString() {
-    assert new StartsWithMatcher('foo').toString() == "STARTS_WITH(foo)"
+    assert new StartsWithHyphenatedMatcher('foo').toString() == "STARTS_WITH_HYPHENATED(foo)"
   }
 }

@@ -20,6 +20,8 @@ import webdsl.support.matchers.AlwaysMatcher
 import webdsl.support.matchers.ContainsMatcher
 import webdsl.support.matchers.EndsWithMatcher
 import webdsl.support.matchers.EqualsMatcher
+import webdsl.support.matchers.ListContainsMatcher
+import webdsl.support.matchers.StartsWithHyphenatedMatcher
 import webdsl.support.matchers.StartsWithMatcher
 
 import static webdsl.support.CssSelectorParser.*
@@ -55,6 +57,16 @@ class CssSelectorParserTest {
   @Test
   void test_CONTAINS() {
     assert CONTAINS('foo') == new ContainsMatcher('foo')
+  }
+
+  @Test
+  void test_LIST_CONTAINS() {
+    assert LIST_CONTAINS('foo') == new ListContainsMatcher('foo')
+  }
+
+  @Test
+  void test_STARTS_WITH_HYPHENATED() {
+    assert STARTS_WITH_HYPHENATED('foo') == new StartsWithHyphenatedMatcher('foo')
   }
 
   @Test
@@ -240,6 +252,56 @@ class CssSelectorParserTest {
   @Test
   void test_parse_tag_with_attribute_contains_can_use_half_quotes() {
     assert parser.parse("li[foo*='bar']") == [new CssSelector(tagName: 'li', attributes: [foo: CONTAINS('bar')])]
+  }
+
+  @Test
+  void test_parse_tag_with_attribute_list_contains_value() {
+    assert parser.parse('li[foo~="bar"]') == [new CssSelector(tagName: 'li', attributes: [foo: LIST_CONTAINS('bar')])]
+  }
+
+  @Test
+  void test_parse_id_with_attribute_list_contains_value() {
+    assert parser.parse('#bar[foo~="bar"]') == [new CssSelector(id: 'bar', attributes: [foo:  LIST_CONTAINS('bar')])]
+  }
+
+  @Test
+  void test_parse_class_with_attribute_list_contains_value() {
+    assert parser.parse('.bar[foo~="bar"]') == [new CssSelector(attributes: [class: EQ('bar'), foo:  LIST_CONTAINS('bar')])]
+  }
+
+  @Test
+  void test_parse_tag_id_class_with_attribute_list_contains_value() {
+    assert parser.parse('baz#bam.bar[foo~="baz"]') == [new CssSelector(tagName:'baz', id:'bam', attributes: [class: EQ('bar'), foo:  LIST_CONTAINS('baz')])]
+  }
+
+  @Test
+  void test_parse_tag_with_attribute_list_contains_can_use_half_quotes() {
+    assert parser.parse("li[foo~='bar']") == [new CssSelector(tagName: 'li', attributes: [foo: LIST_CONTAINS('bar')])]
+  }
+
+  @Test
+  void test_parse_tag_with_attribute_starts_with_hyphenated_value() {
+    assert parser.parse('li[foo|="bar"]') == [new CssSelector(tagName: 'li', attributes: [foo: STARTS_WITH_HYPHENATED('bar')])]
+  }
+
+  @Test
+  void test_parse_id_with_attribute_starts_with_hyphenated_value() {
+    assert parser.parse('#bar[foo|="bar"]') == [new CssSelector(id: 'bar', attributes: [foo:  STARTS_WITH_HYPHENATED('bar')])]
+  }
+
+  @Test
+  void test_parse_class_with_attribute_starts_with_hyphenated_value() {
+    assert parser.parse('.bar[foo|="bar"]') == [new CssSelector(attributes: [class: EQ('bar'), foo:  STARTS_WITH_HYPHENATED('bar')])]
+  }
+
+  @Test
+  void test_parse_tag_id_class_with_attribute_starts_with_hyphenated_value() {
+    assert parser.parse('baz#bam.bar[foo|="baz"]') == [new CssSelector(tagName:'baz', id:'bam', attributes: [class: EQ('bar'), foo:  STARTS_WITH_HYPHENATED('baz')])]
+  }
+
+  @Test
+  void test_parse_tag_with_attribute_starts_with_hyphenated_can_use_half_quotes() {
+    assert parser.parse("li[foo|='bar']") == [new CssSelector(tagName: 'li', attributes: [foo: STARTS_WITH_HYPHENATED('bar')])]
   }
 
 

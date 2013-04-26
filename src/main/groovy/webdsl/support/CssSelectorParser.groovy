@@ -16,13 +16,15 @@ import webdsl.support.matchers.AlwaysMatcher
 import webdsl.support.matchers.ContainsMatcher
 import webdsl.support.matchers.EndsWithMatcher
 import webdsl.support.matchers.EqualsMatcher
+import webdsl.support.matchers.ListContainsMatcher
+import webdsl.support.matchers.StartsWithHyphenatedMatcher
 import webdsl.support.matchers.StartsWithMatcher
 
 import java.util.regex.Matcher
 
 class CssSelectorParser {
   List<CssSelector> parse(String selector) {
-    String regex = /([^.#\s\[]+)?#?([^.\s\[]+)?[.]?([^\s\[]*)(?:\[(.+?)(?:([*^$])?="(.+)")?\])?\s*/
+    String regex = /([^.#\s\[]+)?#?([^.\s\[]+)?[.]?([^\s\[]*)(?:\[(.+?)(?:([*^$~|])?="(.+)")?\])?\s*/
 
     List<CssSelector> result = []
 
@@ -52,6 +54,12 @@ class CssSelectorParser {
               break
             case '*':
               matcher = CONTAINS(attributeValue)
+              break
+            case '~':
+              matcher = LIST_CONTAINS(attributeValue)
+              break
+            case '|':
+              matcher = STARTS_WITH_HYPHENATED(attributeValue)
               break
             default:
               matcher = attributeValue ? EQ(attributeValue) : ALWAYS()
@@ -85,5 +93,13 @@ class CssSelectorParser {
 
   static CONTAINS(String value) {
     new ContainsMatcher(value)
+  }
+
+  static LIST_CONTAINS(String value) {
+    new ListContainsMatcher(value)
+  }
+
+  static STARTS_WITH_HYPHENATED(String value) {
+    new StartsWithHyphenatedMatcher(value)
   }
 }

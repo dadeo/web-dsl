@@ -297,4 +297,89 @@ class CssSelectorTest extends AbstractNonServerTest {
       assert $('[select="me"]')*.text == ['foo', 'bak', 'fox']
     }
   }
+
+  void test_select_by_attribute_begins_with() {
+    html {
+      div(select: 'me', 'foo')
+      div('bar')
+      div(select: 'meToo', 'baz')
+      p(select: 'me', 'bak')
+      div {
+        div('foz')
+        div(select: 'me', 'fox')
+      }
+    }
+
+    webdsl {
+      assert $('[select^="me"]')*.text == ['foo', 'baz', 'bak', 'fox']
+    }
+  }
+
+  void test_select_by_attribute_ends_with() {
+    html {
+      div(select: 'me', 'foo')
+      div('bar')
+      div(select: 'meToo', 'baz')
+      p(select: 'me', 'bak')
+      div {
+        div('foz')
+        div(select: 'youToo', 'fox')
+      }
+    }
+
+    webdsl {
+      assert $('[select$="Too"]')*.text == ['baz', 'fox']
+    }
+  }
+
+  void test_select_by_attribute_value_contains_with() {
+    html {
+      div(select: 'me', 'foo')
+      div('bar')
+      div(select: 'meToo', 'baz')
+      p(select: 'me', 'bak')
+      div {
+        div(select:'beTty', 'foz')
+        div(select: 'youToo', 'fox')
+      }
+    }
+
+    webdsl {
+      assert $('[select*="eT"]')*.text == ['baz', 'foz']
+    }
+  }
+
+  void test_select_by_attribute_value_list_contains_with() {
+    html {
+      div(select: 'this', 'foo')
+      div('bar')
+      div(select: 'this or that', 'baz')
+      p(select: 'that', 'bak')
+      div {
+        div(select:'that this or', 'foz')
+        div(select: 'that or this', 'fox')
+      }
+    }
+
+    webdsl {
+      assert $('[select~="this"]')*.text == ['foo', 'baz', 'foz', 'fox']
+    }
+  }
+
+  void test_select_by_attribute_starts_with_hyphenated() {
+    html {
+      div(select: 'en', 'foo')
+      div('bar')
+      div(select: 'en-', 'baz')
+      p(select: 'end', 'bak')
+      div {
+        div(select:'entry', 'foz')
+        div(select: 'en-this', 'fox')
+      }
+    }
+
+    webdsl {
+      assert $('[select|="en"]')*.text == ['foo', 'baz', 'fox']
+    }
+  }
 }

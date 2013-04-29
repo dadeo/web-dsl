@@ -183,12 +183,14 @@ class WebDsl {
         }
       }
 
+      def insideSelector = { element -> predicates.every { it(element) } ? [element] : [] }
+
       if (target instanceof ElementDsl)
         target = target.element
 
       target.getHtmlElementDescendants()
           .toList()
-          .findAll { element -> predicates.every { it(element) } }
+          .collectMany(insideSelector)
           .collect { factory.create(this, it) }
     }
 

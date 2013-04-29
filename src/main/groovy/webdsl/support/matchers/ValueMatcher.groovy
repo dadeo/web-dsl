@@ -13,15 +13,6 @@
 package webdsl.support.matchers
 
 
-@groovy.transform.Immutable
-class EndsWithMatcher implements ValueMatcher {
-  String value
-
-  boolean matches(String value) {
-    this.value ? value?.endsWith(this.value) : false
-  }
-
-  String toString() {
-    "ENDS_WITH($value)"
-  }
+interface ValueMatcher {
+  boolean matches(String value)
 }

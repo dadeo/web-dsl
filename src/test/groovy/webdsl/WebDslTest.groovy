@@ -12,7 +12,6 @@
  */
 package webdsl
 
-import webdsl.support.TableDsl
 import webdsl.support.ElementDsl
 import webdsl.support.SelectDsl
 

@@ -13,10 +13,11 @@
 package webdsl.support
 
 import groovy.transform.Immutable
+import webdsl.support.matchers.ValueMatcher
 
 @Immutable
 class CssSelector {
   String id
   String tagName
-  Map<String, String> attributes = [:]
+  Map<String, ValueMatcher> attributes = [:]
 }

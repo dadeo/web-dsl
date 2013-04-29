@@ -15,7 +15,7 @@ package webdsl.support.matchers
 import groovy.transform.Immutable
 
 @Immutable
-class EqualsMatcher {
+class EqualsMatcher implements ValueMatcher {
   String value
 
   String toString() {

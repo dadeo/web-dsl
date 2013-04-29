@@ -15,7 +15,7 @@ package webdsl.support.matchers
 import groovy.transform.Immutable
 
 @Immutable
-class AlwaysMatcher {
+class AlwaysMatcher implements ValueMatcher {
   boolean matches(String value) {
     true
   }

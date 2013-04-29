@@ -14,7 +14,7 @@ package webdsl.support.matchers
 
 
 @groovy.transform.Immutable
-class ListContainsMatcher {
+class ListContainsMatcher implements ValueMatcher {
   String value
 
   boolean matches(String value) {

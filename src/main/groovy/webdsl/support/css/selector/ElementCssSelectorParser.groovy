@@ -10,7 +10,7 @@
  * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package webdsl.support
+package webdsl.support.css.selector
 
 import webdsl.support.matchers.AlwaysMatcher
 import webdsl.support.matchers.ContainsMatcher
@@ -22,11 +22,11 @@ import webdsl.support.matchers.StartsWithMatcher
 
 import java.util.regex.Matcher
 
-class CssSelectorParser {
+class ElementCssSelectorParser {
   List<CssSelector> parse(String selector) {
     String regex = /([^.#\s\[]+)?#?([^.\s\[]+)?[.]?([^\s\[]*)(?:\[(.+?)(?:([*^$~|])?="(.+)")?\])?\s*/
 
-    List<CssSelector> result = []
+    List<ElementCssSelector> result = []
 
     Matcher m = selector.replaceAll(/'/, /"/) =~ regex
     while (m.find()) {
@@ -68,7 +68,7 @@ class CssSelectorParser {
           attributes[attributeName] = matcher
         }
 
-        result << new CssSelector(id, tagName, attributes)
+        result << new ElementCssSelector(id, tagName, attributes)
       }
     }
 

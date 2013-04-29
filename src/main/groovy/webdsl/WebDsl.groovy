@@ -19,6 +19,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement
 import com.gargoylesoftware.htmlunit.html.HtmlPage
 import org.codehaus.groovy.runtime.GStringImpl
 import webdsl.support.*
+import webdsl.support.css.selector.CssSelector
+import webdsl.support.css.selector.CssSelectorParser
 
 class WebDsl {
   private static final ThreadLocal container = new ThreadLocal()
@@ -166,43 +168,9 @@ class WebDsl {
   }
 
   def $(selector) {
-    List<CssSelector> cssSelectors = new CssSelectorParser().parse(selector)
+    CssSelector cssSelector = new CssSelectorParser().parse(selector)
 
-    def applySelector = { cssSelector, target ->
-      def predicates = []
-
-      if (cssSelector.id)
-        predicates << { it.id == cssSelector.id }
-
-      if (cssSelector.tagName)
-        predicates << { it.tagName == cssSelector.tagName }
-
-      cssSelector.attributes.each { attributeName, valueMatcher ->
-        predicates << {
-          it.hasAttribute(attributeName) && valueMatcher.matches(it.getAttribute(attributeName))
-        }
-      }
-
-      def insideSelector = { element -> predicates.every { it(element) } ? [element] : [] }
-
-      if (target instanceof ElementDsl)
-        target = target.element
-
-      target.getHtmlElementDescendants()
-          .toList()
-          .collectMany(insideSelector)
-          .collect { factory.create(this, it) }
-    }
-
-    def applyAllSelectors = { selectors, target ->
-      def dslElements = applySelector selectors.head(), target
-      if (selectors.tail())
-        dslElements.collect curry(selectors.tail())
-      else
-        dslElements
-    }
-
-    def dslElements = applyAllSelectors cssSelectors, page
+    def dslElements = cssSelector.select(page).collect { factory.create(this, it) }
 
     dslElements.size() > 1 ? dslElements : dslElements[0]
   }

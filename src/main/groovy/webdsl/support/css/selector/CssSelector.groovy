@@ -10,14 +10,9 @@
  * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and limitations under the License.
  */
-package webdsl.support
+package webdsl.support.css.selector
 
-import groovy.transform.Immutable
-import webdsl.support.matchers.ValueMatcher
 
-@Immutable
-class CssSelector {
-  String id
-  String tagName
-  Map<String, ValueMatcher> attributes = [:]
+interface CssSelector {
+  List select(candidate)
 }

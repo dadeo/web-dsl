@@ -33,15 +33,22 @@ class CssSelectorParser {
     for (int i = 1; i < matcher.size(); ++i) {
       switch (operator) {
         case '>':
-          selector = new ParentCssSelector(selector, elementSelectorParser.parse(matcher[i][1])[0])
+          selector = new ParentCssSelector(selector, createChildCssSelector(matcher[i][1]))
           break
         case '+':
-          selector = new StalkerCssSelector(selector, elementSelectorParser.parse(matcher[i][1])[0])
+          selector = new StalkerCssSelector(selector, createChildCssSelector(matcher[i][1]))
           break
       }
       operator = matcher[i][2]
     }
 
     selector
+  }
+
+  protected ChildCssSelector createChildCssSelector(childSelectionPattern) {
+    List<CssSelector> cssSelectors = elementSelectorParser.parse(childSelectionPattern)
+    CssSelector exactMatchSelector = cssSelectors.head()
+    InsideCssSelector insideCssSelector = cssSelectors.size() > 1 ? new InsideCssSelector(cssSelectors.tail()) : null
+    new ChildCssSelector(exactMatchSelector, insideCssSelector)
   }
 }

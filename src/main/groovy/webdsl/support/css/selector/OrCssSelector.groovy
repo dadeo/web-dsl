@@ -18,6 +18,6 @@ class OrCssSelector implements CssSelector {
 
   @Override
   List select(candidate) {
-    []
+    cssSelectors.collectMany { it.select(candidate) }
   }
 }

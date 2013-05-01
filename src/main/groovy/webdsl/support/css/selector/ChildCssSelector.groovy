@@ -14,10 +14,12 @@ package webdsl.support.css.selector
 
 @groovy.transform.Immutable
 class ChildCssSelector implements CssSelector {
-  CssSelector child
+  CssSelector exactMatchSelector
+  InsideCssSelector insideCssSelector
 
   @Override
   List select(candidate) {
-    []
+    List selected = exactMatchSelector.select(candidate)
+    insideCssSelector ? selected.collectMany { insideCssSelector.select(it) } : selected
   }
 }

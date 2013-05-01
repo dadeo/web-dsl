@@ -18,7 +18,10 @@ import com.gargoylesoftware.htmlunit.html.DomText
 import com.gargoylesoftware.htmlunit.html.HtmlElement
 import com.gargoylesoftware.htmlunit.html.HtmlPage
 import org.codehaus.groovy.runtime.GStringImpl
-import webdsl.support.*
+import webdsl.support.ChildrenDsl
+import webdsl.support.DslFactory
+import webdsl.support.FormDsl
+import webdsl.support.SelectorDsl
 import webdsl.support.css.selector.CssSelector
 import webdsl.support.css.selector.CssSelectorParser
 
@@ -170,7 +173,10 @@ class WebDsl {
   def $(selector) {
     CssSelector cssSelector = new CssSelectorParser().parse(selector)
 
-    def dslElements = cssSelector.select(page).collect { factory.create(this, it) }
+    def dslElements = cssSelector.select(page)
+                                 .unique()
+                                 .sort { it.startLineNumber * 10000 + it.startColumnNumber }
+                                 .collect { factory.create(this, it) }
 
     dslElements.size() > 1 ? dslElements : dslElements[0]
   }

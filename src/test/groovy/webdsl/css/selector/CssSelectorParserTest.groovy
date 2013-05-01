@@ -71,7 +71,7 @@ class CssSelectorParserTest {
 
     parser.elementSelectorParser = mockElementSelectorParser.proxyInstance()
 
-    assert toString(parser.parse("tag1>tag2")) == "parent(inside(element(x)), element(y))"
+    assert toString(parser.parse("tag1>tag2")) == "parent(inside(element(x)), child(element(y)))"
   }
 
   @Test
@@ -91,9 +91,8 @@ class CssSelectorParserTest {
 
     parser.elementSelectorParser = mockElementSelectorParser.proxyInstance()
 
-    assert toString(parser.parse("tag1>tag2>tag3")) == "parent(parent(inside(element(x)), element(y)), element(z))"
+    assert toString(parser.parse("tag1>tag2>tag3")) == "parent(parent(inside(element(x)), child(element(y))), child(element(z)))"
   }
-
   @Test
   void test_parse_stalker_simple() {
     mockElementSelectorParser.demand.parse {
@@ -107,7 +106,7 @@ class CssSelectorParserTest {
 
     parser.elementSelectorParser = mockElementSelectorParser.proxyInstance()
 
-    assert toString(parser.parse("tag1+tag2")) == "stalker(inside(element(x)), element(y))"
+    assert toString(parser.parse("tag1+tag2")) == "stalker(inside(element(x)), child(element(y)))"
   }
 
   @Test
@@ -127,7 +126,7 @@ class CssSelectorParserTest {
 
     parser.elementSelectorParser = mockElementSelectorParser.proxyInstance()
 
-    assert toString(parser.parse("tag1+tag2+tag3")) == "stalker(stalker(inside(element(x)), element(y)), element(z))"
+    assert toString(parser.parse("tag1+tag2+tag3")) == "stalker(stalker(inside(element(x)), child(element(y))), child(element(z)))"
   }
 
   @Test
@@ -183,7 +182,7 @@ class CssSelectorParserTest {
 
     parser.elementSelectorParser = mockElementSelectorParser.proxyInstance()
 
-    assert toString(parser.parse("tag1+tag2,tag3")) == "or(stalker(inside(element(x)), element(y)), inside(element(z)))"
+    assert toString(parser.parse("tag1+tag2,tag3")) == "or(stalker(inside(element(x)), child(element(y))), inside(element(z)))"
   }
 
   @Test
@@ -203,7 +202,7 @@ class CssSelectorParserTest {
 
     parser.elementSelectorParser = mockElementSelectorParser.proxyInstance()
 
-    assert toString(parser.parse("tag1,tag2+tag3")) == "or(inside(element(x)), stalker(inside(element(y)), element(z)))"
+    assert toString(parser.parse("tag1,tag2+tag3")) == "or(inside(element(x)), stalker(inside(element(y)), child(element(z))))"
   }
 
   private toString(selector) {
@@ -215,7 +214,7 @@ class CssSelectorParserTest {
       case ParentCssSelector:
         return "parent(${toString(selector.parent)}, ${toString(selector.child)})"
       case ChildCssSelector:
-        return "child(${toString(selector.child)})"
+        return "child(${toString(selector.exactMatchSelector)})"
       case StalkerCssSelector:
         return "stalker(${toString(selector.stalked)}, ${toString(selector.stalker)})"
       case OrCssSelector:

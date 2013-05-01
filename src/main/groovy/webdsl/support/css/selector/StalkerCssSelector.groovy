@@ -12,6 +12,8 @@
  */
 package webdsl.support.css.selector
 
+import com.gargoylesoftware.htmlunit.html.HtmlElement
+
 @groovy.transform.Immutable
 class StalkerCssSelector implements CssSelector {
   CssSelector stalked
@@ -19,6 +21,10 @@ class StalkerCssSelector implements CssSelector {
 
   @Override
   List select(candidate) {
-    []
+    List stalkedResults = stalked.select(candidate)
+    stalkedResults.collectMany {
+      HtmlElement sibling = it.nextSibling
+      stalker.select(sibling)
+    }
   }
 }

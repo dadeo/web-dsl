@@ -12,6 +12,8 @@
  */
 package webdsl.support.css.selector
 
+import com.gargoylesoftware.htmlunit.html.HtmlElement
+
 @groovy.transform.Immutable
 class ParentCssSelector implements CssSelector {
   CssSelector parent
@@ -19,6 +21,9 @@ class ParentCssSelector implements CssSelector {
 
   @Override
   List select(candidate) {
-    []
+    List parents = parent.select(candidate)
+    def result = parents.collectMany { HtmlElement aParent ->
+      aParent.childElements.collect { child.select(it) }.grep().flatten()
+    }
   }
 }

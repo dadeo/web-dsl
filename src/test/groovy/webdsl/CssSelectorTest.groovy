@@ -339,7 +339,7 @@ class CssSelectorTest extends AbstractNonServerTest {
       div(select: 'meToo', 'baz')
       p(select: 'me', 'bak')
       div {
-        div(select:'beTty', 'foz')
+        div(select: 'beTty', 'foz')
         div(select: 'youToo', 'fox')
       }
     }
@@ -356,7 +356,7 @@ class CssSelectorTest extends AbstractNonServerTest {
       div(select: 'this or that', 'baz')
       p(select: 'that', 'bak')
       div {
-        div(select:'that this or', 'foz')
+        div(select: 'that this or', 'foz')
         div(select: 'that or this', 'fox')
       }
     }
@@ -373,7 +373,7 @@ class CssSelectorTest extends AbstractNonServerTest {
       div(select: 'en-', 'baz')
       p(select: 'end', 'bak')
       div {
-        div(select:'entry', 'foz')
+        div(select: 'entry', 'foz')
         div(select: 'en-this', 'fox')
       }
     }
@@ -382,4 +382,146 @@ class CssSelectorTest extends AbstractNonServerTest {
       assert $('[select|="en"]')*.text == ['foo', 'baz', 'fox']
     }
   }
+
+  void test_select_relationship_or() {
+    html {
+      div(select: 'en', 'foo')
+      div('bar')
+      div(select: 'en-', 'baz')
+      p(select: 'end', 'bak')
+      div {
+        div(select: 'entry', 'foz')
+        div(select: 'en-this', 'fox')
+      }
+      b(select: 'entry', 'bolded value')
+    }
+
+    webdsl {
+      assert $("b,[select='end'],[select='entry']")*.text == ['bak', 'foz', 'bolded value']
+    }
+  }
+
+  void test_select_relationship_follows() {
+    html {
+      a('a')
+      b('b1')
+      c('c')
+      b('b2')
+      a('a')
+      b('b3')
+    }
+
+    webdsl {
+      assert $("a+b")*.text == ['b1', 'b3']
+    }
+  }
+
+  void test_select_relationship_follows_complex() {
+    html {
+      a {
+        b {
+          c {
+            d {
+              e {
+                f('f1')
+              }
+            }
+          }
+          d {
+            e {
+              f('f2')
+              g('g1')
+            }
+          }
+        }
+      }
+      a {
+        c('c1')
+        d {
+          f('f3')
+        }
+        c('c2')
+        d('d1')
+      }
+      e {
+        c('c3')
+        d {
+          f('f4')
+        }
+      }
+      c('c4')
+      d {
+        f('f5')
+      }
+    }
+
+    webdsl {
+      assert $("a c+d f")*.text == ['f2', 'f3']
+    }
+  }
+
+  void test_select_relationship_child() {
+    html {
+      a {
+        b('b1')
+        c('c1')
+        b('b2')
+        b('b3')
+        c('c2')
+        d {
+          b('b4')
+        }
+      }
+    }
+
+    webdsl {
+      assert $("a>b")*.text == ['b1', 'b2', 'b3']
+    }
+  }
+
+  void test_select_relationship_child_complex() {
+    html {
+      a {
+        b('b1')
+        d('d1')
+        b {
+          c {
+            d('d2')
+          }
+          d('d3')
+        }
+        d('d4')
+      }
+      b {
+        d('d5')
+      }
+    }
+
+    webdsl {
+      assert $("a>b d")*.text == ['d2', 'd3']
+    }
+  }
+
+  void test_select_relationship_multiple_simple() {
+    html {
+      a {
+        b('b1')
+        c('c1')
+        d('d1')
+        b('b2')
+        d('d2')
+        c('c2')
+        d('d3')
+        d('d4')
+      }
+      b('b3')
+      c('c3')
+      d('d5')
+    }
+
+    webdsl {
+      assert $("a>b,c+d")*.text == ['b1', 'd1', 'b2', 'd3', 'd5']
+    }
+  }
+
 }

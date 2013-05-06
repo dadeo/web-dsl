@@ -17,6 +17,7 @@ import java.util.regex.Matcher
 
 class CssSelectorParser {
   private ElementCssSelectorParser elementSelectorParser = new ElementCssSelectorParser()
+  private RelationshipParser relationshipParser = new RelationshipParser()
 
   CssSelector parse(String selectorString) {
     Matcher matcher = selectorString =~ /([^,]+)[,]?/
@@ -26,20 +27,23 @@ class CssSelectorParser {
   }
 
   private CssSelector parseOrFragment(String selectorString) {
-    Matcher matcher = selectorString =~ /([^+>]+)([+>]?)/
+    List parts = relationshipParser.parse(selectorString)
 
-    CssSelector selector = new InsideCssSelector(elementSelectorParser.parse(matcher[0][1]))
-    String operator = matcher[0][2]
-    for (int i = 1; i < matcher.size(); ++i) {
+    CssSelector selector = new InsideCssSelector(elementSelectorParser.parse(parts.head()[1]))
+
+    parts.tail().each {
+      String operator = it[0]
       switch (operator) {
         case '>':
-          selector = new ParentCssSelector(selector, createChildCssSelector(matcher[i][1]))
+          selector = new ParentCssSelector(selector, createChildCssSelector(it[1]))
           break
         case '+':
-          selector = new StalkerCssSelector(selector, createChildCssSelector(matcher[i][1]))
+          selector = new StalkerCssSelector(selector, createChildCssSelector(it[1]))
+          break
+        case '~':
+          selector = new PrecededBySiblingCssSelector(selector, createChildCssSelector(it[1]))
           break
       }
-      operator = matcher[i][2]
     }
 
     selector

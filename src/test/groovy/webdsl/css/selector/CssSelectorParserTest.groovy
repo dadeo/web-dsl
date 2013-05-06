@@ -22,6 +22,7 @@ import webdsl.support.css.selector.ElementCssSelectorParser
 import webdsl.support.css.selector.InsideCssSelector
 import webdsl.support.css.selector.OrCssSelector
 import webdsl.support.css.selector.ParentCssSelector
+import webdsl.support.css.selector.PrecededBySiblingCssSelector
 import webdsl.support.css.selector.StalkerCssSelector
 
 class CssSelectorParserTest {
@@ -205,6 +206,22 @@ class CssSelectorParserTest {
     assert toString(parser.parse("tag1,tag2+tag3")) == "or(inside(element(x)), stalker(inside(element(y)), child(element(z))))"
   }
 
+  @Test
+  void test_parse_precededBySibling_single() {
+    mockElementSelectorParser.demand.parse {
+      assert it == "tag1"
+      [new ElementCssSelector(id:"x")]
+    }
+    mockElementSelectorParser.demand.parse {
+      assert it == "tag2"
+      [new ElementCssSelector(id:"y")]
+    }
+
+    parser.elementSelectorParser = mockElementSelectorParser.proxyInstance()
+
+    assert toString(parser.parse("tag1~tag2")) == "precededBySibling(inside(element(x)), child(element(y)))"
+  }
+
   private toString(selector) {
     switch(selector.class) {
       case ElementCssSelector:
@@ -219,6 +236,8 @@ class CssSelectorParserTest {
         return "stalker(${toString(selector.stalked)}, ${toString(selector.stalker)})"
       case OrCssSelector:
         return "or(${selector.cssSelectors.collect { toString(it) }.join(', ')})"
+      case PrecededBySiblingCssSelector:
+        return "precededBySibling(${toString(selector.sibling)}, ${toString(selector.selector)})"
       default:
         throw new RuntimeException("Selector doesn't have toString() implementation")
     }

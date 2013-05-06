@@ -524,4 +524,52 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  void test_select_relationship_precededBySibling_simple() {
+    html {
+      a {
+        b('b1')
+      }
+      b('b2')
+      c('c1')
+      b('b3')
+      d {
+        b('b4')
+      }
+    }
+
+    webdsl {
+      assert $("a~b")*.text == ['b2', 'b3']
+    }
+  }
+
+  void test_select_relationship_precededBySibling_complex() {
+    html {
+      a {
+        b {
+          c('c1')
+          d('d1')
+        }
+      }
+      b {
+        c('c2')
+        d('d2')
+      }
+      c('c3')
+      b {
+        c {
+          d('d3')
+        }
+      }
+      c {
+        b {
+          d('d4')
+        }
+      }
+    }
+
+    webdsl {
+      assert $("a~b d")*.text == ['d2', 'd3']
+    }
+  }
+
 }

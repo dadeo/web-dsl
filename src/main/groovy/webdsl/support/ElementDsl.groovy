@@ -41,7 +41,7 @@ class ElementDsl extends BaseElementDsl {
   }
 
   def getText() {
-    untrimmedText.trim()
+    untrimmedText.trim().replaceAll(/\s+/, ' ')
   }
 
   def getUntrimmedText() {

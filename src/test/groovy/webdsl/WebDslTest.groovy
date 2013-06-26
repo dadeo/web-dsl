@@ -625,7 +625,7 @@ class WebDslTest extends AbstractServerTest {
 
   void test_untrimmedText() {
     webdsl {
-      assert multiline.untrimmedText == "\n    multi-line text\n"
+      assert multiline.untrimmedText == "\n    multi-line   text\n"
     }
   }
 

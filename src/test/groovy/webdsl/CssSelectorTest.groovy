@@ -23,6 +23,7 @@ class CssSelectorTest extends AbstractNonServerTest {
 
     webdsl {
       assert $('p').text == 'a'
+      assert $$('p').text == ['a']
     }
   }
 
@@ -34,7 +35,8 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $('div')*.text == ['hello', 'world']
+      assert $('div').text == 'hello'
+      assert $$('div').text == ['hello', 'world']
     }
   }
 
@@ -46,6 +48,7 @@ class CssSelectorTest extends AbstractNonServerTest {
 
     webdsl {
       assert $('p').text == 'a'
+      assert $$('p').text == ['a']
     }
   }
 
@@ -57,6 +60,7 @@ class CssSelectorTest extends AbstractNonServerTest {
 
     webdsl {
       assert $('p') == null
+      assert $$('p') == []
     }
   }
 
@@ -70,6 +74,7 @@ class CssSelectorTest extends AbstractNonServerTest {
 
     webdsl {
       assert $('.selected').text == 'd'
+      assert $$('.selected').text == ['d']
     }
   }
 
@@ -82,7 +87,8 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $('.selected')*.text == ['b', 'd']
+      assert $('.selected').text == 'b'
+      assert $$('.selected').text == ['b', 'd']
     }
   }
 
@@ -96,6 +102,7 @@ class CssSelectorTest extends AbstractNonServerTest {
 
     webdsl {
       assert $('.selected') == null
+      assert $$('.selected') == []
     }
   }
 
@@ -109,6 +116,7 @@ class CssSelectorTest extends AbstractNonServerTest {
 
     webdsl {
       assert $('p.selected').text == 'b'
+      assert $$('p.selected').text == ['b']
     }
   }
 
@@ -122,7 +130,8 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $('p.selected')*.text == ['b', 'e']
+      assert $('p.selected').text == 'b'
+      assert $$('p.selected').text == ['b', 'e']
     }
   }
 
@@ -136,6 +145,7 @@ class CssSelectorTest extends AbstractNonServerTest {
 
     webdsl {
       assert $('p.selected') == null
+      assert $$('p.selected') == []
     }
   }
 
@@ -148,6 +158,7 @@ class CssSelectorTest extends AbstractNonServerTest {
 
     webdsl {
       assert $('#myP').text == 'c'
+      assert $$('#myP').text == ['c']
     }
   }
 
@@ -159,7 +170,8 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $('#myP')*.text == ['a', 'c']
+      assert $('#myP').text == 'a'
+      assert $$('#myP').text == ['a', 'c']
     }
   }
 
@@ -172,6 +184,7 @@ class CssSelectorTest extends AbstractNonServerTest {
 
     webdsl {
       assert $('#myP').text == 'c'
+      assert $$('#myP').text == ['c']
     }
   }
 
@@ -184,6 +197,7 @@ class CssSelectorTest extends AbstractNonServerTest {
 
     webdsl {
       assert $('#myP') == null
+      assert $$('#myP') == []
     }
   }
 
@@ -196,6 +210,7 @@ class CssSelectorTest extends AbstractNonServerTest {
 
     webdsl {
       assert $('#myP.main').text == 'b'
+      assert $$('#myP.main').text == ['b']
     }
   }
 
@@ -208,7 +223,8 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $('#myP.main')*.text == ['b', 'c']
+      assert $('#myP.main').text == 'b'
+      assert $$('#myP.main').text == ['b', 'c']
     }
   }
 
@@ -221,6 +237,7 @@ class CssSelectorTest extends AbstractNonServerTest {
 
     webdsl {
       assert $('#myP.main') == null
+      assert $$('#myP.main') == []
     }
   }
 
@@ -243,7 +260,8 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $('#myP .owner')*.text == ['2', '3', '4', '5']
+      assert $('#myP .owner').text == '2'
+      assert $$('#myP .owner').text == ['2', '3', '4', '5']
     }
   }
 
@@ -260,7 +278,8 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $('div[select]')*.text == ['foo', 'baz', 'fox']
+      assert $('div[select]').text == 'foo', 'baz'
+      assert $$('div[select]').text == ['foo', 'baz', 'fox']
     }
   }
 
@@ -277,7 +296,8 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $('div[select="me"]')*.text == ['foo', 'fox']
+      assert $('div[select="me"]').text == 'foo'
+      assert $$('div[select="me"]').text == ['foo', 'fox']
     }
   }
 
@@ -294,7 +314,8 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $('[select="me"]')*.text == ['foo', 'bak', 'fox']
+      assert $('[select="me"]').text == 'foo'
+      assert $$('[select="me"]').text == ['foo', 'bak', 'fox']
     }
   }
 
@@ -311,7 +332,8 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $('[select^="me"]')*.text == ['foo', 'baz', 'bak', 'fox']
+      assert $('[select^="me"]').text == 'foo'
+      assert $$('[select^="me"]').text == ['foo', 'baz', 'bak', 'fox']
     }
   }
 
@@ -328,7 +350,8 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $('[select$="Too"]')*.text == ['baz', 'fox']
+      assert $('[select$="Too"]').text == 'baz'
+      assert $$('[select$="Too"]').text == ['baz', 'fox']
     }
   }
 
@@ -345,7 +368,8 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $('[select*="eT"]')*.text == ['baz', 'foz']
+      assert $('[select*="eT"]').text == 'baz'
+      assert $$('[select*="eT"]').text == ['baz', 'foz']
     }
   }
 
@@ -362,7 +386,8 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $('[select~="this"]')*.text == ['foo', 'baz', 'foz', 'fox']
+      assert $('[select~="this"]').text == 'foo'
+      assert $$('[select~="this"]').text == ['foo', 'baz', 'foz', 'fox']
     }
   }
 
@@ -379,7 +404,8 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $('[select|="en"]')*.text == ['foo', 'baz', 'fox']
+      assert $('[select|="en"]').text == 'foo'
+      assert $$('[select|="en"]').text == ['foo', 'baz', 'fox']
     }
   }
 
@@ -397,7 +423,8 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $("b,[select='end'],[select='entry']")*.text == ['bak', 'foz', 'bolded value']
+      assert $("b,[select='end'],[select='entry']").text == 'bak'
+      assert $$("b,[select='end'],[select='entry']").text == ['bak', 'foz', 'bolded value']
     }
   }
 
@@ -412,7 +439,8 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $("a+b")*.text == ['b1', 'b3']
+      assert $("a+b").text == 'b1'
+      assert $$("a+b").text == ['b1', 'b3']
     }
   }
 
@@ -456,7 +484,8 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $("a c+d f")*.text == ['f2', 'f3']
+      assert $("a c+d f").text == 'f2'
+      assert $$("a c+d f").text == ['f2', 'f3']
     }
   }
 
@@ -475,7 +504,8 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $("a>b")*.text == ['b1', 'b2', 'b3']
+      assert $("a>b").text == 'b1'
+      assert $$("a>b").text == ['b1', 'b2', 'b3']
     }
   }
 
@@ -498,7 +528,8 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $("a>b d")*.text == ['d2', 'd3']
+      assert $("a>b d").text == 'd2'
+      assert $$("a>b d").text == ['d2', 'd3']
     }
   }
 
@@ -520,7 +551,8 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $("a>b,c+d")*.text == ['b1', 'd1', 'b2', 'd3', 'd5']
+      assert $("a>b,c+d").text == 'b1'
+      assert $$("a>b,c+d").text == ['b1', 'd1', 'b2', 'd3', 'd5']
     }
   }
 
@@ -538,7 +570,8 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $("a~b")*.text == ['b2', 'b3']
+      assert $("a~b").text == 'b2'
+      assert $$("a~b").text == ['b2', 'b3']
     }
   }
 
@@ -568,7 +601,8 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $("a~b d")*.text == ['d2', 'd3']
+      assert $("a~b d").text == 'd2'
+      assert $$("a~b d").text == ['d2', 'd3']
     }
   }
 

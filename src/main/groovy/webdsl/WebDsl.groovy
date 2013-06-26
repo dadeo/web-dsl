@@ -171,6 +171,11 @@ class WebDsl {
   }
 
   def $(selector) {
+    def dslElements = $$(selector)
+    dslElements[0]
+  }
+
+  def $$(selector) {
     CssSelector cssSelector = new CssSelectorParser().parse(selector)
 
     def dslElements = cssSelector.select(page)
@@ -178,7 +183,7 @@ class WebDsl {
                                  .sort { it.startLineNumber * 10000 + it.startColumnNumber }
                                  .collect { factory.create(this, it) }
 
-    dslElements.size() > 1 ? dslElements : dslElements[0]
+    dslElements
   }
 
   static def camel(String string) {

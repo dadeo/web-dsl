@@ -14,9 +14,6 @@ package webdsl
 
 import groovy.xml.StreamingMarkupBuilder
 import junit.framework.TestCase
-import com.gargoylesoftware.htmlunit.MockWebConnection
-import com.gargoylesoftware.htmlunit.WebClient
-import com.gargoylesoftware.htmlunit.BrowserVersion
 
 abstract class AbstractNonServerTest extends TestCase {
   private contents
@@ -30,23 +27,19 @@ abstract class AbstractNonServerTest extends TestCase {
   }
 
   def webdsl(Closure closure) {
-    def browserVersion = BrowserVersion.getDefault()
-    def webClient = new WebClient(browserVersion)
-    final MockWebConnection webConnection = new MockWebConnection();
-    webConnection.setDefaultResponse(contents);
-    webClient.setWebConnection(webConnection);
+    WebDsl webDsl = new WebPageDslBuilder()
+        .baseUrl("http://localhost/test.html")
+        .pageContents(contents)
+        .build()
 
-    WebDsl web = new WebDsl()
-    web.webClient = webClient
-    web.for("http://localhost/test.html")
-    web.do closure
+    webDsl.do closure
   }
 
-    //    final List<NameValuePair> expectedParameters = Collections.emptyList();
-    //    final MockWebConnection webConnection = getMockConnection(secondPage);
-    //
-    //    assertEquals("url", "http://www.foo2.com/", secondPage.getWebResponse().getWebRequest().getUrl());
-    //    assertSame("method", HttpMethod.GET, webConnection.getLastMethod());
-    //    Assert.assertEquals("parameters", expectedParameters, webConnection.getLastParameters());
-    //    assertNotNull(secondPage);
+  //    final List<NameValuePair> expectedParameters = Collections.emptyList();
+  //    final MockWebConnection webConnection = getMockConnection(secondPage);
+  //
+  //    assertEquals("url", "http://www.foo2.com/", secondPage.getWebResponse().getWebRequest().getUrl());
+  //    assertSame("method", HttpMethod.GET, webConnection.getLastMethod());
+  //    Assert.assertEquals("parameters", expectedParameters, webConnection.getLastParameters());
+  //    assertNotNull(secondPage);
 }

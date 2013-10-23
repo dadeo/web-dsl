@@ -65,7 +65,7 @@ class ElementCssSelectorParserTest {
 
   @Test
   void test_parse_class_only() {
-    assert parser.parse('.selected') == [new ElementCssSelector(attributes: [class: EQ('selected')])]
+    assert parser.parse('.selected') == [new ElementCssSelector(attributes: [class: LIST_CONTAINS('selected')])]
   }
 
   @Test
@@ -75,7 +75,7 @@ class ElementCssSelectorParserTest {
 
   @Test
   void test_parse_id_with_class() {
-    assert parser.parse('#myId.selected') == [new ElementCssSelector(id: 'myId', attributes: [class: EQ('selected')])]
+    assert parser.parse('#myId.selected') == [new ElementCssSelector(id: 'myId', attributes: [class: LIST_CONTAINS('selected')])]
   }
 
   @Test
@@ -85,12 +85,12 @@ class ElementCssSelectorParserTest {
 
   @Test
   void test_parse_tagName_with_class() {
-    assert parser.parse('div.selected') == [new ElementCssSelector(tagName: 'div', attributes: [class: EQ('selected')])]
+    assert parser.parse('div.selected') == [new ElementCssSelector(tagName: 'div', attributes: [class: LIST_CONTAINS('selected')])]
   }
 
   @Test
   void test_parse_id_with_tagName_and_class() {
-    assert parser.parse('div#myId.selected') == [new ElementCssSelector(id: 'myId', tagName: 'div', attributes: [class: EQ('selected')])]
+    assert parser.parse('div#myId.selected') == [new ElementCssSelector(id: 'myId', tagName: 'div', attributes: [class: LIST_CONTAINS('selected')])]
   }
 
   @Test
@@ -100,22 +100,22 @@ class ElementCssSelectorParserTest {
 
   @Test
   void test_parse_multiple_selectors_by_tagName_then_class() {
-    assert parser.parse('p .selected') == [new ElementCssSelector(tagName: 'p'), new ElementCssSelector(attributes: [class: EQ('selected')])]
+    assert parser.parse('p .selected') == [new ElementCssSelector(tagName: 'p'), new ElementCssSelector(attributes: [class: LIST_CONTAINS('selected')])]
   }
 
   @Test
   void test_parse_multiple_selectors_by_tagName_and_class_then_tagName_and_class() {
     assert parser.parse('p.selected div.name') == [
-        new ElementCssSelector(tagName: 'p', attributes: [class: EQ('selected')]),
-        new ElementCssSelector(tagName: 'div', attributes: [class: EQ('name')])]
+        new ElementCssSelector(tagName: 'p', attributes: [class: LIST_CONTAINS('selected')]),
+        new ElementCssSelector(tagName: 'div', attributes: [class: LIST_CONTAINS('name')])]
   }
 
   @Test
   void test_parse_multiple_selectors_by_tagName_and_id_and_class_then_tagName_and_class_then_tagName_and_class() {
     assert parser.parse('li#owners.error p.selected div.name') == [
-        new ElementCssSelector(id: 'owners', tagName: 'li', attributes: [class: EQ('error')]),
-        new ElementCssSelector(tagName: 'p', attributes: [class: EQ('selected')]),
-        new ElementCssSelector(tagName: 'div', attributes: [class: EQ('name')])]
+        new ElementCssSelector(id: 'owners', tagName: 'li', attributes: [class: LIST_CONTAINS('error')]),
+        new ElementCssSelector(tagName: 'p', attributes: [class: LIST_CONTAINS('selected')]),
+        new ElementCssSelector(tagName: 'div', attributes: [class: LIST_CONTAINS('name')])]
   }
 
   @Test
@@ -135,12 +135,12 @@ class ElementCssSelectorParserTest {
 
   @Test
   void test_parse_class_with_attribute() {
-    assert parser.parse('.bar[foo]') == [new ElementCssSelector(attributes: [class: EQ('bar'), foo: ALWAYS()])]
+    assert parser.parse('.bar[foo]') == [new ElementCssSelector(attributes: [class: LIST_CONTAINS('bar'), foo: ALWAYS()])]
   }
 
   @Test
   void test_parse_tag_id_class_with_attribute() {
-    assert parser.parse('baz#bam.bar[foo]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: EQ('bar'), foo: ALWAYS()])]
+    assert parser.parse('baz#bam.bar[foo]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: LIST_CONTAINS('bar'), foo: ALWAYS()])]
   }
 
   @Test
@@ -160,12 +160,12 @@ class ElementCssSelectorParserTest {
 
   @Test
   void test_parse_class_with_attribute_equals_value() {
-    assert parser.parse('.bar[foo="bar"]') == [new ElementCssSelector(attributes: [class: EQ('bar'), foo: EQ('bar')])]
+    assert parser.parse('.bar[foo="bar"]') == [new ElementCssSelector(attributes: [class: LIST_CONTAINS('bar'), foo: EQ('bar')])]
   }
 
   @Test
   void test_parse_tag_id_class_with_attribute_equals_value() {
-    assert parser.parse('baz#bam.bar[foo="bar"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: EQ('bar'), foo: EQ('bar')])]
+    assert parser.parse('baz#bam.bar[foo="bar"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: LIST_CONTAINS('bar'), foo: EQ('bar')])]
   }
 
   @Test
@@ -185,12 +185,12 @@ class ElementCssSelectorParserTest {
 
   @Test
   void test_parse_class_with_attribute_starts_with_value() {
-    assert parser.parse('.bar[foo^="bar"]') == [new ElementCssSelector(attributes: [class: EQ('bar'), foo: STARTS_WITH('bar')])]
+    assert parser.parse('.bar[foo^="bar"]') == [new ElementCssSelector(attributes: [class: LIST_CONTAINS('bar'), foo: STARTS_WITH('bar')])]
   }
 
   @Test
   void test_parse_tag_id_class_with_attribute_starts_with_value() {
-    assert parser.parse('baz#bam.bar[foo^="baz"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: EQ('bar'), foo: STARTS_WITH('baz')])]
+    assert parser.parse('baz#bam.bar[foo^="baz"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: LIST_CONTAINS('bar'), foo: STARTS_WITH('baz')])]
   }
 
   @Test
@@ -210,12 +210,12 @@ class ElementCssSelectorParserTest {
 
   @Test
   void test_parse_class_with_attribute_ends_with_value() {
-    assert parser.parse('.bar[foo$="bar"]') == [new ElementCssSelector(attributes: [class: EQ('bar'), foo: ENDS_WITH('bar')])]
+    assert parser.parse('.bar[foo$="bar"]') == [new ElementCssSelector(attributes: [class: LIST_CONTAINS('bar'), foo: ENDS_WITH('bar')])]
   }
 
   @Test
   void test_parse_tag_id_class_with_attribute_ends_with_value() {
-    assert parser.parse('baz#bam.bar[foo$="baz"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: EQ('bar'), foo: ENDS_WITH('baz')])]
+    assert parser.parse('baz#bam.bar[foo$="baz"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: LIST_CONTAINS('bar'), foo: ENDS_WITH('baz')])]
   }
 
   @Test
@@ -235,12 +235,12 @@ class ElementCssSelectorParserTest {
 
   @Test
   void test_parse_class_with_attribute_contains_value() {
-    assert parser.parse('.bar[foo*="bar"]') == [new ElementCssSelector(attributes: [class: EQ('bar'), foo: CONTAINS('bar')])]
+    assert parser.parse('.bar[foo*="bar"]') == [new ElementCssSelector(attributes: [class: LIST_CONTAINS('bar'), foo: CONTAINS('bar')])]
   }
 
   @Test
   void test_parse_tag_id_class_with_attribute_contains_value() {
-    assert parser.parse('baz#bam.bar[foo*="baz"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: EQ('bar'), foo: CONTAINS('baz')])]
+    assert parser.parse('baz#bam.bar[foo*="baz"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: LIST_CONTAINS('bar'), foo: CONTAINS('baz')])]
   }
 
   @Test
@@ -260,12 +260,12 @@ class ElementCssSelectorParserTest {
 
   @Test
   void test_parse_class_with_attribute_list_contains_value() {
-    assert parser.parse('.bar[foo~="bar"]') == [new ElementCssSelector(attributes: [class: EQ('bar'), foo: LIST_CONTAINS('bar')])]
+    assert parser.parse('.bar[foo~="bar"]') == [new ElementCssSelector(attributes: [class: LIST_CONTAINS('bar'), foo: LIST_CONTAINS('bar')])]
   }
 
   @Test
   void test_parse_tag_id_class_with_attribute_list_contains_value() {
-    assert parser.parse('baz#bam.bar[foo~="baz"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: EQ('bar'), foo: LIST_CONTAINS('baz')])]
+    assert parser.parse('baz#bam.bar[foo~="baz"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: LIST_CONTAINS('bar'), foo: LIST_CONTAINS('baz')])]
   }
 
   @Test
@@ -285,12 +285,12 @@ class ElementCssSelectorParserTest {
 
   @Test
   void test_parse_class_with_attribute_starts_with_hyphenated_value() {
-    assert parser.parse('.bar[foo|="bar"]') == [new ElementCssSelector(attributes: [class: EQ('bar'), foo: STARTS_WITH_HYPHENATED('bar')])]
+    assert parser.parse('.bar[foo|="bar"]') == [new ElementCssSelector(attributes: [class: LIST_CONTAINS('bar'), foo: STARTS_WITH_HYPHENATED('bar')])]
   }
 
   @Test
   void test_parse_tag_id_class_with_attribute_starts_with_hyphenated_value() {
-    assert parser.parse('baz#bam.bar[foo|="baz"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: EQ('bar'), foo: STARTS_WITH_HYPHENATED('baz')])]
+    assert parser.parse('baz#bam.bar[foo|="baz"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: LIST_CONTAINS('bar'), foo: STARTS_WITH_HYPHENATED('baz')])]
   }
 
   @Test

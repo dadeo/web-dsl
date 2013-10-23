@@ -92,6 +92,62 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  void test_select_by_class_multiple_classes_first_item() {
+    html {
+      p('a')
+      p('b')
+      p('c')
+      div(class: 'selected one item', 'd')
+    }
+
+    webdsl {
+      assert $('.selected').text == 'd'
+      assert $$('.selected').text == ['d']
+    }
+  }
+
+  void test_select_by_class_multiple_classes_middle_item() {
+    html {
+      p('a')
+      p('b')
+      p('c')
+      div(class: 'one selected item', 'd')
+    }
+
+    webdsl {
+      assert $('.selected').text == 'd'
+      assert $$('.selected').text == ['d']
+    }
+  }
+
+  void test_select_by_class_multiple_classes_last_item() {
+    html {
+      p('a')
+      p('b')
+      p('c')
+      div(class: 'one item selected', 'd')
+    }
+
+    webdsl {
+      assert $('.selected').text == 'd'
+      assert $$('.selected').text == ['d']
+    }
+  }
+
+  void test_select_by_class_multiple_classes_not_exact_match() {
+    html {
+      p('a')
+      p('b')
+      p('c')
+      div(class: 'one selected item', 'd')
+    }
+
+    webdsl {
+      assert $('.select') == null
+      assert $$('.select') == []
+    }
+  }
+
   void test_select_by_class_not_found() {
     html {
       p('a')

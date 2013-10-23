@@ -41,7 +41,7 @@ class ElementCssSelectorParser {
         Map<String, String> attributes = [:]
 
         if (cssClass)
-          attributes.class = EQ(cssClass)
+          attributes.class = LIST_CONTAINS(cssClass)
 
         def matcher
         if (attributeName) {

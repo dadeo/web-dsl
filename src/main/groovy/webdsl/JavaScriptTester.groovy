@@ -29,7 +29,7 @@ class JavaScriptTester {
         </head>
         <body>
         <div id='results'></div>
-        <script type="text/javascript" src="../scripts/assert.js"></script>
+        <script type="text/javascript" src="scripts/assert.js"></script>
         ${
       javascriptLocations.collect { "<script type='text/javascript' src='$it'></script>" }.join("\n")
     }
@@ -41,8 +41,8 @@ class JavaScriptTester {
     """
 
     WebPageDslBuilder webPageDslBuilder = new WebPageDslBuilder()
-        .baseUrl("http://localhost/test.html")
-        .pageContents(contents)
+        .defaultUrl("http://localhost/test.html")
+        .defaultContents(contents)
 
     javascriptLocations.each {
       webPageDslBuilder = webPageDslBuilder.setResponseFor "http://localhost/$it", new File(it).text, 'application/javascript'

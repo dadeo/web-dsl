@@ -28,8 +28,8 @@ abstract class AbstractNonServerTest extends TestCase {
 
   def webdsl(Closure closure) {
     WebDsl webDsl = new WebPageDslBuilder()
-        .baseUrl("http://localhost/test.html")
-        .pageContents(contents)
+        .defaultUrl("http://localhost/test.html")
+        .defaultContents(contents)
         .build()
 
     webDsl.do closure

@@ -15,24 +15,25 @@ package webdsl
 import com.gargoylesoftware.htmlunit.BrowserVersion
 import com.gargoylesoftware.htmlunit.MockWebConnection
 import com.gargoylesoftware.htmlunit.WebClient
+import webdsl.support.UrlBuilder
 
 
 class WebPageDslBuilder {
   private Map definition
 
   WebPageDslBuilder() {
-    this([responses: [].asImmutable()])
+    this([baseUrl: 'http://localhost', responses: [].asImmutable()])
   }
 
   WebPageDslBuilder(Map definition) {
     this.definition = definition.asImmutable()
   }
 
-  WebPageDslBuilder baseUrl(String baseUrl) {
+  WebPageDslBuilder defaultUrl(String baseUrl) {
     new WebPageDslBuilder(definition + [baseUrl: baseUrl])
   }
 
-  WebPageDslBuilder pageContents(String pageContents) {
+  WebPageDslBuilder defaultContents(String pageContents) {
     new WebPageDslBuilder(definition + [pageContents: pageContents])
   }
 
@@ -42,10 +43,12 @@ class WebPageDslBuilder {
     new WebPageDslBuilder(definition + [responses: responses.asImmutable()])
   }
 
-  WebDsl build() {
+  WebDsl build(String destinationUrl = null) {
+    UrlBuilder urlBuilder = new UrlBuilder(definition.baseUrl)
+
     MockWebConnection webConnection = new MockWebConnection()
     definition.responses.each {
-      webConnection.setResponse it.url.toURL(), it.responseContent, it.contentType
+      webConnection.setResponse urlBuilder.build(it.url).toURL(), it.responseContent, it.contentType
     }
 
     def browserVersion = BrowserVersion.getDefault()
@@ -55,7 +58,7 @@ class WebPageDslBuilder {
 
     WebDsl web = new WebDsl()
     web.webClient = webClient
-    web.for(definition.baseUrl)
+    web.for(destinationUrl ?: definition.baseUrl)
     web
   }
 }

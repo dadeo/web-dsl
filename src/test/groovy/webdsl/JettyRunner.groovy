@@ -12,9 +12,6 @@
  */
 package webdsl
 
-import javax.servlet.http.HttpServlet
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 import org.mortbay.jetty.Handler
 import org.mortbay.jetty.Server
 import org.mortbay.jetty.handler.DefaultHandler
@@ -22,6 +19,10 @@ import org.mortbay.jetty.handler.HandlerList
 import org.mortbay.jetty.handler.ResourceHandler
 import org.mortbay.jetty.servlet.ServletHandler
 import org.mortbay.jetty.servlet.ServletHolder
+
+import javax.servlet.http.HttpServlet
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 public class JettyRunner {
 
@@ -42,12 +43,24 @@ public class JettyRunner {
     handler = new ServletHandler();
 
     addPage '/testit/*', {
+      def paramlines = new HashMap(params)
+                             .sort()
+                             .collect { name, value ->
+                                "<tr><td>$name</td><td>${value.clone().sort().join(', ')}</td></tr>"
+                             }
+                             .join('\n')
+
       """
             <html>
               <head><title>TestServlet $path</title></head>
               <body>
                 <h1>Hello TestServlet</h1>
                 <p><a href="/main.html">main</a>
+                <h2>Parameters</h2>
+                <table id="parameters">
+                  <tr><th>Name</th><th>Value</th></tr>
+                  ${paramlines}
+                </table>
               </body>
             </html> """
     }
@@ -75,7 +88,7 @@ public class JettyRunner {
 
   def addPage(String mapping, Closure pageContent) {
     def testServlet = [:]
-    testServlet.doGet = {HttpServletRequest request, HttpServletResponse response ->
+    testServlet.doGet = { HttpServletRequest request, HttpServletResponse response ->
       path = request.getRequestURI().split("/")[-1]
       params = request.getParameterMap()
 

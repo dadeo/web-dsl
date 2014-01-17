@@ -24,6 +24,7 @@ class DslFactory {
       (HtmlUnorderedList):ListDsl,
       (HtmlOrderedList):ListDsl,
       (HtmlInput):InputDsl,
+      (HtmlTextArea):TextAreaDsl,
       (HtmlElement):ElementDsl
   ]
 

@@ -43,6 +43,24 @@ class BaseElementDsl {
     result
   }
 
+  Map<String, String> getStyle() {
+    Map styleAttributeStyling = [:]
+    Map cssStyling = element.getScriptObject().jsxGet_currentStyle().localModifications_.collectEntries { k, v ->
+      println v
+      [k, v.value]
+    }
+
+    String styleAttributeValue = element.getAttribute('style')
+    if(styleAttributeValue) {
+      styleAttributeStyling = styleAttributeValue?.split(';').collectEntries {
+        def parts = it.split(':')
+        [parts[0], parts[1].trim()]
+      }
+    }
+
+    cssStyling + styleAttributeStyling
+  }
+
   String attr(name) {
     getAttribute(name)
   }

@@ -16,7 +16,8 @@ import groovy.xml.StreamingMarkupBuilder
 import junit.framework.TestCase
 
 abstract class AbstractNonServerTest extends TestCase {
-  private contents
+  private String contents
+  private String cssContents
 
   def html(String contents) {
     this.contents = contents
@@ -26,11 +27,34 @@ abstract class AbstractNonServerTest extends TestCase {
     contents = new StreamingMarkupBuilder().bind(closure).toString()
   }
 
+  def css(String cssContents) {
+    this.cssContents = cssContents
+  }
+
   def webdsl(Closure closure) {
-    WebDsl webDsl = new WebPageDslBuilder()
+    String modifiedContents = contents
+
+    if(cssContents) {
+      modifiedContents = """
+        <html>
+          <head>
+            <link rel="stylesheet" type="text/css" href="test.css"></link>
+          </head>
+          <body>
+            $contents
+          </body>
+        </html>
+      """
+    }
+
+    WebPageDslBuilder builder = new WebPageDslBuilder()
         .defaultUrl("http://localhost/test.html")
-        .defaultContents(contents)
-        .build()
+        .defaultContents(modifiedContents)
+
+    if (cssContents)
+      builder = builder.setResponseFor("test.css", cssContents, "text/css")
+
+    WebDsl webDsl = builder.build()
 
     webDsl.do closure
   }

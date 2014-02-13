@@ -56,4 +56,47 @@ class BaseElementDslTest extends AbstractNonServerTest {
       assert $('#my-div').hasClass('blue-class')
     }
   }
+
+
+  void test_hasAttribute(){
+    html {
+      div(id:"my-div", class: 'look-a-class')
+    }
+
+    webdsl {
+      assert $('#my-div').hasAttribute('class')
+      assert $('#my-div').hasAttribute('id')
+    }
+  }
+
+  void test_hasAttribute_empty_attribute(){
+    html {
+      div(id:"my-div", class: 'look-a-class', disabled:'', checked: '')
+    }
+
+    webdsl {
+      assert $("#my-div").hasAttribute('disabled')
+      assert $("#my-div").hasAttribute('checked')
+    }
+  }
+
+  void test_hasAttribute_attribute_with_no_value(){
+    html("<div id='my-div' class='look-a-class' disabled checked></div>")
+
+    webdsl {
+      assert $("#my-div").hasAttribute('disabled')
+      assert $("#my-div").hasAttribute('checked')
+    }
+  }
+
+  void test_hasAttribute_no_attribute(){
+    html {
+      div(id:"my-div")
+    }
+
+    webdsl {
+      assertFalse $("#my-div").hasAttribute('disabled')
+      assertFalse $("#my-div").hasAttribute('style')
+    }
+  }
 }

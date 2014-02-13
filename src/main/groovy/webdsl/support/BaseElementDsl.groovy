@@ -47,6 +47,10 @@ class BaseElementDsl {
     element.getAttribute(name)
   }
 
+  boolean hasClass(String className){
+    element.getAttribute('class').contains(className)
+  }
+  
   String getTagName() {
     element.tagName
   }

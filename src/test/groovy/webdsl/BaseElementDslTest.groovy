@@ -16,7 +16,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
 
   void test_hasClass() {
     html {
-      div(id:"my-div",class: 'look-a-class')
+      div(id: "my-div", class: 'look-a-class')
     }
 
     webdsl {
@@ -26,7 +26,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
 
   void test_hasClass_not_the_same_class() {
     html {
-      div(id:"my-div",class: 'look-a-class')
+      div(id: "my-div", class: 'look-a-class')
     }
 
     webdsl {
@@ -36,7 +36,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
 
   void test_hasClass_does_not_have_a_class() {
     html {
-      div(id:"my-div")
+      div(id: "my-div")
     }
 
     webdsl {
@@ -46,7 +46,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
 
   void test_hasClass_multiple_classes() {
     html {
-      div(id:"my-div", class: 'one-class two-class three-class blue-class')
+      div(id: "my-div", class: 'one-class two-class three-class blue-class')
     }
 
     webdsl {
@@ -58,9 +58,9 @@ class BaseElementDslTest extends AbstractNonServerTest {
   }
 
 
-  void test_hasAttribute(){
+  void test_hasAttribute() {
     html {
-      div(id:"my-div", class: 'look-a-class')
+      div(id: "my-div", class: 'look-a-class')
     }
 
     webdsl {
@@ -69,9 +69,9 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
-  void test_hasAttribute_empty_attribute(){
+  void test_hasAttribute_empty_attribute() {
     html {
-      div(id:"my-div", class: 'look-a-class', disabled:'', checked: '')
+      div(id: "my-div", class: 'look-a-class', disabled: '', checked: '')
     }
 
     webdsl {
@@ -80,7 +80,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
-  void test_hasAttribute_attribute_with_no_value(){
+  void test_hasAttribute_attribute_with_no_value() {
     html("<div id='my-div' class='look-a-class' disabled checked></div>")
 
     webdsl {
@@ -89,9 +89,9 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
-  void test_hasAttribute_no_attribute(){
+  void test_hasAttribute_no_attribute() {
     html {
-      div(id:"my-div")
+      div(id: "my-div")
     }
 
     webdsl {

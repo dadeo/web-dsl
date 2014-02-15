@@ -24,7 +24,7 @@ class BaseElementDsl {
     this.factory = factory
     this.element = element
   }
-  
+
   def propertyMissing(String name) {
     def selectors = findSelectorsFor(name)
     if (selectors.size()) {
@@ -36,7 +36,7 @@ class BaseElementDsl {
   def findSelectorsFor(name) {
     def result = new SelectorDsl(pageContainer, factory)
     element.children.each { element ->
-      if(element.metaClass.hasProperty(element, "tagName") && element.tagName == name) {
+      if (element.metaClass.hasProperty(element, "tagName") && element.tagName == name) {
         result << element
       }
     }
@@ -47,16 +47,14 @@ class BaseElementDsl {
     element.getAttribute(name)
   }
 
-  boolean hasClass(String className){
+  boolean hasClass(String className) {
     element.getAttribute('class').contains(className)
   }
 
-  boolean hasAttribute(String attributeName){
-    element.attributes.find{k,v->
-      k == attributeName
-    }
+  boolean hasAttribute(String attributeName) {
+    element.attributes.find { k, v -> k == attributeName }
   }
-  
+
   String getTagName() {
     element.tagName
   }

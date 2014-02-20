@@ -59,4 +59,17 @@ class BaseElementDsl {
     element.tagName
   }
 
+  void insertBefore(Closure closure) {
+    HtmlElement newElement = new PageElementBuilder().build(pageContainer.page, closure)
+    element.insertBefore(newElement)
+  }
+
+  void insertAfter(Closure closure) {
+    HtmlElement newElement = new PageElementBuilder().build(pageContainer.page, closure)
+    if(element.nextSibling)
+      element.nextSibling.insertBefore(newElement)
+    else
+      element.parentNode.appendChild(newElement)
+  }
+
 }

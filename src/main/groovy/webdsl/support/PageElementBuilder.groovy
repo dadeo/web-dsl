@@ -23,6 +23,7 @@ class PageElementBuilder extends BuilderSupport {
     this.page = page
     Closure c = closure.clone()
     c.delegate = this
+    c.resolveStrategy = Closure.DELEGATE_FIRST
     c()
   }
 

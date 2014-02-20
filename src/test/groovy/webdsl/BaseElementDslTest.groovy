@@ -99,4 +99,65 @@ class BaseElementDslTest extends AbstractNonServerTest {
       assertFalse $("#my-div").hasAttribute('style')
     }
   }
+
+  void test_insertBefore_first_element() {
+    html {
+      div('b', id:'target')
+      div('c')
+    }
+
+    webdsl {
+      assert $$('div').text == ['b', 'c']
+
+      $('#target').insertBefore { div('a') }
+
+      assert $$('div').text == ['a', 'b', 'c']
+    }
+  }
+
+  void test_insertBefore_last_element() {
+    html {
+      div('a')
+      div('c', id:'target')
+    }
+
+    webdsl {
+      assert $$('div').text == ['a', 'c']
+
+      $('#target').insertBefore { div('b') }
+
+      assert $$('div').text == ['a', 'b', 'c']
+    }
+  }
+
+  void test_insertAfter_first_element() {
+    html {
+      div('a', id:'target')
+      div('c')
+    }
+
+    webdsl {
+      assert $$('div').text == ['a', 'c']
+
+      $('#target').insertAfter { div('b') }
+
+      assert $$('div').text == ['a', 'b', 'c']
+    }
+  }
+
+  void test_insertAfter_last_element() {
+    html {
+      div('a')
+      div('b', id:'target')
+    }
+
+    webdsl {
+      assert $$('div').text == ['a', 'b']
+
+      $('#target').insertAfter { div('c') }
+
+      assert $$('div').text == ['a', 'b', 'c']
+    }
+  }
+
 }

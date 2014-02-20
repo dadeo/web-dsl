@@ -178,12 +178,19 @@ class WebDsl {
   def $$(selector) {
     CssSelector cssSelector = new CssSelectorParser().parse(selector)
 
+
     def dslElements = cssSelector.select(page)
                                  .unique()
-                                 .sort { it.startLineNumber * 10000 + it.startColumnNumber }
+                                 .sort(elementSortOrder())
                                  .collect { factory.create(this, it) }
 
     dslElements
+  }
+
+  private Closure elementSortOrder() {
+    int counter = 0
+    Map<HtmlElement, Integer> sortOrder = ((HtmlPage) page).htmlElementDescendants.toList().collectEntries { [it, counter++] }
+    return { HtmlElement it -> sortOrder[it] }
   }
 
   static def camel(String string) {

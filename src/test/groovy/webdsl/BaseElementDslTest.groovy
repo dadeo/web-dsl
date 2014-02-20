@@ -16,7 +16,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
 
   void test_hasClass() {
     html {
-      div(id: "my-div", class: 'look-a-class')
+      div(id: "my-div", class: 'look-a-class') {}
     }
 
     webdsl {
@@ -26,7 +26,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
 
   void test_hasClass_not_the_same_class() {
     html {
-      div(id: "my-div", class: 'look-a-class')
+      div(id: "my-div", class: 'look-a-class') {}
     }
 
     webdsl {
@@ -36,7 +36,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
 
   void test_hasClass_does_not_have_a_class() {
     html {
-      div(id: "my-div")
+      div(id: "my-div") {}
     }
 
     webdsl {
@@ -46,7 +46,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
 
   void test_hasClass_multiple_classes() {
     html {
-      div(id: "my-div", class: 'one-class two-class three-class blue-class')
+      div(id: "my-div", class: 'one-class two-class three-class blue-class') {}
     }
 
     webdsl {
@@ -60,7 +60,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
 
   void test_hasAttribute() {
     html {
-      div(id: "my-div", class: 'look-a-class')
+      div(id: "my-div", class: 'look-a-class') {}
     }
 
     webdsl {
@@ -71,7 +71,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
 
   void test_hasAttribute_empty_attribute() {
     html {
-      div(id: "my-div", class: 'look-a-class', disabled: '', checked: '')
+      div(id: "my-div", class: 'look-a-class', disabled: '', checked: '') {}
     }
 
     webdsl {
@@ -91,7 +91,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
 
   void test_hasAttribute_no_attribute() {
     html {
-      div(id: "my-div")
+      div(id: "my-div") {}
     }
 
     webdsl {
@@ -102,7 +102,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
 
   void test_insertBefore_first_element() {
     html {
-      div('b', id:'target')
+      div('b', id: 'target')
       div('c')
     }
 
@@ -118,7 +118,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
   void test_insertBefore_last_element() {
     html {
       div('a')
-      div('c', id:'target')
+      div('c', id: 'target')
     }
 
     webdsl {
@@ -132,7 +132,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
 
   void test_insertAfter_first_element() {
     html {
-      div('a', id:'target')
+      div('a', id: 'target')
       div('c')
     }
 
@@ -148,7 +148,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
   void test_insertAfter_last_element() {
     html {
       div('a')
-      div('b', id:'target')
+      div('b', id: 'target')
     }
 
     webdsl {
@@ -162,7 +162,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
 
   void test_prependChild_children_exist() {
     html {
-      div(id:'target') {
+      div(id: 'target') {
         div('a2')
         div('a3')
       }
@@ -180,7 +180,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
 
   void test_prependChild_no_children_exist() {
     html {
-      div(id:'target') {}
+      div(id: 'target') {}
 
       div('b')
     }
@@ -197,7 +197,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
 
   void test_appendChild_children_exist() {
     html {
-      div(id:'target') {
+      div(id: 'target') {
         div('a1')
         div('a2')
       }
@@ -215,7 +215,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
 
   void test_appendChild_no_children_exist() {
     html {
-      div(id:'target') {}
+      div(id: 'target') {}
 
       div('b')
     }

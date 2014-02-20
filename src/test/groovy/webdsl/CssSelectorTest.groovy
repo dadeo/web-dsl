@@ -299,10 +299,10 @@ class CssSelectorTest extends AbstractNonServerTest {
 
   void test_select_multiple_by_id_then_class() {
     html {
-      div('a') {
+      div {
         div(class: 'owner', '1')
       }
-      div(id: 'myP', 'b') {
+      div(id: 'myP') {
         div(class: 'owner', '2')
         div(class: 'owner', '3')
         div(class: 'owner', '4')
@@ -310,7 +310,7 @@ class CssSelectorTest extends AbstractNonServerTest {
           div(class: 'owner', '5')
         }
       }
-      div('c') {
+      div {
         div(class: 'owner', '6')
       }
     }

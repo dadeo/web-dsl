@@ -160,4 +160,73 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  void test_prependChild_children_exist() {
+    html {
+      div(id:'target') {
+        div('a2')
+        div('a3')
+      }
+      div('b')
+    }
+
+    webdsl {
+      assert $$('div').text == ['a2a3', 'a2', 'a3', 'b']
+
+      $('#target').prependChild { div('a1') }
+
+      assert $$('div').text == ['a1a2a3', 'a1', 'a2', 'a3', 'b']
+    }
+  }
+
+  void test_prependChild_no_children_exist() {
+    html {
+      div(id:'target') {}
+
+      div('b')
+    }
+
+    webdsl {
+      assert $$('div').text == ['', 'b']
+
+      $('#target').prependChild { div('a') }
+
+      assert $$('div').text == ['a', 'a', 'b']
+    }
+  }
+
+
+  void test_appendChild_children_exist() {
+    html {
+      div(id:'target') {
+        div('a1')
+        div('a2')
+      }
+      div('b')
+    }
+
+    webdsl {
+      assert $$('div').text == ['a1a2', 'a1', 'a2', 'b']
+
+      $('#target').appendChild { div('a3') }
+
+      assert $$('div').text == ['a1a2a3', 'a1', 'a2', 'a3', 'b']
+    }
+  }
+
+  void test_appendChild_no_children_exist() {
+    html {
+      div(id:'target') {}
+
+      div('b')
+    }
+
+    webdsl {
+      assert $$('div').text == ['', 'b']
+
+      $('#target').appendChild { div('a') }
+
+      assert $$('div').text == ['a', 'a', 'b']
+    }
+  }
+
 }

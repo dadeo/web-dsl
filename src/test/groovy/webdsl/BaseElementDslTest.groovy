@@ -14,6 +14,27 @@ package webdsl
 
 class BaseElementDslTest extends AbstractNonServerTest {
 
+  void test_getAttribute() {
+    html {
+      div(id: "my-div", class: 'look-a-class') {}
+    }
+
+    webdsl {
+      assert $('#my-div').getAttribute('id') == 'my-div'
+      assert $('#my-div').getAttribute('class') == 'look-a-class'
+    }
+  }
+
+  void test_getAttributes() {
+    html {
+      div(id: "my-div", class: 'look-a-class') {}
+    }
+
+    webdsl {
+      assert $('#my-div').attributes == [id: 'my-div', class: 'look-a-class']
+    }
+  }
+
   void test_hasClass() {
     html {
       div(id: "my-div", class: 'look-a-class') {}
@@ -226,6 +247,19 @@ class BaseElementDslTest extends AbstractNonServerTest {
       $('#target').appendChild { div('a') }
 
       assert $$('div').text == ['a', 'a', 'b']
+    }
+  }
+
+  void test_asXml() {
+    html {
+      div('b')
+    }
+
+    webdsl {
+      assert $('div').asXml() == """<div>
+                                   |  b
+                                   |</div>
+                                   |""".stripMargin()
     }
   }
 

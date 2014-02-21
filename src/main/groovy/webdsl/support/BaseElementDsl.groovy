@@ -44,7 +44,15 @@ class BaseElementDsl {
   }
 
   String attr(name) {
+    getAttribute(name)
+  }
+
+  String getAttribute(name) {
     element.getAttribute(name)
+  }
+
+  Map<String, String> getAttributes() {
+    element.attributesMap.collectEntries { k, v -> [k, v.textContent] }
   }
 
   boolean hasClass(String className) {
@@ -83,6 +91,10 @@ class BaseElementDsl {
   void appendChild(Closure closure) {
     HtmlElement newElement = new PageElementBuilder().build(pageContainer.page, closure)
     element.appendChild(newElement)
+  }
+
+  String asXml() {
+    element.asXml()
   }
 
 }

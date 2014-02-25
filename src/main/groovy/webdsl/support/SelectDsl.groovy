@@ -13,6 +13,7 @@
 package webdsl.support
 
 import com.gargoylesoftware.htmlunit.html.HtmlElement
+import com.gargoylesoftware.htmlunit.html.HtmlOption
 
 
 class SelectDsl extends ElementDsl {
@@ -20,38 +21,56 @@ class SelectDsl extends ElementDsl {
     super(pageContainer, factory, element)
   }
 
-  private createOptions = { [value: it.getValueAttribute(), text: it.text]}
+  private createOptions = {
+    HtmlOption option = it
+
+    [
+        value: option.getValueAttribute(),
+        text: option.text,
+        selected: option.isSelected(),
+        select: { option.selected = true },
+        deselect: { option.selected = false }
+    ]
+  }
 
   @Override
   def getValue() {
-    def selected = values
-    if(!selected) {
-      null
-    } else if (!element.isMultipleSelectEnabled() || selected.size() == 1) {
-      selected[0]
-    } else {
-      selected
-    }
+    def selectedOptions = getSelectedOptions()
+    if(element.isMultipleSelectEnabled())
+      selectedOptions.text
+    else
+      selectedOptions[0]?.text
+//    def selected = values
+//    if (!selected) {
+//      null
+//    } else if (!element.isMultipleSelectEnabled() || selected.size() == 1) {
+//      selected[0]
+//    } else {
+//      selected
+//    }
+  }
+
+  List<String> getText() {
+    options.text
   }
 
   @Override
   def setValue(value) {
-    setValues([value])
-  }
-
-  def getValues() {
-    selectedOptions.value
+    setValues([value].flatten().grep())
   }
 
   def setValues(List<String> values) {
-    if(values.size() > 1 && !element.isMultipleSelectEnabled())
+    if (!values.size() && !element.isMultipleSelectEnabled())
+      throw new RuntimeException("unable to deselect option, html select element does not have multiple select enabled")
+
+    if (values.size() > 1 && !element.isMultipleSelectEnabled())
       throw new RuntimeException("html select element does not have multiple select enabled")
 
     pageContainer.page = element.selectedOptions.inject(null) { page, option -> option.setSelected(false) }
-    if(values)
+    if (values)
       pageContainer.page = values.inject(null) { page, value ->
         def option = findOptionByValue(element, value) ?: findOptionByText(element, value)
-        if(!option) throw new RuntimeException("Unable to find Option(name: '$value') or Option(text: '$value') in Select(id: '$id', name: '$name').")
+        if (!option) throw new RuntimeException("Unable to find Option(name: '$value') or Option(text: '$value') in Select(id: '$id', name: '$name').")
         option.setSelected(true)
       }
   }
@@ -84,7 +103,10 @@ class SelectDsl extends ElementDsl {
     element.getSelectedOptions().collect createOptions
   }
 
-  def deselectAll() {
-    setValues([])
+  void deselectAll() {
+    if(element.isMultipleSelectEnabled())
+      setValues([])
+    else
+      throw new RuntimeException('deselect is not available, html select element does not have multiple select enabled')
   }
 }

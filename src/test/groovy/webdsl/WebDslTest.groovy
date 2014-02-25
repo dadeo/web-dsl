@@ -290,140 +290,6 @@ class WebDslTest extends AbstractServerTest {
     }
   }
 
-  void test_form_select_by_id() {
-    webdsl {
-      assert auto instanceof SelectDsl
-      assert 'volvo' == autoId.value
-      autoId.value = 'audi'
-      form.submit
-      assert server.params.auto[0] == 'audi'
-    }
-  }
-
-  void test_form_select_by_name() {
-    webdsl {
-      assert auto instanceof SelectDsl
-      assert 'volvo' == auto.value
-      auto.value = 'audi'
-      form.submit
-      assert server.params.auto[0] == 'audi'
-    }
-  }
-
-  void test_form_select__multiple_options() {
-    webdsl {
-      assert ['volvo'] == auto2.values
-      auto2.values = ['audi', 'mercedes', 'saab']
-      assert auto2.values == ['saab', 'mercedes', 'audi']
-      form3.submit
-      assert ['saab', 'mercedes', 'audi'] == server.params.auto2
-    }
-  }
-
-  void test_form_select__multiple_options__assign_empty_list() {
-    webdsl {
-      assert ['volvo'] == auto2.values
-      auto2.values = []
-      assert auto2.values == []
-      form3.submit
-      assert !server.params.auto2
-    }
-  }
-
-  void test_form_select__multiple_options__deselectAll() {
-    webdsl {
-      assert ['volvo'] == auto2.values
-      auto2.deselectAll()
-      assert auto2.values == []
-      form3.submit
-      assert !server.params.auto2
-    }
-  }
-
-  void test_form_select__multiple_options__set__not_supported() {
-    shouldFail {
-      webdsl {
-        auto.values = ['audi', 'mercedes', 'saab']
-      }
-    }
-  }
-
-  void test_form_select__multiple_options__supported__value_called() {
-    webdsl {
-      auto2.values = ['audi', 'mercedes', 'saab']
-      assert auto2.value == ['saab', 'mercedes', 'audi']
-    }
-  }
-
-  void test_form_select__multiple_options__supported__no_selection() {
-    webdsl {
-      auto2.values = []
-      assert auto2.value == null
-      assert auto2.values == []
-      assert auto2.selectedOptions == []
-    }
-  }
-
-  void test_form_select__multiple_options__unsupported__no_selection() {
-    webdsl {
-      auto.values = []
-      assert auto.value == null
-      assert auto.values == []
-      assert auto.selectedOptions == []
-    }
-  }
-
-  void test_form_select__multiple_options__get__not_supported() {
-    webdsl {
-      assert auto.values == ['volvo']
-    }
-  }
-
-  void test_form_select_get_option_values() {
-    webdsl {
-      assert auto.options.value == ['volvo', 'saab', 'mercedes', 'audi']
-    }
-  }
-
-  void test_form_select_get_option_text() {
-    webdsl {
-      assert auto.options.text == ['Volvo', 'Saab', 'Mercedes', 'Audi']
-    }
-  }
-
-  void test_form_select_get_selectedOption_values() {
-    webdsl {
-      auto2.values = ['mercedes', 'volvo']
-      assert auto2.selectedOptions.value == ['volvo', 'mercedes']
-    }
-  }
-
-  void test_form_select_get_selectedOption_text() {
-    webdsl {
-      auto2.values = ['mercedes', 'volvo']
-      assert auto2.selectedOptions.text == ['Volvo', 'Mercedes']
-    }
-  }
-
-  void test_form_select_set_value_by_label_text() {
-    webdsl {
-      auto.value = 'Volvo'
-      assert 'volvo' == auto.value
-    }
-  }
-
-  void test_form_select_set_value_by_label_text_not_found() {
-    try {
-      webdsl {
-        auto.value = 'VolvoII'
-        assert 'volvo' == auto.value
-      }
-      fail('not expected to pass')
-    } catch (RuntimeException e) {
-      assert e.message == '''Unable to find Option(name: 'VolvoII') or Option(text: 'VolvoII') in Select(id: 'autoId', name: 'auto').'''
-    }
-  }
-
   void test_fillInWith() {
     webdsl {
       form {
@@ -454,21 +320,21 @@ class WebDslTest extends AbstractServerTest {
         actual = values()
       }
     }
-    assert actual == [name: "a default value", auto: "volvo", namedCheckbox1: false, namedCheckbox2: true, namedCheckbox3: true, radio1: "radio 1 value 3"]
+    assert actual == [name: "a default value", auto: "Volvo", namedCheckbox1: false, namedCheckbox2: true, namedCheckbox3: true, radio1: "radio 1 value 3"]
   }
 
   void test_valuesById() {
     webdsl {
       Map actual = form.valuesById()
-      assert actual == [nameId: "a default value", autoId: "volvo", checkbox1: false, checkbox2: true, checkbox3: true, radio1_1: false, radio1_2: false, radio1_3: true], actual
+      assert actual == [nameId: "a default value", autoId: "Volvo", checkbox1: false, checkbox2: true, checkbox3: true, radio1_1: false, radio1_2: false, radio1_3: true], actual
     }
   }
 
   void test_values_with_multiple_select() {
     webdsl {
-      auto2.values = ['volvo', 'saab']
+      auto2.value = ['Volvo', 'Saab']
       Map actual = form3.values()
-      assert actual == [auto2: ["volvo", "saab"]]
+      assert actual == [auto2: ["Volvo", "Saab"]]
     }
   }
 

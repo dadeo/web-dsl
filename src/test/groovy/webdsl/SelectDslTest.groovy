@@ -466,6 +466,103 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  void test_form_fillInWith_by_name__multiple_select__with_multiple_values() {
+    html {
+      form {
+        select(name: 'Autos', id: 'autos', multiple: 'true') {
+          option(value: 'volvo', 'Volvo')
+          option(value: 'saab', 'Saab', selected: 'true')
+          option(value: 'audi', 'Audi')
+        }
+      }
+    }
+
+    webdsl {
+      $("form").fillInWith([Autos: ['Volvo', 'Audi']])
+      assert $("form").values() == [Autos: ['Volvo', 'Audi']]
+    }
+  }
+
+  void test_form_fillInWith_by_name__multiple_select__with_single_value() {
+    html {
+      form {
+        select(name: 'Autos', id: 'autos', multiple: 'true') {
+          option(value: 'volvo', 'Volvo')
+          option(value: 'saab', 'Saab', selected: 'true')
+          option(value: 'audi', 'Audi')
+        }
+      }
+    }
+
+    webdsl {
+      $("form").fillInWith([Autos: 'Audi'])
+      assert $("form").values() == [Autos: ['Audi']]
+    }
+  }
+
+  void test_form_fillInWith_by_name__not_multiple_select() {
+    html {
+      form {
+        select(name: 'Autos', id: 'autos') {
+          option(value: 'volvo', 'Volvo')
+          option(value: 'saab', 'Saab', selected: 'true')
+          option(value: 'audi', 'Audi')
+        }
+      }
+    }
+  }
+
+  void test_form_fillInWith_by_id__multiple_select__with_multiple_values() {
+    html {
+      form {
+        select(name: 'Autos', id: 'autos', multiple: 'true') {
+          option(value: 'volvo', 'Volvo')
+          option(value: 'saab', 'Saab', selected: 'true')
+          option(value: 'audi', 'Audi')
+        }
+      }
+    }
+
+    webdsl {
+      $("form").fillInWith([autos: ['Volvo', 'Audi']])
+      assert $("form").values() == [Autos: ['Volvo', 'Audi']]
+    }
+  }
+
+  void test_form_fillInWith_by_id__multiple_select__with_single_value() {
+    html {
+      form {
+        select(name: 'Autos', id: 'autos', multiple: 'true') {
+          option(value: 'volvo', 'Volvo')
+          option(value: 'saab', 'Saab', selected: 'true')
+          option(value: 'audi', 'Audi')
+        }
+      }
+    }
+
+    webdsl {
+      $("form").fillInWith([autos: 'Audi'])
+      assert $("form").values() == [Autos: ['Audi']]
+    }
+  }
+
+  void test_form_fillInWith_by_id__not_multiple_select() {
+    html {
+      form {
+        select(name: 'Autos', id: 'autos') {
+          option(value: 'volvo', 'Volvo')
+          option(value: 'saab', 'Saab', selected: 'true')
+          option(value: 'audi', 'Audi')
+        }
+      }
+    }
+
+    webdsl {
+      $("form").fillInWith([autos: 'Audi'])
+      assert $("form").values() == [Autos: 'Audi']
+    }
+  }
+
   void test_deselect__not_multiple_select__should_fail() {
     html {
       form {

@@ -12,6 +12,7 @@
  */
 package webdsl.support
 
+import com.gargoylesoftware.htmlunit.html.DomNode
 
 class RadioButtonDsl extends ElementDsl {
   RadioButtonDsl(pageContainer, DslFactory factory, element) {
@@ -22,11 +23,31 @@ class RadioButtonDsl extends ElementDsl {
     element.isChecked()
   }
 
+  void setChecked(boolean checked) {
+    pageContainer.page = element.setChecked(checked)
+  }
+
   def getValue() {
-    checked ? super.value : pageContainer.findElementsByNameOrId(name).findResult {
-      if (it.checked) {
-        it.valueAttribute
-      }
+    if (checked)
+      super.value
+    else {
+      BaseElementDsl formDsl = closest('form')
+      DomNode containingNode = formDsl ? formDsl.element : pageContainer.page
+      containingNode.getHtmlElementDescendants().find { it.getAttribute('name') == name && it.checked }?.getAttribute('value')
+    }
+  }
+
+  @Override
+  def setValue(value) {
+    if(value instanceof Boolean) {
+      element.setChecked(value)
+    } else {
+      BaseElementDsl formDsl = closest('form')
+      DomNode containingNode = formDsl ? formDsl.element : pageContainer.page
+      if(value)
+        containingNode.getHtmlElementDescendants().find { it.getAttribute('name') == name && it.valueAttribute == value }?.setChecked(true)
+      else
+        containingNode.getHtmlElementDescendants().findAll { it.getAttribute('name') == name}*.setChecked(false)
     }
   }
 
@@ -39,4 +60,11 @@ class RadioButtonDsl extends ElementDsl {
     }
   }
 
+  List<RadioButtonDsl> getGroup() {
+    BaseElementDsl formDsl = closest('form')
+    DomNode containingNode = formDsl ? formDsl.element : pageContainer.page
+    containingNode.getHtmlElementDescendants()
+                  .findAll { it.getAttribute('name') == name}
+                  .collect { factory.create(pageContainer, it) }
+  }
 }

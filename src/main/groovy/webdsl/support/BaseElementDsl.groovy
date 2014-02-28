@@ -97,4 +97,13 @@ class BaseElementDsl {
     element.asXml()
   }
 
+  def closest(String elementType) {
+    HtmlElement candidate = element.parentNode
+    while(candidate && candidate.tagName != elementType) {
+      candidate = candidate.parentNode != pageContainer.page ? candidate.parentNode : null
+    }
+
+    if(candidate)
+      factory.create(pageContainer, candidate)
+  }
 }

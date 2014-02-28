@@ -263,4 +263,64 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  void test_closest_direct_descendent() {
+    html {
+      div(id: 'div0') {}
+
+      div(id: 'div1') {
+        div(id: 'div2') {
+          div(id: 'div3') {
+            div(id: 'target') {}
+          }
+        }
+      }
+
+      div(id: 'div4') {}
+    }
+
+    webdsl {
+      assert $('#target').closest('div').id == 'div3'
+    }
+  }
+
+  void test_closest_nested_descendant() {
+    html {
+      div(id: 'div0') {}
+
+      div(id: 'div1') {
+        div(id: 'div2') {
+          span(id: 'span1') {
+            span(id: 'span2') {
+              span(id: 'target') {}
+            }
+          }
+        }
+      }
+
+      div(id: 'div3') {}
+    }
+
+    webdsl {
+      assert $('#target').closest('div').id == 'div2'
+    }
+  }
+
+  void test_closest_not_found() {
+    html {
+      div(id: 'div1') {
+        div(id: 'div2') {
+          span(id: 'span1') {
+            span(id: 'span2') {
+              span(id: 'target') {}
+            }
+          }
+        }
+      }
+    }
+
+    webdsl {
+      assert $('#target').closest('p') == null
+    }
+  }
+
 }

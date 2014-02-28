@@ -149,6 +149,16 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_attribute_equals_value_can_have_multiple_words() {
+    assert parser.parse('[foo="foo bar baz"]') == [new ElementCssSelector(attributes: [foo: EQ('foo bar baz')])]
+  }
+
+  @Test
+  void test_parse_attribute_equals_value_can_have_multiple_words_even_when_no_quotes() {
+    assert parser.parse('[foo=foo bar baz]') == [new ElementCssSelector(attributes: [foo: EQ('foo bar baz')])]
+  }
+
+  @Test
   void test_parse_tag_with_attribute_equals_value() {
     assert parser.parse('li[foo="bar"]') == [new ElementCssSelector(tagName: 'li', attributes: [foo: EQ('bar')])]
   }
@@ -166,6 +176,11 @@ class ElementCssSelectorParserTest {
   @Test
   void test_parse_tag_id_class_with_attribute_equals_value() {
     assert parser.parse('baz#bam.bar[foo="bar"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: LIST_CONTAINS('bar'), foo: EQ('bar')])]
+  }
+
+  @Test
+  void test_parse_tag_with_attribute_equals_value_can_use_no_quotes() {
+    assert parser.parse("li[foo=bar]") == [new ElementCssSelector(tagName: 'li', attributes: [foo: EQ('bar')])]
   }
 
   @Test
@@ -194,6 +209,11 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_tag_with_attribute_starts_with_value_can_use_no_quotes() {
+    assert parser.parse("li[foo^=bar]") == [new ElementCssSelector(tagName: 'li', attributes: [foo: STARTS_WITH('bar')])]
+  }
+
+  @Test
   void test_parse_tag_with_attribute_starts_with_value_can_use_half_quotes() {
     assert parser.parse("li[foo^='bar']") == [new ElementCssSelector(tagName: 'li', attributes: [foo: STARTS_WITH('bar')])]
   }
@@ -216,6 +236,11 @@ class ElementCssSelectorParserTest {
   @Test
   void test_parse_tag_id_class_with_attribute_ends_with_value() {
     assert parser.parse('baz#bam.bar[foo$="baz"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: LIST_CONTAINS('bar'), foo: ENDS_WITH('baz')])]
+  }
+
+  @Test
+  void test_parse_tag_with_attribute_ends_with_value_can_use_no_quotes() {
+    assert parser.parse('li[foo$=bar]') == [new ElementCssSelector(tagName: 'li', attributes: [foo: ENDS_WITH('bar')])]
   }
 
   @Test
@@ -244,6 +269,11 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_tag_with_attribute_contains_can_use_no_quotes() {
+    assert parser.parse("li[foo*=bar]") == [new ElementCssSelector(tagName: 'li', attributes: [foo: CONTAINS('bar')])]
+  }
+
+  @Test
   void test_parse_tag_with_attribute_contains_can_use_half_quotes() {
     assert parser.parse("li[foo*='bar']") == [new ElementCssSelector(tagName: 'li', attributes: [foo: CONTAINS('bar')])]
   }
@@ -269,6 +299,11 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_tag_with_attribute_list_contains_can_use_no_quotes() {
+    assert parser.parse("li[foo~=bar]") == [new ElementCssSelector(tagName: 'li', attributes: [foo: LIST_CONTAINS('bar')])]
+  }
+
+  @Test
   void test_parse_tag_with_attribute_list_contains_can_use_half_quotes() {
     assert parser.parse("li[foo~='bar']") == [new ElementCssSelector(tagName: 'li', attributes: [foo: LIST_CONTAINS('bar')])]
   }
@@ -291,6 +326,11 @@ class ElementCssSelectorParserTest {
   @Test
   void test_parse_tag_id_class_with_attribute_starts_with_hyphenated_value() {
     assert parser.parse('baz#bam.bar[foo|="baz"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: LIST_CONTAINS('bar'), foo: STARTS_WITH_HYPHENATED('baz')])]
+  }
+
+  @Test
+  void test_parse_tag_with_attribute_starts_with_hyphenated_can_use_no_quotes() {
+    assert parser.parse("li[foo|=bar]") == [new ElementCssSelector(tagName: 'li', attributes: [foo: STARTS_WITH_HYPHENATED('bar')])]
   }
 
   @Test

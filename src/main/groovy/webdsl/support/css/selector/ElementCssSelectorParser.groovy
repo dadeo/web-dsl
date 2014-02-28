@@ -24,11 +24,11 @@ import java.util.regex.Matcher
 
 class ElementCssSelectorParser {
   List<CssSelector> parse(String selector) {
-    String regex = /([^.#\s\[]+)?#?([^.\s\[]+)?[.]?([^\s\[]*)(?:\[(.+?)(?:([*^$~|])?="(.+)")?\])?\s*/
+    String regex = /([^.#\s\[]+)?#?([^.\s\[]+)?[.]?([^\s\[]*)(?:\[(.+?)(?:([*^$~|])?=(.+))?\])?\s*/
 
     List<ElementCssSelector> result = []
 
-    Matcher m = selector.replaceAll(/'/, /"/) =~ regex
+    Matcher m = selector.replaceAll(/['"]/, "") =~ regex
     while (m.find()) {
       String id = m.group(2)
       String tagName = m.group(1)

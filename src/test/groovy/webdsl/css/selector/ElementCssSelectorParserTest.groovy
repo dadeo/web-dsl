@@ -124,8 +124,23 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_multiple_attribute_names() {
+    assert parser.parse('[foo][bar]') == [new ElementCssSelector(attributes: [foo: ALWAYS(), bar: ALWAYS()])]
+  }
+
+  @Test
+  void test_parse_multiple_attribute_names_with_different_operators() {
+    assert parser.parse('[foo^=bar][abc$=xyz]') == [new ElementCssSelector(attributes: [foo: STARTS_WITH('bar'), abc: ENDS_WITH('xyz')])]
+  }
+
+  @Test
   void test_parse_tag_with_attribute() {
     assert parser.parse('li[foo]') == [new ElementCssSelector(tagName: 'li', attributes: [foo: ALWAYS()])]
+  }
+
+  @Test
+  void test_parse_tag_with_multiple_attributes() {
+    assert parser.parse('li[foo][bar]') == [new ElementCssSelector(tagName: 'li', attributes: [foo: ALWAYS(), bar: ALWAYS()])]
   }
 
   @Test
@@ -134,8 +149,18 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_id_with_multiple_attributes() {
+    assert parser.parse('#bar[foo][bar]') == [new ElementCssSelector(id: 'bar', attributes: [foo: ALWAYS(), bar: ALWAYS()])]
+  }
+
+  @Test
   void test_parse_class_with_attribute() {
     assert parser.parse('.bar[foo]') == [new ElementCssSelector(attributes: [class: LIST_CONTAINS('bar'), foo: ALWAYS()])]
+  }
+
+  @Test
+  void test_parse_class_with_multiple_attributes() {
+    assert parser.parse('.bar[foo][bar]') == [new ElementCssSelector(attributes: [class: LIST_CONTAINS('bar'), foo: ALWAYS(), bar: ALWAYS()])]
   }
 
   @Test
@@ -144,8 +169,18 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_tag_id_class_with_multiple_attributes() {
+    assert parser.parse('baz#bam.bar[foo][bar]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: LIST_CONTAINS('bar'), foo: ALWAYS(), bar: ALWAYS()])]
+  }
+
+  @Test
   void test_parse_attribute_equals_value() {
     assert parser.parse('[foo="bar"]') == [new ElementCssSelector(attributes: [foo: EQ('bar')])]
+  }
+
+  @Test
+  void test_parse_attribute_equals_value__multiple_attributes() {
+    assert parser.parse('[foo="bar"][abc="xyz"]') == [new ElementCssSelector(attributes: [foo: EQ('bar'), abc: EQ('xyz')])]
   }
 
   @Test
@@ -154,8 +189,18 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_attribute_equals_value_can_have_multiple_words__multiple_attributes() {
+    assert parser.parse('[foo="foo bar baz"][bar="bar baz foo"]') == [new ElementCssSelector(attributes: [foo: EQ('foo bar baz'), bar: EQ('bar baz foo')])]
+  }
+
+  @Test
   void test_parse_attribute_equals_value_can_have_multiple_words_even_when_no_quotes() {
     assert parser.parse('[foo=foo bar baz]') == [new ElementCssSelector(attributes: [foo: EQ('foo bar baz')])]
+  }
+
+  @Test
+  void test_parse_attribute_equals_value_can_have_multiple_words_even_when_no_quotes__multiple_attributes() {
+    assert parser.parse('[foo=foo bar baz][bar="bar baz foo"]') == [new ElementCssSelector(attributes: [foo: EQ('foo bar baz'), bar: EQ('bar baz foo')])]
   }
 
   @Test
@@ -164,8 +209,18 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_tag_with_attribute_equals_value__multiple_attributes() {
+    assert parser.parse('li[foo="bar"][abc="xyz"]') == [new ElementCssSelector(tagName: 'li', attributes: [foo: EQ('bar'), abc: EQ('xyz')])]
+  }
+
+  @Test
   void test_parse_id_with_attribute_equals_value() {
     assert parser.parse('#bar[foo="bar"]') == [new ElementCssSelector(id: 'bar', attributes: [foo: EQ('bar')])]
+  }
+
+  @Test
+  void test_parse_id_with_attribute_equals_value__multiple_attributes() {
+    assert parser.parse('#bar[foo="bar"][abc="xyz"]') == [new ElementCssSelector(id: 'bar', attributes: [foo: EQ('bar'), abc: EQ('xyz')])]
   }
 
   @Test
@@ -174,8 +229,18 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_class_with_attribute_equals_value__multiple_attributes() {
+    assert parser.parse('.bar[foo="bar"][abc="xyz"]') == [new ElementCssSelector(attributes: [class: LIST_CONTAINS('bar'), foo: EQ('bar'), abc: EQ('xyz')])]
+  }
+
+  @Test
   void test_parse_tag_id_class_with_attribute_equals_value() {
     assert parser.parse('baz#bam.bar[foo="bar"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: LIST_CONTAINS('bar'), foo: EQ('bar')])]
+  }
+
+  @Test
+  void test_parse_tag_id_class_with_attribute_equals_value__multiple_attributes() {
+    assert parser.parse('baz#bam.bar[foo="bar"][abc="xyz"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: LIST_CONTAINS('bar'), foo: EQ('bar'), abc: EQ('xyz')])]
   }
 
   @Test
@@ -184,8 +249,18 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_tag_with_attribute_equals_value_can_use_no_quotes__multiple_attributes() {
+    assert parser.parse("li[foo=bar][abc=xyz]") == [new ElementCssSelector(tagName: 'li', attributes: [foo: EQ('bar'), abc: EQ('xyz')])]
+  }
+
+  @Test
   void test_parse_tag_with_attribute_equals_value_can_use_half_quotes() {
     assert parser.parse("li[foo='bar']") == [new ElementCssSelector(tagName: 'li', attributes: [foo: EQ('bar')])]
+  }
+
+  @Test
+  void test_parse_tag_with_attribute_equals_value_can_use_half_quotes__multiple_attributes() {
+    assert parser.parse("li[foo='bar'][abc='xyz']") == [new ElementCssSelector(tagName: 'li', attributes: [foo: EQ('bar'), abc: EQ('xyz')])]
   }
 
   @Test
@@ -194,8 +269,18 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_tag_with_attribute_start_with_value__multiple_attributes() {
+    assert parser.parse('li[foo^="bar"][abc^="xyz"]') == [new ElementCssSelector(tagName: 'li', attributes: [foo: STARTS_WITH('bar'),abc: STARTS_WITH('xyz')])]
+  }
+
+  @Test
   void test_parse_id_with_attribute_starts_with_value() {
     assert parser.parse('#bar[foo^="bar"]') == [new ElementCssSelector(id: 'bar', attributes: [foo: STARTS_WITH('bar')])]
+  }
+
+  @Test
+  void test_parse_id_with_attribute_starts_with_value__multiple_attributes() {
+    assert parser.parse('#bar[foo^="bar"][abc^="xyz"]') == [new ElementCssSelector(id: 'bar', attributes: [foo: STARTS_WITH('bar'), abc: STARTS_WITH('xyz')])]
   }
 
   @Test
@@ -204,8 +289,18 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_class_with_attribute_starts_with_value__multiple_attributes() {
+    assert parser.parse('.bar[foo^="bar"][abc^="xyz"]') == [new ElementCssSelector(attributes: [class: LIST_CONTAINS('bar'), foo: STARTS_WITH('bar'), abc: STARTS_WITH('xyz')])]
+  }
+
+  @Test
   void test_parse_tag_id_class_with_attribute_starts_with_value() {
     assert parser.parse('baz#bam.bar[foo^="baz"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: LIST_CONTAINS('bar'), foo: STARTS_WITH('baz')])]
+  }
+
+  @Test
+  void test_parse_tag_id_class_with_attribute_starts_with_value__multiple_attributes() {
+    assert parser.parse('baz#bam.bar[foo^="baz"][abc^="xyz"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: LIST_CONTAINS('bar'), foo: STARTS_WITH('baz'), abc: STARTS_WITH('xyz')])]
   }
 
   @Test
@@ -214,13 +309,23 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_tag_with_attribute_starts_with_value_can_use_no_quotes__multiple_attributes() {
+    assert parser.parse("li[foo^=bar][abc^=xyz]") == [new ElementCssSelector(tagName: 'li', attributes: [foo: STARTS_WITH('bar'), abc: STARTS_WITH('xyz')])]
+  }
+
+  @Test
   void test_parse_tag_with_attribute_starts_with_value_can_use_half_quotes() {
     assert parser.parse("li[foo^='bar']") == [new ElementCssSelector(tagName: 'li', attributes: [foo: STARTS_WITH('bar')])]
   }
 
   @Test
-  void test_parse_tag_with_attribute_ends_with_value() {
-    assert parser.parse('li[foo$="bar"]') == [new ElementCssSelector(tagName: 'li', attributes: [foo: ENDS_WITH('bar')])]
+  void test_parse_tag_with_attribute_starts_with_value_can_use_half_quotes__multiple_attributes() {
+    assert parser.parse("li[foo^='bar'][abc^=xyz]") == [new ElementCssSelector(tagName: 'li', attributes: [foo: STARTS_WITH('bar'), abc: STARTS_WITH('xyz')])]
+  }
+
+  @Test
+  void test_parse_tag_with_attribute_ends_with_value__multiple_attributes() {
+    assert parser.parse('li[foo$="bar"][abc$="xyz"]') == [new ElementCssSelector(tagName: 'li', attributes: [foo: ENDS_WITH('bar'), abc: ENDS_WITH('xyz')])]
   }
 
   @Test
@@ -229,8 +334,18 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_id_with_attribute_ends_with_value__multiple_attributes() {
+    assert parser.parse('#bar[foo$="bar"][abc$="xyz"]') == [new ElementCssSelector(id: 'bar', attributes: [foo: ENDS_WITH('bar'), abc: ENDS_WITH('xyz')])]
+  }
+
+  @Test
   void test_parse_class_with_attribute_ends_with_value() {
     assert parser.parse('.bar[foo$="bar"]') == [new ElementCssSelector(attributes: [class: LIST_CONTAINS('bar'), foo: ENDS_WITH('bar')])]
+  }
+
+  @Test
+  void test_parse_class_with_attribute_ends_with_value__multiple_attributes() {
+    assert parser.parse('.bar[foo$="bar"][abc$="xyz"]') == [new ElementCssSelector(attributes: [class: LIST_CONTAINS('bar'), foo: ENDS_WITH('bar'), abc: ENDS_WITH('xyz')])]
   }
 
   @Test
@@ -239,8 +354,18 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_tag_id_class_with_attribute_ends_with_value__multiple_attributes() {
+    assert parser.parse('baz#bam.bar[foo$="baz"][abc$="xyz"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: LIST_CONTAINS('bar'), foo: ENDS_WITH('baz'), abc: ENDS_WITH('xyz')])]
+  }
+
+  @Test
   void test_parse_tag_with_attribute_ends_with_value_can_use_no_quotes() {
     assert parser.parse('li[foo$=bar]') == [new ElementCssSelector(tagName: 'li', attributes: [foo: ENDS_WITH('bar')])]
+  }
+
+  @Test
+  void test_parse_tag_with_attribute_ends_with_value_can_use_no_quotes__multiple_attributes() {
+    assert parser.parse('li[foo$=bar][abc$=xyz]') == [new ElementCssSelector(tagName: 'li', attributes: [foo: ENDS_WITH('bar'), abc: ENDS_WITH('xyz')])]
   }
 
   @Test
@@ -249,8 +374,18 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_tag_with_attribute_ends_with_value_can_use_half_quotes__multiple_attributes() {
+    assert parser.parse("li[foo\$='bar'][abc\$='xyz']") == [new ElementCssSelector(tagName: 'li', attributes: [foo: ENDS_WITH('bar'), abc: ENDS_WITH('xyz')])]
+  }
+
+  @Test
   void test_parse_tag_with_attribute_contains_value() {
     assert parser.parse('li[foo*="bar"]') == [new ElementCssSelector(tagName: 'li', attributes: [foo: CONTAINS('bar')])]
+  }
+
+  @Test
+  void test_parse_tag_with_attribute_contains_value__multiple_attributes() {
+    assert parser.parse('li[foo*="bar"][abc*="xyz"]') == [new ElementCssSelector(tagName: 'li', attributes: [foo: CONTAINS('bar'), abc: CONTAINS('xyz')])]
   }
 
   @Test
@@ -259,8 +394,18 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_id_with_attribute_contains_value__multiple_attributes() {
+    assert parser.parse('#bar[foo*="bar"][abc*="xyz"]') == [new ElementCssSelector(id: 'bar', attributes: [foo: CONTAINS('bar'), abc: CONTAINS('xyz')])]
+  }
+
+  @Test
   void test_parse_class_with_attribute_contains_value() {
     assert parser.parse('.bar[foo*="bar"]') == [new ElementCssSelector(attributes: [class: LIST_CONTAINS('bar'), foo: CONTAINS('bar')])]
+  }
+
+  @Test
+  void test_parse_class_with_attribute_contains_value__multiple_attributes() {
+    assert parser.parse('.bar[foo*="bar"][abc*="xyz"]') == [new ElementCssSelector(attributes: [class: LIST_CONTAINS('bar'), foo: CONTAINS('bar'), abc: CONTAINS('xyz')])]
   }
 
   @Test
@@ -269,8 +414,18 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_tag_id_class_with_attribute_contains_value__multiple_attributes() {
+    assert parser.parse('baz#bam.bar[foo*="baz"][abc*="xyz"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: LIST_CONTAINS('bar'), foo: CONTAINS('baz'), abc: CONTAINS('xyz')])]
+  }
+
+  @Test
   void test_parse_tag_with_attribute_contains_can_use_no_quotes() {
     assert parser.parse("li[foo*=bar]") == [new ElementCssSelector(tagName: 'li', attributes: [foo: CONTAINS('bar')])]
+  }
+
+  @Test
+  void test_parse_tag_with_attribute_contains_can_use_no_quotes__multiple_attributes() {
+    assert parser.parse("li[foo*=bar][abc*=xyz]") == [new ElementCssSelector(tagName: 'li', attributes: [foo: CONTAINS('bar'), abc: CONTAINS('xyz')])]
   }
 
   @Test
@@ -279,8 +434,18 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_tag_with_attribute_contains_can_use_half_quotes__multiple_attributes() {
+    assert parser.parse("li[foo*='bar'][abc*='xyz']") == [new ElementCssSelector(tagName: 'li', attributes: [foo: CONTAINS('bar'), abc: CONTAINS('xyz')])]
+  }
+
+  @Test
   void test_parse_tag_with_attribute_list_contains_value() {
     assert parser.parse('li[foo~="bar"]') == [new ElementCssSelector(tagName: 'li', attributes: [foo: LIST_CONTAINS('bar')])]
+  }
+
+  @Test
+  void test_parse_tag_with_attribute_list_contains_value__multiple_attributes() {
+    assert parser.parse('li[foo~="bar"][abc~="xyz"]') == [new ElementCssSelector(tagName: 'li', attributes: [foo: LIST_CONTAINS('bar'), abc: LIST_CONTAINS('xyz')])]
   }
 
   @Test
@@ -289,8 +454,18 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_id_with_attribute_list_contains_value__multiple_attributes() {
+    assert parser.parse('#bar[foo~="bar"][abc~="xyz"]') == [new ElementCssSelector(id: 'bar', attributes: [foo: LIST_CONTAINS('bar'), abc: LIST_CONTAINS('xyz')])]
+  }
+
+  @Test
   void test_parse_class_with_attribute_list_contains_value() {
     assert parser.parse('.bar[foo~="bar"]') == [new ElementCssSelector(attributes: [class: LIST_CONTAINS('bar'), foo: LIST_CONTAINS('bar')])]
+  }
+
+  @Test
+  void test_parse_class_with_attribute_list_contains_value__multiple_attributes() {
+    assert parser.parse('.bar[foo~="bar"][abc~="xyz"]') == [new ElementCssSelector(attributes: [class: LIST_CONTAINS('bar'), foo: LIST_CONTAINS('bar'), abc: LIST_CONTAINS('xyz')])]
   }
 
   @Test
@@ -299,8 +474,18 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_tag_id_class_with_attribute_list_contains_value__multiple_attributes() {
+    assert parser.parse('baz#bam.bar[foo~="baz"][abc~="xyz"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: LIST_CONTAINS('bar'), foo: LIST_CONTAINS('baz'), abc: LIST_CONTAINS('xyz')])]
+  }
+
+  @Test
   void test_parse_tag_with_attribute_list_contains_can_use_no_quotes() {
     assert parser.parse("li[foo~=bar]") == [new ElementCssSelector(tagName: 'li', attributes: [foo: LIST_CONTAINS('bar')])]
+  }
+
+  @Test
+  void test_parse_tag_with_attribute_list_contains_can_use_no_quotes__multiple_attributes() {
+    assert parser.parse("li[foo~=bar][abc~=xyz]") == [new ElementCssSelector(tagName: 'li', attributes: [foo: LIST_CONTAINS('bar'), abc: LIST_CONTAINS('xyz')])]
   }
 
   @Test
@@ -309,8 +494,18 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_tag_with_attribute_list_contains_can_use_half_quotes__multiple_attributes() {
+    assert parser.parse("li[foo~='bar'][abc~='xyz']") == [new ElementCssSelector(tagName: 'li', attributes: [foo: LIST_CONTAINS('bar'), abc: LIST_CONTAINS('xyz')])]
+  }
+
+  @Test
   void test_parse_tag_with_attribute_starts_with_hyphenated_value() {
     assert parser.parse('li[foo|="bar"]') == [new ElementCssSelector(tagName: 'li', attributes: [foo: STARTS_WITH_HYPHENATED('bar')])]
+  }
+
+  @Test
+  void test_parse_tag_with_attribute_starts_with_hyphenated_value__multiple_attributes() {
+    assert parser.parse('li[foo|="bar"][abc|="xyz"]') == [new ElementCssSelector(tagName: 'li', attributes: [foo: STARTS_WITH_HYPHENATED('bar'), abc: STARTS_WITH_HYPHENATED('xyz')])]
   }
 
   @Test
@@ -319,8 +514,18 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_id_with_attribute_starts_with_hyphenated_value__multiple_attributes() {
+    assert parser.parse('#bar[foo|="bar"][abc|="xyz"]') == [new ElementCssSelector(id: 'bar', attributes: [foo: STARTS_WITH_HYPHENATED('bar'), abc: STARTS_WITH_HYPHENATED('xyz')])]
+  }
+
+  @Test
   void test_parse_class_with_attribute_starts_with_hyphenated_value() {
     assert parser.parse('.bar[foo|="bar"]') == [new ElementCssSelector(attributes: [class: LIST_CONTAINS('bar'), foo: STARTS_WITH_HYPHENATED('bar')])]
+  }
+
+  @Test
+  void test_parse_class_with_attribute_starts_with_hyphenated_value__multiple_attributes() {
+    assert parser.parse('.bar[foo|="bar"][abc|="xyz"]') == [new ElementCssSelector(attributes: [class: LIST_CONTAINS('bar'), foo: STARTS_WITH_HYPHENATED('bar'), abc: STARTS_WITH_HYPHENATED('xyz')])]
   }
 
   @Test
@@ -329,13 +534,28 @@ class ElementCssSelectorParserTest {
   }
 
   @Test
+  void test_parse_tag_id_class_with_attribute_starts_with_hyphenated_value__multiple_attributes() {
+    assert parser.parse('baz#bam.bar[foo|="baz"][abc|="xyz"]') == [new ElementCssSelector(tagName: 'baz', id: 'bam', attributes: [class: LIST_CONTAINS('bar'), foo: STARTS_WITH_HYPHENATED('baz'), abc: STARTS_WITH_HYPHENATED('xyz')])]
+  }
+
+  @Test
   void test_parse_tag_with_attribute_starts_with_hyphenated_can_use_no_quotes() {
     assert parser.parse("li[foo|=bar]") == [new ElementCssSelector(tagName: 'li', attributes: [foo: STARTS_WITH_HYPHENATED('bar')])]
   }
 
   @Test
+  void test_parse_tag_with_attribute_starts_with_hyphenated_can_use_no_quotes__multiple_attributes() {
+    assert parser.parse("li[foo|=bar][abc|=xyz]") == [new ElementCssSelector(tagName: 'li', attributes: [foo: STARTS_WITH_HYPHENATED('bar'), abc: STARTS_WITH_HYPHENATED('xyz')])]
+  }
+
+  @Test
   void test_parse_tag_with_attribute_starts_with_hyphenated_can_use_half_quotes() {
     assert parser.parse("li[foo|='bar']") == [new ElementCssSelector(tagName: 'li', attributes: [foo: STARTS_WITH_HYPHENATED('bar')])]
+  }
+
+  @Test
+  void test_parse_tag_with_attribute_starts_with_hyphenated_can_use_half_quotes__multiple_attributes() {
+    assert parser.parse("li[foo|='bar'][abc|='xyz']") == [new ElementCssSelector(tagName: 'li', attributes: [foo: STARTS_WITH_HYPHENATED('bar'), abc: STARTS_WITH_HYPHENATED('xyz')])]
   }
 
 

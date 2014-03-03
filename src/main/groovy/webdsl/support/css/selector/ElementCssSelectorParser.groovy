@@ -12,60 +12,47 @@
  */
 package webdsl.support.css.selector
 
-import webdsl.support.matchers.AlwaysMatcher
-import webdsl.support.matchers.ContainsMatcher
-import webdsl.support.matchers.EndsWithMatcher
-import webdsl.support.matchers.EqualsMatcher
-import webdsl.support.matchers.ListContainsMatcher
-import webdsl.support.matchers.StartsWithHyphenatedMatcher
-import webdsl.support.matchers.StartsWithMatcher
+import webdsl.support.matchers.*
 
 import java.util.regex.Matcher
 
 class ElementCssSelectorParser {
   List<CssSelector> parse(String selector) {
-    String regex = /([^.#\s\[]+)?#?([^.\s\[]+)?[.]?([^\s\[]*)(?:\[(.+?)(?:([*^$~|])?=(.+))?\])?\s*/
+
+    String tag = /[^#.\[\s]+/
+    String clazz = /\./ + tag
+    String selectorId = /#/ + tag
+    String attributesAll = /\[\s*([^$^|*~=\]]*)\s*(?:([$^|*~])?=\s*('|")?([^'"\]]*)\7?)?\s*\]/
+    String regex = "($tag)?($selectorId)?($clazz)?((?:$attributesAll)+)?"
+
+    String attributesRegex = attributesAll.replace(/\7/, /\3/)
 
     List<ElementCssSelector> result = []
 
-    Matcher m = selector.replaceAll(/['"]/, "") =~ regex
+    Matcher m = selector =~ regex
     while (m.find()) {
       String id = m.group(2)
       String tagName = m.group(1)
       String cssClass = m.group(3)
-      String attributeName = m.group(4)
-      String matchType = m.group(5)
-      String attributeValue = m.group(6)
+      String attributesString = m.group(4)
 
-      if (id || tagName || cssClass || attributeName) {
+      if (id || tagName || cssClass || attributesString) {
         Map<String, String> attributes = [:]
 
+        if (id)
+          id -= '#'
+
         if (cssClass)
-          attributes.class = LIST_CONTAINS(cssClass)
+          attributes.class = LIST_CONTAINS(cssClass - ".")
 
-        def matcher
-        if (attributeName) {
-          switch (matchType) {
-            case '^':
-              matcher = STARTS_WITH(attributeValue)
-              break
-            case '$':
-              matcher = ENDS_WITH(attributeValue)
-              break
-            case '*':
-              matcher = CONTAINS(attributeValue)
-              break
-            case '~':
-              matcher = LIST_CONTAINS(attributeValue)
-              break
-            case '|':
-              matcher = STARTS_WITH_HYPHENATED(attributeValue)
-              break
-            default:
-              matcher = attributeValue ? EQ(attributeValue) : ALWAYS()
-
+        if (attributesString) {
+          Matcher attributesMatcher = attributesString =~ attributesRegex
+          while(attributesMatcher.find()) {
+            String attributeName = attributesMatcher.group(1)
+            String matchType = attributesMatcher.group(2)
+            String attributeValue = attributesMatcher.group(4)
+            attributes[attributeName] = createAttributeMatcher(attributeValue, matchType)
           }
-          attributes[attributeName] = matcher
         }
 
         result << new ElementCssSelector(id, tagName, attributes)
@@ -73,6 +60,23 @@ class ElementCssSelectorParser {
     }
 
     result
+  }
+
+  private def createAttributeMatcher(String attributeValue, String matchType) {
+    switch (matchType) {
+      case '^':
+        return STARTS_WITH(attributeValue)
+      case '$':
+        return ENDS_WITH(attributeValue)
+      case '*':
+        return CONTAINS(attributeValue)
+      case '~':
+        return LIST_CONTAINS(attributeValue)
+      case '|':
+        return STARTS_WITH_HYPHENATED(attributeValue)
+      default:
+        return attributeValue ? EQ(attributeValue) : ALWAYS()
+    }
   }
 
   static EQ(String value) {

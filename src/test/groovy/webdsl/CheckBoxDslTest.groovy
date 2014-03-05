@@ -12,6 +12,7 @@
  */
 package webdsl
 
+import com.gargoylesoftware.htmlunit.BrowserVersion
 import webdsl.support.CheckBoxDsl
 
 class CheckBoxDslTest extends AbstractNonServerTest {
@@ -27,6 +28,26 @@ class CheckBoxDslTest extends AbstractNonServerTest {
     webdsl {
       assert $("[name='bike']") instanceof CheckBoxDsl
       assert car instanceof CheckBoxDsl
+    }
+  }
+
+  void test_click() {
+    html """
+      <form>
+        <input type="checkbox" name="bike" value="Bike">I have a bike<br>
+      </form>
+    """
+
+    webdsl {
+      assert $("[name=bike]").value == false
+
+      $('[name=bike]').click()
+
+      assert $("[name=bike]").value == true
+
+      $('[name=bike]').click()
+
+      assert $("[name=bike]").value == false
     }
   }
 
@@ -242,6 +263,66 @@ class CheckBoxDslTest extends AbstractNonServerTest {
     webdsl {
       $('form').fillInWith([bikeId: true, carId: false])
       assert $("form").values() == [bike: true, car: false]
+    }
+  }
+
+  void test_click_fires_onclick_event() {
+    js '''
+      function handler() {
+        document.getElementsByTagName("p")[0].innerHTML = 'page updated'
+      };
+    '''
+
+    html """
+      <p>page not updated</p>
+
+      <input type="checkbox" id="bikeId" name="bike" value="Bike" onclick="handler();">I have a bike<br>
+    """
+
+    webdsl {
+      assert $('p').text == 'page not updated'
+      $('input').click()
+      assert $('p').text == 'page updated'
+    }
+  }
+
+  void test_value_fires_onclick_event() {
+    js '''
+      function handler() {
+        document.getElementsByTagName("p")[0].innerHTML = 'page updated'
+      };
+    '''
+
+    html """
+      <p>page not updated</p>
+
+      <input type="checkbox" id="bikeId" name="bike" value="Bike" onclick="handler();">I have a bike<br>
+    """
+
+    webdsl {
+      assert $('p').text == 'page not updated'
+      $('input').value = true
+      assert $('p').text == 'page updated'
+    }
+  }
+
+  void test_value_does_not_fire_onclick_event_when_value_does_not_change() {
+    js '''
+      function handler() {
+        document.getElementsByTagName("p")[0].innerHTML = 'page updated'
+      };
+    '''
+
+    html """
+      <p>page not updated</p>
+
+      <input type="checkbox" id="bikeId" name="bike" value="Bike" onclick="handler();">I have a bike<br>
+    """
+
+    webdsl {
+      assert $('p').text == 'page not updated'
+      $('input').value = false
+      assert $('p').text == 'page not updated'
     }
   }
 }

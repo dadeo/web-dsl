@@ -22,7 +22,7 @@ class WebPageDslBuilder {
   private Map definition
 
   WebPageDslBuilder() {
-    this([baseUrl: 'http://localhost', responses: [].asImmutable()])
+    this([baseUrl: 'http://localhost', responses: [].asImmutable(), browserVersion:BrowserVersion.getDefault()])
   }
 
   WebPageDslBuilder(Map definition) {
@@ -43,6 +43,10 @@ class WebPageDslBuilder {
     new WebPageDslBuilder(definition + [responses: responses.asImmutable()])
   }
 
+  WebPageDslBuilder browserVersion(BrowserVersion browserVersion) {
+    new WebPageDslBuilder(definition + [browserVersion: browserVersion])
+  }
+
   WebDsl build(String destinationUrl = null) {
     UrlBuilder urlBuilder = new UrlBuilder(definition.baseUrl)
 
@@ -51,8 +55,7 @@ class WebPageDslBuilder {
       webConnection.setResponse urlBuilder.build(it.url).toURL(), it.responseContent, it.contentType
     }
 
-    def browserVersion = BrowserVersion.getDefault()
-    def webClient = new WebClient(browserVersion)
+    def webClient = new WebClient(definition.browserVersion)
     webConnection.setDefaultResponse(definition.pageContents);
     webClient.setWebConnection(webConnection);
 

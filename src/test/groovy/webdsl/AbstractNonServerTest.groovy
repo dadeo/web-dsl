@@ -12,12 +12,14 @@
  */
 package webdsl
 
+import com.gargoylesoftware.htmlunit.BrowserVersion
 import groovy.xml.StreamingMarkupBuilder
 import junit.framework.TestCase
 
 abstract class AbstractNonServerTest extends TestCase {
   private String contents
   private String cssContents
+  private String jsContents
 
   def html(String contents) {
     this.contents = contents
@@ -31,14 +33,22 @@ abstract class AbstractNonServerTest extends TestCase {
     this.cssContents = cssContents
   }
 
+  def js(String jsContents) {
+    this.jsContents = jsContents
+  }
+
   def webdsl(Closure closure) {
     String modifiedContents = contents
 
-    if(cssContents) {
+    String cssLink = cssContents ? '<link rel="stylesheet" type="text/css" href="test.css"></link>' : ""
+    String scriptTag = jsContents ? '<script src="jquery.js"></script>' : ""
+
+    if(cssContents || jsContents) {
       modifiedContents = """
         <html>
           <head>
-            <link rel="stylesheet" type="text/css" href="test.css"></link>
+            $cssLink
+            $scriptTag
           </head>
           <body>
             $contents
@@ -48,22 +58,18 @@ abstract class AbstractNonServerTest extends TestCase {
     }
 
     WebPageDslBuilder builder = new WebPageDslBuilder()
+//        .browserVersion(BrowserVersion.FIREFOX_3_6)
         .defaultUrl("http://localhost/test.html")
         .defaultContents(modifiedContents)
 
     if (cssContents)
       builder = builder.setResponseFor("test.css", cssContents, "text/css")
 
+    if (jsContents)
+      builder = builder.setResponseFor("jquery.js", jsContents, 'application/javascript')
+
     WebDsl webDsl = builder.build()
 
     webDsl.do closure
   }
-
-  //    final List<NameValuePair> expectedParameters = Collections.emptyList();
-  //    final MockWebConnection webConnection = getMockConnection(secondPage);
-  //
-  //    assertEquals("url", "http://www.foo2.com/", secondPage.getWebResponse().getWebRequest().getUrl());
-  //    assertSame("method", HttpMethod.GET, webConnection.getLastMethod());
-  //    Assert.assertEquals("parameters", expectedParameters, webConnection.getLastParameters());
-  //    assertNotNull(secondPage);
 }

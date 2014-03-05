@@ -46,7 +46,6 @@ class BaseElementDsl {
   Map<String, String> getStyle() {
     Map styleAttributeStyling = [:]
     Map cssStyling = element.getScriptObject().jsxGet_currentStyle().localModifications_.collectEntries { k, v ->
-      println v
       [k, v.value]
     }
 

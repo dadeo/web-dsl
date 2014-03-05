@@ -33,6 +33,9 @@ class CheckBoxDsl extends ElementDsl {
 
   @Override
   def setValue(value) {
-    pageContainer.page = element.setChecked(value ?: false)
+    boolean makeChecked = value ?: false
+
+    if (checked ^ makeChecked)
+      click()
   }
 }

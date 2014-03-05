@@ -19,7 +19,7 @@ class CheckBoxDsl extends ElementDsl {
   }
 
   def getChecked() {
-    element.isDefaultChecked()
+    element.isChecked()
   }
 
   def tableValue(attributeName) {
@@ -27,7 +27,12 @@ class CheckBoxDsl extends ElementDsl {
   }
 
   @Override
+  def getValue() {
+    checked
+  }
+
+  @Override
   def setValue(value) {
-    pageContainer.page = element.setChecked(value)    
+    pageContainer.page = element.setChecked(value ?: false)
   }
 }

@@ -388,4 +388,100 @@ class RadioButtonDslTest extends AbstractNonServerTest {
       assert group[1].attr('value') == 'female'
     }
   }
+
+  void test_click_fires_onclick_event() {
+    js '''
+      function handler() {
+        document.getElementsByTagName("p")[0].innerHTML = 'page updated'
+      };
+    '''
+
+    html """
+      <p>page not updated</p>
+
+      <form>
+        <input type='radio' name='sex' value='male' onclick="handler();">Male
+        <br/>
+        <input type='radio' name='sex' value='female' checked>Female
+      </form>
+    """
+
+    webdsl {
+      assert $('p').text == 'page not updated'
+      $('input[value=male]').click()
+      assert $('p').text == 'page updated'
+    }
+  }
+
+  void test_value_fires_onclick_event() {
+    js '''
+      function handler() {
+        document.getElementsByTagName("p")[0].innerHTML = 'page updated'
+      };
+    '''
+
+    html """
+      <p>page not updated</p>
+
+      <form>
+        <input type='radio' name='sex' value='male' onclick="handler();">Male
+        <br/>
+        <input type='radio' name='sex' value='female' checked>Female
+      </form>
+    """
+
+    webdsl {
+      assert $('p').text == 'page not updated'
+      $('[name=sex]').value = 'male'
+      assert $('p').text == 'page updated'
+    }
+  }
+
+  void test_value_does_not_fire_onclick_event_when_value_does_not_change() {
+    js '''
+      function handler() {
+        document.getElementsByTagName("p")[0].innerHTML = 'page updated'
+      };
+    '''
+
+    html """
+      <p>page not updated</p>
+
+      <form>
+        <input type='radio' name='sex' value='male' checked onclick="handler();">Male
+        <br/>
+        <input type='radio' name='sex' value='female'>Female
+      </form>
+    """
+
+    webdsl {
+      assert $('p').text == 'page not updated'
+      $('[name=sex]').value = 'male'
+      assert $('p').text == 'page not updated'
+    }
+  }
+
+  void test_click_fires_onclick_event_when_value_does_not_change() {
+    js '''
+      function handler() {
+        document.getElementsByTagName("p")[0].innerHTML = 'page updated'
+      };
+    '''
+
+    html """
+      <p>page not updated</p>
+
+      <form>
+        <input type='radio' name='sex' value='male' checked onclick="handler();">Male
+        <br/>
+        <input type='radio' name='sex' value='female'>Female
+      </form>
+    """
+
+    webdsl {
+      assert $('p').text == 'page not updated'
+      $('[name=sex]').click()
+      assert $('p').text == 'page updated'
+    }
+  }
 }

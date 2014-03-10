@@ -40,14 +40,6 @@ class SelectDsl extends ElementDsl {
       selectedOptions.text
     else
       selectedOptions[0]?.text
-//    def selected = values
-//    if (!selected) {
-//      null
-//    } else if (!element.isMultipleSelectEnabled() || selected.size() == 1) {
-//      selected[0]
-//    } else {
-//      selected
-//    }
   }
 
   List<String> getText() {

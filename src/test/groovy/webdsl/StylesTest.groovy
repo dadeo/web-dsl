@@ -23,7 +23,7 @@ class StylesTest extends AbstractNonServerTest {
     }
 
     webdsl { WebDsl dsl ->
-      assert $('#mydiv').style == ['margin-bottom':'10px', width:'100px']
+      assert $('#mydiv').style == ['margin-bottom': '10px', width: '100px']
     }
   }
 
@@ -68,7 +68,7 @@ class StylesTest extends AbstractNonServerTest {
 
     webdsl {
       assert $('#mydiv').style.width == '100px'
-      assert $('#mydiv').style == [margin:'25px', 'margin-top':'40px', width:'100px']
+      assert $('#mydiv').style == [margin: '25px', 'margin-top': '40px', width: '100px']
     }
   }
 
@@ -90,7 +90,18 @@ class StylesTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $('#mydiv').style == [margin:'25px', 'margin-top':'40px', width:'50px']
+      assert $('#mydiv').style == [margin: '25px', 'margin-top': '40px', width: '50px']
+    }
+  }
+
+  @Test
+  void test_element_with_multiple_inline_styles_parse_whitespace_correctly() {
+    html {
+      div "my text", id: 'mydiv', style: ' width : 50px; display: none;'
+    }
+
+    webdsl {
+      assert $('#mydiv').style == [width: '50px', display: 'none']
     }
   }
 

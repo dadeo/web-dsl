@@ -52,8 +52,8 @@ class BaseElementDsl {
     String styleAttributeValue = element.getAttribute('style')
     if(styleAttributeValue) {
       styleAttributeStyling = styleAttributeValue?.split(';').collectEntries {
-        def parts = it.split(':')
-        [parts[0], parts[1].trim()]
+        def parts = it.split(/\s*:\s*/)
+        [parts[0].trim(), parts[1].trim()]
       }
     }
 

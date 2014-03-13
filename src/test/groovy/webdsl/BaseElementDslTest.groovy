@@ -305,7 +305,136 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
-  void test_closest_not_found() {
+  void test_closest_css_selector_class() {
+    html {
+      div(id: 'div0', class: 'one') {}
+
+      div(id: 'div1', class: 'one') {
+        div(id: 'div2') {
+          span(id: 'span1') {
+            span(id: 'span2') {
+              span(id: 'target') {}
+            }
+          }
+        }
+      }
+
+      div(id: 'div3', class: 'one') {}
+    }
+
+    webdsl {
+      assert $('#target').closest('.one').id == 'div1'
+    }
+  }
+
+  void test_closest_css_selector_class__not_an_ancestor() {
+    html {
+      div(id: 'div0', class: 'one') {}
+
+      div(id: 'div1') {
+        div(id: 'div2') {
+          span(id: 'span1') {
+            span(id: 'span2') {
+              span(id: 'target') {}
+            }
+          }
+        }
+      }
+
+      div(id: 'div3', class: 'one') {}
+    }
+
+    webdsl {
+      assert $('#target').closest('.one') == null
+    }
+  }
+
+  void test_closest_css_selector_id() {
+    html {
+      div(id: 'div0', class: 'one') {}
+
+      div(id: 'div1', class: 'one') {
+        div(id: 'div2') {
+          span(id: 'span1') {
+            span(id: 'span2') {
+              span(id: 'target') {}
+            }
+          }
+        }
+      }
+
+      div(id: 'div3', class: 'one') {}
+    }
+
+    webdsl {
+      assert $('#target').closest('#div1').id == 'div1'
+    }
+  }
+
+  void test_closest_css_selector_id__not_an_ancestor() {
+    html {
+      div(id: 'div0', class: 'one') {}
+
+      div(id: 'div1', class: 'one') {
+        div(id: 'div2') {
+          span(id: 'span1') {
+            span(id: 'span2') {
+              span(id: 'target') {}
+            }
+          }
+        }
+      }
+
+      div(id: 'div3', class: 'one') {}
+    }
+
+    webdsl {
+      assert $('#target').closest('#div0') == null
+    }
+  }
+
+  void test_closest_css_selector_child() {
+    html {
+      div(id: 'div0', class: 'one') {}
+
+      div(id: 'div1', class: 'one') {
+        div(id: 'div2') {
+          span(id: 'span1') {
+            span(id: 'span2') {
+              span(id: 'target') {}
+            }
+          }
+        }
+      }
+
+      div(id: 'div3', class: 'one') {}
+    }
+
+    webdsl {
+      assert $('#target').closest('div>span').id == 'span1'
+    }
+  }
+
+  void test_closest_css_selector_sibling() {
+    html {
+      div(id: 'div1', class: 'one') {
+        div(id: 'div2') {
+          span(id: 'span1') {}
+          span(id: 'span2') {
+            span(id: 'span3') {
+              span(id: 'target') {}
+            }
+          }
+        }
+      }
+    }
+
+    webdsl {
+      assert $('#target').closest('span~span').id == 'span2'
+    }
+  }
+
+  void test_closest_css_selector_tag__not_found() {
     html {
       div(id: 'div1') {
         div(id: 'div2') {

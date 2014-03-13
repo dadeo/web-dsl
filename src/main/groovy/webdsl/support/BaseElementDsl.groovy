@@ -13,6 +13,9 @@
 package webdsl.support
 
 import com.gargoylesoftware.htmlunit.html.HtmlElement
+import webdsl.support.css.selector.CssSelector
+import webdsl.support.css.selector.CssSelectorParser
+import webdsl.support.css.selector.InsideCssSelector
 
 class BaseElementDsl {
   HtmlElement element
@@ -114,9 +117,31 @@ class BaseElementDsl {
     element.asXml()
   }
 
-  def closest(String elementType) {
+  def closest(String cssSelectorPattern) {
+    CssSelector selector = new CssSelectorParser().parse(cssSelectorPattern)
+
+    if(selector instanceof InsideCssSelector)
+      closestSimple(selector.cssSelectors[0])
+    else
+      closestComplex(selector)
+  }
+
+  protected def closestSimple(CssSelector selector) {
     HtmlElement candidate = element.parentNode
-    while(candidate && candidate.tagName != elementType) {
+    while(candidate && !selector.select(candidate)) {
+      candidate = candidate.parentNode != pageContainer.page ? candidate.parentNode : null
+    }
+
+    if(candidate)
+      factory.create(pageContainer, candidate)
+  }
+
+  protected def closestComplex(CssSelector selector) {
+    List candidates = selector.select(pageContainer.page)
+
+    HtmlElement candidate = element.parentNode
+
+    while(candidate && !candidates.find { it == candidate }) {
       candidate = candidate.parentNode != pageContainer.page ? candidate.parentNode : null
     }
 

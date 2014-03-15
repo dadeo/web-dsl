@@ -15,6 +15,7 @@ package webdsl
 import com.gargoylesoftware.htmlunit.BrowserVersion
 import com.gargoylesoftware.htmlunit.MockWebConnection
 import com.gargoylesoftware.htmlunit.WebClient
+import com.gargoylesoftware.htmlunit.WebConnection
 import webdsl.support.UrlBuilder
 
 
@@ -47,7 +48,7 @@ class WebPageDslBuilder {
     new WebPageDslBuilder(definition + [browserVersion: browserVersion])
   }
 
-  WebDsl build(String destinationUrl = null) {
+  WebConnection buildWebConnection() {
     UrlBuilder urlBuilder = new UrlBuilder(definition.baseUrl)
 
     MockWebConnection webConnection = new MockWebConnection()
@@ -55,9 +56,14 @@ class WebPageDslBuilder {
       webConnection.setResponse urlBuilder.build(it.url).toURL(), it.responseContent, it.contentType
     }
 
-    def webClient = new WebClient(definition.browserVersion)
     webConnection.setDefaultResponse(definition.pageContents);
-    webClient.setWebConnection(webConnection);
+
+    webConnection
+  }
+
+  WebDsl build(String destinationUrl = null) {
+    def webClient = new WebClient(definition.browserVersion)
+    webClient.setWebConnection(buildWebConnection());
 
     WebDsl web = new WebDsl()
     web.webClient = webClient

@@ -12,7 +12,6 @@
  */
 package webdsl
 
-import groovy.xml.MarkupBuilder
 import groovy.xml.StreamingMarkupBuilder
 
 abstract class AbstractServerTest extends GroovyTestCase {
@@ -44,7 +43,7 @@ abstract class AbstractServerTest extends GroovyTestCase {
     def obj = new Object()
     obj.metaClass.html = {
       def pageContents
-      if(it instanceof String)
+      if (it instanceof String)
         pageContents = it
       else
         pageContents = new StreamingMarkupBuilder().bind(it).toString()

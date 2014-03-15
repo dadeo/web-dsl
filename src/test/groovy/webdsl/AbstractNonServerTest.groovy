@@ -12,7 +12,6 @@
  */
 package webdsl
 
-import com.gargoylesoftware.htmlunit.BrowserVersion
 import groovy.xml.StreamingMarkupBuilder
 import junit.framework.TestCase
 
@@ -38,12 +37,25 @@ abstract class AbstractNonServerTest extends TestCase {
   }
 
   def webdsl(Closure closure) {
+    withBuilder { WebPageDslBuilder builder ->
+      WebDsl webDsl = builder.build()
+      webDsl.do closure
+    }
+  }
+
+  def withWebConnection(Closure closure) {
+    withBuilder { WebPageDslBuilder builder ->
+      closure(builder.buildWebConnection())
+    }
+  }
+
+  private def withBuilder(Closure closure) {
     String modifiedContents = contents
 
     String cssLink = cssContents ? '<link rel="stylesheet" type="text/css" href="test.css"></link>' : ""
     String scriptTag = jsContents ? '<script src="jquery.js"></script>' : ""
 
-    if(cssContents || jsContents) {
+    if (cssContents || jsContents) {
       modifiedContents = """
         <html>
           <head>
@@ -68,8 +80,6 @@ abstract class AbstractNonServerTest extends TestCase {
     if (jsContents)
       builder = builder.setResponseFor("jquery.js", jsContents, 'application/javascript')
 
-    WebDsl webDsl = builder.build()
-
-    webDsl.do closure
+    closure(builder)
   }
 }

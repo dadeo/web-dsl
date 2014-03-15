@@ -25,30 +25,29 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 public class JettyRunner {
-
+  static final int DEFAULT_PORT = 8081
   private Server server
   def params
   def path
   private ServletHandler handler
 
-  JettyRunner(options) {
-    if (options == null) {
-      options = [port: 8081]
-    }
+  JettyRunner(options = [:]) {
+    options.port = options.port ?: DEFAULT_PORT
+    options.webappsDirectory = options.webappsDirectory ?: "src/test/resources/webapps/test"
 
     ResourceHandler resource_handler = new ResourceHandler()
     resource_handler.setWelcomeFiles(["index.html"] as String[])
-    resource_handler.setResourceBase("src/test/resources/webapps/test")
+    resource_handler.setResourceBase(options.webappsDirectory)
 
     handler = new ServletHandler();
 
     addPage '/testit/*', {
       def paramlines = new HashMap(params)
-                             .sort()
-                             .collect { name, value ->
-                                "<tr><td>$name</td><td>${value.clone().sort().join(', ')}</td></tr>"
-                             }
-                             .join('\n')
+          .sort()
+          .collect { name, value ->
+        "<tr><td>$name</td><td>${value.clone().sort().join(', ')}</td></tr>"
+      }
+          .join('\n')
 
       """
             <html>
@@ -110,4 +109,15 @@ public class JettyRunner {
     runner.server.join()
 
   }
+
+  static def withServer(Map options, Closure closure) {
+    JettyRunner server = new JettyRunner(options)
+    server.start()
+    try {
+      closure()
+    } finally {
+      server.stop()
+    }
+  }
+
 }

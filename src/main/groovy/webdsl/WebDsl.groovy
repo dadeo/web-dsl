@@ -12,6 +12,7 @@
  */
 package webdsl
 
+import com.gargoylesoftware.htmlunit.CollectingAlertHandler
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController
 import com.gargoylesoftware.htmlunit.WebClient
 import com.gargoylesoftware.htmlunit.html.DomText
@@ -34,15 +35,25 @@ class WebDsl {
 
   private boolean factoryResets = true
   private DslFactory factory = new DslFactory()
+  private List<String> alerts = []
 
   WebDsl() {
     initWebClient()
   }
 
-  def _for(where) {
+  WebDsl(String url) {
+    this()
+    init(url)
+  }
+
+  WebDsl init(String url) {
     container.set this
-    setPage webClient.getPage(where)
+    setPage webClient.getPage(url)
     this
+  }
+
+  WebDsl _for(String url) {
+    init(url)
   }
 
   def _do(closure) {
@@ -65,6 +76,7 @@ class WebDsl {
   private def initWebClient() {
     webClient = new WebClient()
     webClient.setAjaxController(new NicelyResynchronizingAjaxController())
+    webClient.alertHandler = new CollectingAlertHandler(alerts)
   }
 
   def form(closure) {
@@ -185,6 +197,10 @@ class WebDsl {
                                  .collect { factory.create(this, it) }
 
     dslElements
+  }
+
+  List<String> getAlerts() {
+    alerts
   }
 
   private Closure elementSortOrder() {

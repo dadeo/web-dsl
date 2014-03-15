@@ -51,7 +51,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assertFalse $('#my-div').hasClass('look-another-class')
+      assert !$('#my-div').hasClass('look-another-class')
     }
   }
 
@@ -61,7 +61,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assertFalse $('#my-div').hasClass('look-a-class')
+      assert !$('#my-div').hasClass('look-a-class')
     }
   }
 
@@ -75,6 +75,16 @@ class BaseElementDslTest extends AbstractNonServerTest {
       assert $('#my-div').hasClass('two-class')
       assert $('#my-div').hasClass('three-class')
       assert $('#my-div').hasClass('blue-class')
+    }
+  }
+
+  void test_hasClass_does_not_match_on_partials() {
+    html {
+      div(id: "my-div", class: 'one-class two-class three-class blue-class') {}
+    }
+
+    webdsl {
+      assert !$('#my-div').hasClass('class')
     }
   }
 
@@ -110,14 +120,53 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  void test_hasAttribute_attribute_are_not_case_sensitive() {
+    html("<div id='my-div' class='look-a-class' DISABLED CHECKED></div>")
+
+    webdsl {
+      assert $("#my-div").hasAttribute('disabled')
+      assert $("#my-div").hasAttribute('checked')
+    }
+  }
+
   void test_hasAttribute_no_attribute() {
     html {
       div(id: "my-div") {}
     }
 
     webdsl {
-      assertFalse $("#my-div").hasAttribute('disabled')
-      assertFalse $("#my-div").hasAttribute('style')
+      assert !$("#my-div").hasAttribute('disabled')
+      assert !$("#my-div").hasAttribute('style')
+    }
+  }
+
+  void test_isDisabled_true() {
+    html {
+      div(id: "my-div", disabled: 'true') {}
+    }
+
+    webdsl {
+      assert $("div").isDisabled()
+    }
+  }
+
+  void test_isDisabled_upper_case_true() {
+    html {
+      div(id: "my-div", DISABLED: 'DISABLED') {}
+    }
+
+    webdsl {
+      assert $("div").isDisabled()
+    }
+  }
+
+  void test_isDisabled_false() {
+    html {
+      div(id: "my-div") {}
+    }
+
+    webdsl {
+      assert !$("div").isDisabled()
     }
   }
 

@@ -76,11 +76,15 @@ class BaseElementDsl {
   }
 
   boolean hasClass(String className) {
-    element.getAttribute('class').contains(className)
+    element.getAttribute('class').split(/\s+/).contains(className)
   }
 
   boolean hasAttribute(String attributeName) {
     element.attributes.find { k, v -> k == attributeName }
+  }
+
+  boolean isDisabled() {
+    hasAttribute('disabled')
   }
 
   String getTagName() {

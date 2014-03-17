@@ -85,6 +85,7 @@ class WebDsl {
     this.webClient = webClient
     this.webClient.setAjaxController(new NicelyResynchronizingAjaxController())
     this.webClient.alertHandler = new CollectingAlertHandler(alerts)
+    this.webClient.useInsecureSSL = true
   }
 
   def form(closure) {

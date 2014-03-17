@@ -212,6 +212,22 @@ class WebDsl {
     alerts
   }
 
+  void setJavaScriptEnabled(boolean value) {
+    webClient.javaScriptEnabled = value
+  }
+
+  boolean isJavaScriptEnabled() {
+    webClient.javaScriptEnabled
+  }
+
+  void enableJavaScript() {
+    javaScriptEnabled = true
+  }
+
+  void disableJavaScript() {
+    javaScriptEnabled = false
+  }
+
   private Closure elementSortOrder() {
     int counter = 0
     Map<HtmlElement, Integer> sortOrder = ((HtmlPage) page).htmlElementDescendants.toList().collectEntries { [it, counter++] }

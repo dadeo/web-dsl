@@ -93,4 +93,39 @@ class WebDslTest extends AbstractNonServerTest {
       assert webDsl.alerts == ['hello world!!!', 'good-bye world!!!']
     }
   }
+
+  void test_javascriptEnabled() {
+    WebDsl dsl = new WebDsl()
+
+    assert dsl.javaScriptEnabled
+    assert dsl.webClient.javaScriptEnabled
+
+    dsl.javaScriptEnabled = false
+
+    assert !dsl.javaScriptEnabled
+    assert !dsl.webClient.javaScriptEnabled
+
+    dsl.javaScriptEnabled = true
+
+    assert dsl.javaScriptEnabled
+    assert dsl.webClient.javaScriptEnabled
+  }
+
+  void test_enableJavaScript() {
+    WebDsl dsl = new WebDsl()
+
+    dsl.javaScriptEnabled = false
+
+    dsl.enableJavaScript()
+
+    assert dsl.javaScriptEnabled
+  }
+
+  void test_disableJavaScript() {
+    WebDsl dsl = new WebDsl()
+
+    dsl.disableJavaScript()
+
+    assert !dsl.javaScriptEnabled
+  }
 }

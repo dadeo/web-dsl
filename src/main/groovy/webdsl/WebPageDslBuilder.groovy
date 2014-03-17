@@ -65,9 +65,6 @@ class WebPageDslBuilder {
     def webClient = new WebClient(definition.browserVersion)
     webClient.setWebConnection(buildWebConnection());
 
-    WebDsl web = new WebDsl()
-    web.webClient = webClient
-    web.for(destinationUrl ?: definition.baseUrl)
-    web
+    new WebDsl(webClient, destinationUrl ?: definition.baseUrl)
   }
 }

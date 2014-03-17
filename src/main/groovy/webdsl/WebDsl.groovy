@@ -38,11 +38,19 @@ class WebDsl {
   private List<String> alerts = []
 
   WebDsl() {
-    initWebClient()
+    this(new WebClient())
+  }
+
+  WebDsl(WebClient webClient) {
+    initWebClient(webClient)
   }
 
   WebDsl(String url) {
-    this()
+    this(new WebClient(), url)
+  }
+
+  WebDsl(WebClient webClient, String url) {
+    initWebClient(webClient)
     init(url)
   }
 
@@ -69,14 +77,14 @@ class WebDsl {
   }
 
   def openNewClient(where) {
-    initWebClient()
+    initWebClient(new WebClient())
     _for(where)
   }
 
-  private def initWebClient() {
-    webClient = new WebClient()
-    webClient.setAjaxController(new NicelyResynchronizingAjaxController())
-    webClient.alertHandler = new CollectingAlertHandler(alerts)
+  private def initWebClient(WebClient webClient) {
+    this.webClient = webClient
+    this.webClient.setAjaxController(new NicelyResynchronizingAjaxController())
+    this.webClient.alertHandler = new CollectingAlertHandler(alerts)
   }
 
   def form(closure) {

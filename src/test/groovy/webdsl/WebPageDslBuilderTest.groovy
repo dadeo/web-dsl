@@ -12,6 +12,8 @@
  */
 package webdsl
 
+import com.gargoylesoftware.htmlunit.CollectingAlertHandler
+import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController
 import org.junit.Test
 
 
@@ -95,5 +97,15 @@ class WebPageDslBuilderTest {
         .build('http://thehost/general/bigerror')
 
     assert dsl.$('h1').text == 'big error'
+  }
+
+  @Test
+  void test_webClient_is_initialized() {
+    WebDsl dsl = new WebPageDslBuilder()
+        .setResponseFor('http://thehost/general/bigerror', '<h1>big error</h1>', 'text/html')
+        .build('http://thehost/general/bigerror')
+
+    assert dsl.webClient.alertHandler instanceof CollectingAlertHandler
+    assert dsl.webClient.ajaxController instanceof NicelyResynchronizingAjaxController
   }
 }

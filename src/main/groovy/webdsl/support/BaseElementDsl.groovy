@@ -13,6 +13,7 @@
 package webdsl.support
 
 import com.gargoylesoftware.htmlunit.html.HtmlElement
+import com.gargoylesoftware.htmlunit.javascript.host.css.CSSStyleDeclaration
 import webdsl.support.css.selector.CssSelector
 import webdsl.support.css.selector.CssSelectorParser
 import webdsl.support.css.selector.InsideCssSelector
@@ -46,21 +47,8 @@ class BaseElementDsl {
     result
   }
 
-  Map<String, String> getStyle() {
-    Map styleAttributeStyling = [:]
-    Map cssStyling = element.getScriptObject().jsxGet_currentStyle().localModifications_.collectEntries { k, v ->
-      [k, v.value]
-    }
-
-    String styleAttributeValue = element.getAttribute('style')
-    if(styleAttributeValue) {
-      styleAttributeStyling = styleAttributeValue?.split(';').collectEntries {
-        def parts = it.split(/\s*:\s*/)
-        [parts[0].trim(), parts[1].trim()]
-      }
-    }
-
-    cssStyling + styleAttributeStyling
+  CSSStyleDeclaration getStyle() {
+    element.scriptObject.currentStyle
   }
 
   String attr(name) {

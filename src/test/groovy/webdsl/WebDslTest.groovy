@@ -98,17 +98,17 @@ class WebDslTest extends AbstractNonServerTest {
     WebDsl dsl = new WebDsl()
 
     assert dsl.javaScriptEnabled
-    assert dsl.webClient.javaScriptEnabled
+    assert dsl.webClient.options.javaScriptEnabled
 
     dsl.javaScriptEnabled = false
 
     assert !dsl.javaScriptEnabled
-    assert !dsl.webClient.javaScriptEnabled
+    assert !dsl.webClient.options.javaScriptEnabled
 
     dsl.javaScriptEnabled = true
 
     assert dsl.javaScriptEnabled
-    assert dsl.webClient.javaScriptEnabled
+    assert dsl.webClient.options.javaScriptEnabled
   }
 
   void test_enableJavaScript() {

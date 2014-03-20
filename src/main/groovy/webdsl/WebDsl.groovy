@@ -85,7 +85,7 @@ class WebDsl {
     this.webClient = webClient
     this.webClient.setAjaxController(new NicelyResynchronizingAjaxController())
     this.webClient.alertHandler = new CollectingAlertHandler(alerts)
-    this.webClient.useInsecureSSL = true
+    this.webClient.options.useInsecureSSL = true
   }
 
   def form(closure) {
@@ -213,11 +213,11 @@ class WebDsl {
   }
 
   void setJavaScriptEnabled(boolean value) {
-    webClient.javaScriptEnabled = value
+    webClient.options.javaScriptEnabled = value
   }
 
   boolean isJavaScriptEnabled() {
-    webClient.javaScriptEnabled
+    webClient.options.javaScriptEnabled
   }
 
   void enableJavaScript() {

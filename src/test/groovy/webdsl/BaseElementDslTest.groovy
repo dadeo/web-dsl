@@ -305,10 +305,11 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
 
     webdsl {
-      assert $('div').asXml() == """<div>
-                                   |  b
-                                   |</div>
-                                   |""".stripMargin()
+      assert $('div').asXml().replaceAll('\r\n', '\n') == """<div>
+                                                             |  b
+                                                             |</div>
+                                                             |""".stripMargin()
+                                                                 .replaceAll('\r\n', '\n')
     }
   }
 

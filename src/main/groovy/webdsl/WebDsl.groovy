@@ -12,6 +12,7 @@
  */
 package webdsl
 
+import com.gargoylesoftware.htmlunit.BrowserVersion
 import com.gargoylesoftware.htmlunit.CollectingAlertHandler
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController
 import com.gargoylesoftware.htmlunit.WebClient
@@ -41,12 +42,20 @@ class WebDsl {
     this(new WebClient())
   }
 
+  WebDsl(BrowserVersion browserVersion) {
+    this(new WebClient(browserVersion))
+  }
+
   WebDsl(WebClient webClient) {
     initWebClient(webClient)
   }
 
   WebDsl(String url) {
     this(new WebClient(), url)
+  }
+
+  WebDsl(BrowserVersion browserVersion, String url) {
+    this(new WebClient(browserVersion), url)
   }
 
   WebDsl(WebClient webClient, String url) {

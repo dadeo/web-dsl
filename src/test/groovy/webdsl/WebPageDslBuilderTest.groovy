@@ -12,12 +12,30 @@
  */
 package webdsl
 
+import com.gargoylesoftware.htmlunit.BrowserVersion
 import com.gargoylesoftware.htmlunit.CollectingAlertHandler
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController
 import org.junit.Test
 
 
 class WebPageDslBuilderTest {
+
+  @Test
+  void test_browserVersion_defaults_to_htmlunit_default() {
+    WebDsl dsl = new WebPageDslBuilder()
+        .build()
+
+    assert dsl.webClient.browserVersion == BrowserVersion.default
+  }
+
+  @Test
+  void test_browserVersion_may_be_specified() {
+    WebDsl dsl = new WebPageDslBuilder()
+        .browserVersion(BrowserVersion.CHROME)
+        .build()
+
+    assert dsl.webClient.browserVersion == BrowserVersion.CHROME
+  }
 
   @Test
   void test_defaultUrl_defaults_when_not_specified() {

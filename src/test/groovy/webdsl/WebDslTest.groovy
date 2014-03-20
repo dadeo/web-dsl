@@ -12,6 +12,7 @@
  */
 package webdsl
 
+import com.gargoylesoftware.htmlunit.BrowserVersion
 import com.gargoylesoftware.htmlunit.WebConnection
 
 class WebDslTest extends AbstractNonServerTest {
@@ -28,6 +29,15 @@ class WebDslTest extends AbstractNonServerTest {
     JettyRunner.withServer(webappsDirectory: WEBAPPS_DIRECTORY) {
       WebDsl webDsl = new WebDsl("http://localhost:8081/test.html")
       assert webDsl.title == 'test html'
+      assert webDsl.webClient.browserVersion == BrowserVersion.default
+    }
+  }
+
+  void test_constructor_url_and_browser_version() {
+    JettyRunner.withServer(webappsDirectory: WEBAPPS_DIRECTORY) {
+      WebDsl webDsl = new WebDsl(BrowserVersion.CHROME, "http://localhost:8081/test.html")
+      assert webDsl.title == 'test html'
+      assert webDsl.webClient.browserVersion == BrowserVersion.CHROME
     }
   }
 
@@ -45,6 +55,21 @@ class WebDslTest extends AbstractNonServerTest {
       webDsl.init('http://localhost')
 
       assert webDsl.alerts == ['hello world!!!', 'good-bye world!!!']
+    }
+  }
+
+  void test_constructor_browser_version() {
+    html """
+      <div id="myDiv">yo</div>
+    """
+
+    withWebConnection { WebConnection connection ->
+      WebDsl webDsl = new WebDsl(BrowserVersion.CHROME)
+      webDsl.webClient.webConnection = connection
+      webDsl.init('http://localhost')
+
+      assert webDsl.$('#myDiv').text == 'yo'
+      assert webDsl.webClient.browserVersion == BrowserVersion.CHROME
     }
   }
 

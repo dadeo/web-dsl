@@ -13,27 +13,33 @@
 package webdsl
 
 import com.gargoylesoftware.htmlunit.html.HtmlSelect
+import org.junit.Before
+import org.junit.Test
 import webdsl.support.DslFactory
 import webdsl.support.SelectDsl
 
-class DslHousekeepingTest extends AbstractServerTest {
+@Mixin(ServerMixin)
+class DslHousekeepingTest {
   def map
 
+  @Before
   void setUp() {
     map = [key: 'value']
-    super.setUp()
   }
 
+  @Test
   void test_closure_result_returned() {
-    assert webdsl {3} == 3
+    assert webdsl { 3 } == 3
   }
 
+  @Test
   void test_access_field() {
     webdsl {
       assert map.key == 'value'
     }
   }
 
+  @Test
   void test_modify_field() {
     webdsl {
       map = [key2: 'value']
@@ -41,20 +47,29 @@ class DslHousekeepingTest extends AbstractServerTest {
     assert map == [key2: 'value']
   }
 
+  @Test
   void test_assertions_in_dsl() {
-    shouldFail {
+    boolean failed = false
+
+    try {
       webdsl {
         fail("should fail")
       }
+    } catch (e) {
+      failed = true
     }
+
+    assert failed
   }
 
+  @Test
   void test_factory_no_override_of_select() {
     webdsl {
       assert auto instanceof SelectDsl
     }
   }
 
+  @Test
   void test_factory_override_of_select() {
     webdsl {
       handle HtmlSelect with OtherDsl
@@ -63,6 +78,7 @@ class DslHousekeepingTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_factory_defaults_to_reset() {
     webdsl(
         {
@@ -77,6 +93,7 @@ class DslHousekeepingTest extends AbstractServerTest {
     )
   }
 
+  @Test
   void test_factory_reset_can_be_overridden() {
     webdsl(
         {

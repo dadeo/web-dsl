@@ -12,18 +12,25 @@
  */
 package webdsl
 
-class DslSelectorChildrenTest extends AbstractServerTest {
+import org.junit.Before
+import org.junit.Test
 
-  protected String defaultPage() {
-    return "selector"
+@Mixin(ServerMixin)
+class DslSelectorChildrenTest {
+
+  @Before
+  void setUp() {
+    defaultPage = "selector"
   }
 
+  @Test
   void test_selector_children() {
     webdsl {
       assert(['tbody', 'tr', 'td', 'td', 'tr', 'td', 'td', 'tr', 'td', 'td'] == table.children.tagName)
     }
   }
 
+  @Test
   void test_selector_children_with_options() {
     webdsl {
       assert(['value 1', 'value 2', 'value 4', 'value 4'] == span.children(type:'span').text)

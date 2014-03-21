@@ -12,14 +12,18 @@
  */
 package webdsl
 
+import org.junit.Before
+import org.junit.Test
 
-class SubmitMatchesTitleTest extends AbstractServerTest {
+@Mixin(ServerMixin)
+class SubmitMatchesTitleTest {
 
-  @Override
-  protected String defaultPage() {
-    "submitMatchesTitle"
+  @Before
+  void setUp() {
+    defaultPage = "submitMatchesTitle"
   }
 
+  @Test
   void test_submit() {
     webdsl {
       assert title == "submit me"

@@ -12,26 +12,32 @@
  */
 package webdsl
 
-import webdsl.support.SelectorDsl
+import org.junit.Before
+import org.junit.Test
 import webdsl.support.BaseElementDsl
+import webdsl.support.SelectorDsl
 
+@Mixin(ServerMixin)
+class DslSelectorTest {
 
-class DslSelectorTest extends AbstractServerTest {
-
-  protected String defaultPage() {
-    return "selector"
+  @Before
+  @Test
+  void setUp() {
+    defaultPage = "selector"
   }
 
+  @Test
   void test_divs() {
     webdsl {
-      assertEquals 3, div.size()
-      assertEquals 2, div[1].div.size()
-      assertEquals "2.1", div[1].div[0].text
-      assertEquals "2.2", div[1].div[1].text
-      assertEquals "2.2", div2.div[1].text
+      assert div.size() == 3
+      assert div[1].div.size() == 2
+      assert div[1].div[0].text == "2.1"
+      assert div[1].div[1].text == "2.2"
+      assert div2.div[1].text == "2.2"
     }
   }
 
+  @Test
   void test_selector_built_correctly() {
     webdsl {
       assertElementTagNames(3, "tr", names.tbody[0].tr)
@@ -39,20 +45,23 @@ class DslSelectorTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_table_tbody_optional() {
     webdsl {
-      assertEquals(["first", "last", "Pinky", "Jones", "Winky", "Jones"], names.tbody[0].tr.td.text)
-      assertEquals(["first", "last", "Pinky", "Jones", "Winky", "Jones"], names.tr.td.text)
+      assert names.tbody[0].tr.td.text == ["first", "last", "Pinky", "Jones", "Winky", "Jones"]
+      assert names.tr.td.text == ["first", "last", "Pinky", "Jones", "Winky", "Jones"]
     }
   }
 
+  @Test
   void test_selector_supports_collect_method() {
     webdsl {
-      assertEquals(["first", "last", "Pinky", "Jones", "Winky", "Jones"], names.tr.td.collect { text })
-      assertEquals(['div3_1', 'div3_2', 'div3_3', 'div3_4'], div[2].div.collect { attr("id") })
+      assert names.tr.td.collect { text } == ["first", "last", "Pinky", "Jones", "Winky", "Jones"]
+      assert div[2].div.collect { attr("id") } == ['div3_1', 'div3_2', 'div3_3', 'div3_4']
     }
   }
 
+  @Test
   void test_selector_each() {
     webdsl {
       def names = []
@@ -61,6 +70,7 @@ class DslSelectorTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_selector_find() {
     webdsl {
       assert "WinkyJones" == table[0].tr.find { td.find { text == "Winky" } }.text
@@ -68,12 +78,14 @@ class DslSelectorTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_selector_findAll() {
     webdsl {
       assert ['1.2', '2.1', '2.2', '3.2'] == div.div.findAll { text.contains('2') }.text
     }
   }
 
+  @Test
   void test_selector_findResult() {
     webdsl {
       assert ['1.2', '2.1', '2.2', '3.2'] == div.div.findResult { text.contains('2') ? text : null }

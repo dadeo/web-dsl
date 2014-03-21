@@ -12,63 +12,77 @@
  */
 package webdsl
 
-class DslChildrenTest extends AbstractServerTest {
+import org.junit.Before
+import org.junit.Test
 
-  protected String defaultPage() {
-    return "children"
+@Mixin(ServerMixin)
+class DslChildrenTest {
+
+  @Before
+  void setUp() {
+    defaultPage = "children"
   }
 
+  @Test
   void test_children() {
     webdsl {
-      assert(['html', 'head', 'title', 'body', 'div', 'span', 'span', 'div', 'div', 'ul', 'li', 'li', 'li'] == children.tagName)
+      assert (['html', 'head', 'title', 'body', 'div', 'span', 'span', 'div', 'div', 'ul', 'li', 'li', 'li'] == children.tagName)
     }
   }
 
+  @Test
   void test_children_of_type() {
     webdsl {
-      assert(['hello', 'world'] == children(type:'span').text)
-      assert(['yo dog', 'message 0message 1message 2message 3', 'message 0'] == children(type:'div').text)
+      assert (['hello', 'world'] == children(type: 'span').text)
+      assert (['yo dog', 'message 0message 1message 2message 3', 'message 0'] == children(type: 'div').text)
     }
   }
 
+  @Test
   void test_children_of_type__allows_list() {
     webdsl {
-      assert(['hello', 'world'] == children(type:['span']).text)
+      assert (['hello', 'world'] == children(type: ['span']).text)
     }
   }
 
+  @Test
   void test_children_of_types() {
     webdsl {
-      assert(['hello', 'world'] == children(types:['span']).text)
-      assert(['yo dog', 'message 0message 1message 2message 3', 'message 0'] == children(types:['div']).text)
-      assert(['yo dog', 'hello', 'world', 'message 0message 1message 2message 3', 'message 0'] == children(types:['span', 'div']).text)
+      assert (['hello', 'world'] == children(types: ['span']).text)
+      assert (['yo dog', 'message 0message 1message 2message 3', 'message 0'] == children(types: ['div']).text)
+      assert (['yo dog', 'hello', 'world', 'message 0message 1message 2message 3', 'message 0'] == children(types: ['span', 'div']).text)
     }
   }
 
+  @Test
   void test_children_of_types__allows_single_type() {
     webdsl {
-      assert(['hello', 'world'] == children(types: 'span').text)
+      assert (['hello', 'world'] == children(types: 'span').text)
     }
   }
 
+  @Test
   void test_children_of_type__none_found() {
     webdsl {
-      assert([] == children(types: 'table').text)
+      assert ([] == children(types: 'table').text)
     }
   }
 
+  @Test
   void test_element_children() {
     webdsl {
       assert errors.children.text == ["message 0", "message 1message 2message 3", "message 1", "message 2", "message 3"]
     }
   }
 
+  @Test
   void test_element_children_of_type() {
     webdsl {
       assert errors.children(type: "li").text == ["message 1", "message 2", "message 3"]
     }
   }
 
+  @Test
   void test_element_children_of_types() {
     webdsl {
       assert errors.children(types: ["li", "div"]).text == ["message 0", "message 1", "message 2", "message 3"]

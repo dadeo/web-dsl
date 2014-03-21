@@ -14,21 +14,18 @@ package webdsl
 
 import groovy.xml.StreamingMarkupBuilder
 
-abstract class AbstractServerTest extends GroovyTestCase {
-  public static final PORT = 8081
-  protected server
-
-  protected String defaultPage() {
-    return "main"
-  }
+class ServerMixin {
+  static final PORT = 8081
+  JettyRunner server
+  String defaultPage = "main"
 
   def webdsl(Closure... closures) {
     webdsl null, closures
   }
 
   def webdsl(String page, Closure... closures) {
-    new ServerRunner().withServer {
-      WebDsl web = new WebDsl().for("http://localhost:$PORT/${page ?: defaultPage()}.html")
+    withServer {
+      WebDsl web = new WebDsl().init("http://localhost:$PORT/${page ?: defaultPage}.html")
       def result
       closures.each { closure ->
         def c = closure.clone()
@@ -57,20 +54,18 @@ abstract class AbstractServerTest extends GroovyTestCase {
     }
     closure.delegate = obj
     closure.resolveStrategy = Closure.DELEGATE_FIRST
-    new ServerRunner().withServer closure
+    withServer closure
   }
 
-  private class ServerRunner {
-    def withServer(Closure closure) {
-      server = new JettyRunner(port: PORT)
-      server.start()
-      def result
-      try {
-        result = closure()
-      } finally {
-        server.stop()
-      }
-      result
+  def withServer(Closure closure) {
+    server = new JettyRunner(port: PORT)
+    server.start()
+    def result
+    try {
+      result = closure()
+    } finally {
+      server.stop()
     }
+    result
   }
 }

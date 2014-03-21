@@ -12,11 +12,13 @@
  */
 package webdsl
 
+import org.junit.Test
 import webdsl.support.ElementDsl
-import webdsl.support.SelectDsl
 
-class WebDslServerTest extends AbstractServerTest {
+@Mixin(ServerMixin)
+class WebDslServerTest {
 
+  @Test
   void test_openNewClient() {
     webdsl {
       def oldClient = webClient
@@ -26,6 +28,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_exists_navigation() {
     webdsl {
       assert exists('namedRainbow')
@@ -40,6 +43,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_exists_true() {
     webdsl {
       assert exists('form0')
@@ -53,6 +57,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_exists_false() {
     webdsl {
       assert !exists('table5')
@@ -61,12 +66,14 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_title() {
     webdsl {
       assert title == "Main Page 1"
     }
   }
 
+  @Test
   void test_click_anchor_by_name() {
     webdsl {
       assert namedRainbow instanceof ElementDsl
@@ -76,6 +83,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_click_anchor_by_id() {
     webdsl {
       assert rainbow instanceof ElementDsl
@@ -84,6 +92,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_click_element_by_id_as_dynamic_string() {
     webdsl {
       assert rainbow instanceof ElementDsl
@@ -92,6 +101,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_click_anchor_by_href() {
     webdsl {
       "rainbow.html".click()
@@ -99,6 +109,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_click_anchor_by_text() {
     webdsl {
       "the rainbow".click()
@@ -106,18 +117,21 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_text_from_line_item() {
     webdsl {
       assert message3.text == "message 3"
     }
   }
 
+  @Test
   void test_text_from_div() {
     webdsl {
       assert message0.text == "message 0"
     }
   }
 
+  @Test
   void test_form_defaults_to_first_form_on_page() {
     webdsl {
       form {
@@ -128,6 +142,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_form_defaults_to_first_form_on_page_with_do() {
     webdsl {
       form.do {
@@ -138,6 +153,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_form_by_id() {
     webdsl {
       form1 {
@@ -148,6 +164,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_form_by_name_getter() {
     webdsl {
       namedForm2 {
@@ -158,6 +175,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_form_has_do() {
     webdsl {
       namedForm2.do {
@@ -168,6 +186,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_click_button_by_name() {
     webdsl {
       namedSubmit1.click()
@@ -177,6 +196,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_click_button_by_id() {
     webdsl {
       submit1.click()
@@ -185,6 +205,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_click_button_by_value() {
     webdsl {
       'Submit 1'.click()
@@ -193,6 +214,7 @@ class WebDslServerTest extends AbstractServerTest {
     assert server.params.containsKey('namedSubmit1')
   }
 
+  @Test
   void test_click_checkbox_by_name() {
     webdsl {
       namedCheckbox1.click()
@@ -206,6 +228,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_click_checkbox_by_id() {
     webdsl {
       checkbox1.click()
@@ -219,6 +242,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_checkbox_setValue_to_opposite_values() {
     webdsl {
       checkbox1.value = true
@@ -232,6 +256,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_checkbox_setValue_defaulted_as_false_set_to_false() {
     webdsl {
       checkbox1.value = false
@@ -240,6 +265,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_checkbox_setValue_defaulted_as_true_set_to_true() {
     webdsl {
       checkbox2.value = true
@@ -248,6 +274,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_form_text_by_id() {
     webdsl {
       assert nameId.value == 'a default value'
@@ -257,6 +284,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_form_text_by_name() {
     webdsl {
       assert name instanceof ElementDsl
@@ -267,6 +295,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_form_text_by_name_as_string() {
     webdsl {
       "name".value = 'henry'
@@ -275,6 +304,7 @@ class WebDslServerTest extends AbstractServerTest {
     assert server.params.name[0] == 'henry'
   }
 
+  @Test
   void test_form_text_by_name_as_gstring() {
     webdsl {
       "na${'me'}".value = 'henry'
@@ -283,6 +313,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_form_text_changes_updates_page_tracking() {
     webdsl {
       textToEcho.value = 'abcd'
@@ -290,6 +321,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_fillInWith() {
     webdsl {
       form {
@@ -303,6 +335,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_fillInWith_allows_extra_values_in_map() {
     webdsl {
       form {
@@ -313,6 +346,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_values() {
     Map actual
     webdsl {
@@ -323,6 +357,7 @@ class WebDslServerTest extends AbstractServerTest {
     assert actual == [name: "a default value", auto: "Volvo", namedCheckbox1: false, namedCheckbox2: true, namedCheckbox3: true, radio1: "radio 1 value 3"]
   }
 
+  @Test
   void test_valuesById() {
     webdsl {
       Map actual = form.valuesById()
@@ -330,6 +365,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_values_with_multiple_select() {
     webdsl {
       auto2.value = ['Volvo', 'Saab']
@@ -338,18 +374,21 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_radio_with_label() {
     webdsl {
       assert "radio content 3" == radio1_3.label
     }
   }
 
+  @Test
   void test_radio_with_no_label() {
     webdsl {
       assert "" == radio1_1.label
     }
   }
 
+  @Test
   void test_radio() {
     webdsl {
       assert !radio1_1.checked
@@ -369,6 +408,7 @@ class WebDslServerTest extends AbstractServerTest {
     assert server.params.radio1[0] == 'radio 1 value 2'
   }
 
+  @Test
   void test_table_as_objects_with_offset() {
     def result
     webdsl {
@@ -381,6 +421,7 @@ class WebDslServerTest extends AbstractServerTest {
     assert result == expected
   }
 
+  @Test
   void test_table_list_offset() {
     def result
     webdsl {
@@ -390,6 +431,7 @@ class WebDslServerTest extends AbstractServerTest {
     assert result == expected
   }
 
+  @Test
   void test_table_list_column_and_offset() {
     def result
     webdsl {
@@ -399,6 +441,7 @@ class WebDslServerTest extends AbstractServerTest {
     assert result == expected
   }
 
+  @Test
   void test_list_unordered() {
     def actual
     webdsl {
@@ -407,6 +450,7 @@ class WebDslServerTest extends AbstractServerTest {
     assert actual == ['item 1', 'item 2', 'item 3', 'item 4', 'item 5']
   }
 
+  @Test
   void test_list_ordered() {
     def actual
     webdsl {
@@ -415,6 +459,7 @@ class WebDslServerTest extends AbstractServerTest {
     assert actual == ['item 1', 'item 2', 'item 3']
   }
 
+  @Test
   void test_properties() {
     webdsl {
       def props = properties()
@@ -428,6 +473,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_ids_starting_with_upper_case_letters() {
     webdsl {
       assert upper.text == 'upper'
@@ -435,6 +481,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_intern() {
     webdsl {
       assert "upper".intern.text == 'upper'
@@ -442,18 +489,21 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_string_value() {
     webdsl {
       assert "nameId".value == 'a default value'
     }
   }
 
+  @Test
   void test_gstring_value() {
     webdsl {
       assert "name${"Id"}".value == 'a default value'
     }
   }
 
+  @Test
   void test_string_text() {
     webdsl {
       assert "upper".text == 'upper'
@@ -461,6 +511,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_gstring_text() {
     webdsl {
       assert "uppe${'r'}".text == 'upper'
@@ -468,6 +519,7 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_tagName() {
     webdsl {
       assert errors.tagName == "div"
@@ -483,30 +535,35 @@ class WebDslServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_text_is_trimmed() {
     webdsl {
       assert multiline.text == "multi-line text"
     }
   }
 
+  @Test
   void test_untrimmedText() {
     webdsl {
       assert multiline.untrimmedText == "\n    multi-line   text\n"
     }
   }
 
+  @Test
   void test_value_is_trimmed() {
     webdsl {
       assert valueWithSpaces.value == "abc"
     }
   }
 
+  @Test
   void test_untrimmedValue() {
     webdsl {
       assert valueWithSpaces.untrimmedValue == " abc "
     }
   }
 
+  @Test
   void test_back() {
     webdsl {
       assert title == "Main Page 1"

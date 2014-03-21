@@ -12,11 +12,12 @@
  */
 package webdsl
 
-import webdsl.support.BaseElementDsl
-import webdsl.support.SelectorDsl
+import org.junit.Test
 
-class InlineHtmlServerTest extends AbstractServerTest {
+@Mixin(ServerMixin)
+class InlineHtmlServerTest {
 
+  @Test
   void test_test_invokes_closure() {
     def invoked
 
@@ -30,6 +31,7 @@ class InlineHtmlServerTest extends AbstractServerTest {
     assert invoked
   }
 
+  @Test
   void test_test_returns_result() {
     def invoked
 
@@ -43,6 +45,7 @@ class InlineHtmlServerTest extends AbstractServerTest {
     assert result
   }
 
+  @Test
   void test_test_with_html_as_string() {
     test {
       html """
@@ -55,10 +58,11 @@ class InlineHtmlServerTest extends AbstractServerTest {
     }
   }
 
+  @Test
   void test_test_with_html_builder() {
     test {
       html {
-        div(id:'mydiv', 'hello world')
+        div(id: 'mydiv', 'hello world')
       }
 
       webdsl {

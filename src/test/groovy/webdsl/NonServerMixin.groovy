@@ -16,7 +16,7 @@ import com.gargoylesoftware.htmlunit.BrowserVersion
 import groovy.xml.StreamingMarkupBuilder
 import junit.framework.TestCase
 
-abstract class AbstractNonServerTest extends TestCase {
+class NonServerMixin {
   private String contents
   private String cssContents
   private String jsContents

@@ -12,10 +12,13 @@
  */
 package webdsl
 
+import org.junit.Test
 import webdsl.support.RadioButtonDsl
 
-class RadioButtonDslTest extends AbstractNonServerTest {
+@Mixin(NonServerMixin)
+class RadioButtonDslTest {
 
+  @Test
   void test_instance_type() {
     html """
       <form>
@@ -31,6 +34,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_getValue_no_selection() {
     html """
       <form>
@@ -45,6 +49,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_getValue_selection() {
     html """
       <form>
@@ -60,6 +65,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
   }
 
 
+  @Test
   void test_getValue_outside_of_a_form__no_selection() {
     html """
       <input type='radio' name='sex' value='male'>Male
@@ -72,6 +78,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_getValue_outside_of_a_form___selection() {
     html """
       <input type='radio' name='sex' value='male'>Male
@@ -84,6 +91,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_getValue_multiple_forms__second_form_no_selection() {
     html """
       <form id='form1'>
@@ -105,6 +113,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_getValue_multiple_forms__second_form_has_selection() {
     html """
       <form id='form1'>
@@ -126,6 +135,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_valid_value() {
     html """
       <form>
@@ -141,6 +151,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_null_deselects_all() {
     html """
       <form>
@@ -156,6 +167,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_true() {
     html """
       <form>
@@ -171,6 +183,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_false() {
     html """
       <form>
@@ -186,6 +199,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_outside_of_a_form_valid_value() {
     html """
       <input type='radio' name='sex' value='male'>Male
@@ -199,6 +213,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_outside_of_a_form_null_deselects_all() {
     html """
       <input type='radio' name='sex' value='male'>Male
@@ -212,6 +227,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_does_not_affect_other_forms_inputs__modify_first_form_input() {
     html """
       <form id='form1'>
@@ -238,6 +254,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_does_not_affect_other_forms_inputs__modify_second_form_input() {
     html """
       <form id='form1'>
@@ -264,6 +281,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_form_values() {
     html """
       <form>
@@ -278,6 +296,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_form_valuesById() {
     html """
       <form>
@@ -292,6 +311,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_form_fillInWith_by_name() {
     html """
       <form>
@@ -307,6 +327,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_form_fillInWith_by_id() {
     html """
       <form>
@@ -322,6 +343,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_group_inside_a_form() {
     html """
       <form>
@@ -343,6 +365,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_group_outside_a_form() {
     html """
       <input type='radio' name='sex' id='sexMale' value='male'>Male
@@ -362,6 +385,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_group_multiple_forms() {
     html """
       <form id='form1'>
@@ -389,6 +413,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_click_fires_onclick_event() {
     js '''
       function handler() {
@@ -413,6 +438,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_value_fires_onclick_event() {
     js '''
       function handler() {
@@ -437,6 +463,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_value_does_not_fire_onclick_event_when_value_does_not_change() {
     js '''
       function handler() {
@@ -461,6 +488,7 @@ class RadioButtonDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_click_fires_onclick_event_when_value_does_not_change() {
     js '''
       function handler() {

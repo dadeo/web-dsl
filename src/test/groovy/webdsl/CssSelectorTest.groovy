@@ -12,9 +12,12 @@
  */
 package webdsl
 
+import org.junit.Test
 
-class CssSelectorTest extends AbstractNonServerTest {
+@Mixin(NonServerMixin)
+class CssSelectorTest {
 
+  @Test
   void test_select_by_tag_name_single_element() {
     html {
       p('a')
@@ -27,6 +30,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_tag_name_multiple_elements() {
     html {
       div('hello')
@@ -40,6 +44,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_tag_name_ignores_class() {
     html {
       p(class: 'main', 'a')
@@ -52,6 +57,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_tag_name_not_found() {
     html {
       div('hello')
@@ -64,6 +70,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_class_single_element() {
     html {
       p('a')
@@ -78,6 +85,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_class_multiple_elements() {
     html {
       p('a')
@@ -92,6 +100,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_class_multiple_classes_first_item() {
     html {
       p('a')
@@ -106,6 +115,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_class_multiple_classes_middle_item() {
     html {
       p('a')
@@ -120,6 +130,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_class_multiple_classes_last_item() {
     html {
       p('a')
@@ -134,6 +145,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_class_multiple_classes_not_exact_match() {
     html {
       p('a')
@@ -148,6 +160,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_class_not_found() {
     html {
       p('a')
@@ -162,6 +175,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_tagName_and_class_single_element() {
     html {
       p('a')
@@ -176,6 +190,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_tagName_and_class_multiple_elements() {
     html {
       p('a')
@@ -191,6 +206,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_tagName_and_class_not_found() {
     html {
       p('a')
@@ -205,6 +221,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_id_single_element() {
     html {
       p('a')
@@ -218,6 +235,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_id_multiple_elements() {
     html {
       p(id: 'myP', 'a')
@@ -231,6 +249,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_id_ignores_class() {
     html {
       p('a')
@@ -244,6 +263,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_id_not_found() {
     html {
       p('a')
@@ -257,6 +277,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_id_and_class_single_element() {
     html {
       p('a')
@@ -270,6 +291,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_id_and_class_multiple_elements() {
     html {
       p('a')
@@ -284,6 +306,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_id_and_class_not_found() {
     html {
       p('a')
@@ -297,6 +320,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_multiple_by_id_then_class() {
     html {
       div {
@@ -321,6 +345,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_tag_with_attribute_by_name() {
     html {
       div(select: 'me', 'foo')
@@ -339,6 +364,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_tag_with_attribute_by_value() {
     html {
       div(select: 'me', 'foo')
@@ -357,6 +383,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_attribute_value() {
     html {
       div(select: 'me', 'foo')
@@ -375,6 +402,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_attribute_begins_with() {
     html {
       div(select: 'me', 'foo')
@@ -393,6 +421,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_attribute_ends_with() {
     html {
       div(select: 'me', 'foo')
@@ -411,6 +440,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_attribute_value_contains_with() {
     html {
       div(select: 'me', 'foo')
@@ -429,6 +459,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_attribute_value_list_contains_with() {
     html {
       div(select: 'this', 'foo')
@@ -447,6 +478,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_by_attribute_starts_with_hyphenated() {
     html {
       div(select: 'en', 'foo')
@@ -465,6 +497,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_relationship_or() {
     html {
       div(select: 'en', 'foo')
@@ -484,6 +517,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_relationship_follows() {
     html {
       a('a')
@@ -500,6 +534,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_relationship_follows_complex() {
     html {
       a {
@@ -545,6 +580,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_relationship_child() {
     html {
       a {
@@ -565,6 +601,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_relationship_child_complex() {
     html {
       a {
@@ -589,6 +626,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_relationship_multiple_simple() {
     html {
       a {
@@ -612,6 +650,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_relationship_precededBySibling_simple() {
     html {
       a {
@@ -631,6 +670,7 @@ class CssSelectorTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_select_relationship_precededBySibling_complex() {
     html {
       a {

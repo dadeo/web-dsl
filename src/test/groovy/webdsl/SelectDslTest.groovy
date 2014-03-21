@@ -12,10 +12,13 @@
  */
 package webdsl
 
+import org.junit.Test
 import webdsl.support.SelectDsl
 
-class SelectDslTest extends AbstractNonServerTest {
+@Mixin(NonServerMixin)
+class SelectDslTest {
 
+  @Test
   void test_instance_type() {
     html {
       form {
@@ -34,6 +37,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_getValue_no_option_selected__not_multiple_select() {
     html {
       form {
@@ -50,6 +54,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_getValue_option_selected__not_multiple_select() {
     html {
       form {
@@ -66,6 +71,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_getValue_multiple_options_selected__multiple_select() {
     html {
       form {
@@ -82,6 +88,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_option_selected__by_name__not_multiple_select() {
     html {
       form {
@@ -99,6 +106,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_multiple_items__by_name__multiple_select() {
     html {
       form {
@@ -116,6 +124,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_multiple_items__by_name__not_multiple_select_should_fail() {
     html {
       form {
@@ -137,6 +146,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_option_selected__by_value() {
     html {
       form {
@@ -154,6 +164,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_multiple__by_value__multiple_select() {
     html {
       form {
@@ -171,6 +182,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_to_empty_list__multiple_select() {
     html {
       form {
@@ -188,6 +200,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_to_null__not_multiple_select() {
     html {
       form {
@@ -209,6 +222,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_to_null__multiple_select() {
     html {
       form {
@@ -226,6 +240,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_multiple_items__by_value__not_multiple_select_should_fail() {
     html {
       form {
@@ -247,6 +262,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_getText() {
     html {
       form {
@@ -263,6 +279,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_getOptions() {
     html {
       form {
@@ -281,6 +298,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_getSelectedOptions__multiple_select() {
     html {
       form {
@@ -299,6 +317,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_getSelectedOptions_nothing_selected__multiple_select() {
     html {
       form {
@@ -315,6 +334,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_getSelectedOptions_nothing_selected__not_multiple_select() {
     html {
       form {
@@ -333,6 +353,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_getOptions__select_option__not_multiple_select() {
     html {
       form {
@@ -351,6 +372,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_getOptions__select_option__multiple_select() {
     html {
       form {
@@ -368,6 +390,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_getOptions_deselect_only_option__multiple_select() {
     html {
       form {
@@ -385,6 +408,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_getOptions_deselect_one_option__multiple_select() {
     html {
       form {
@@ -402,6 +426,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_form_values__not_multiple_select() {
     html {
       form {
@@ -418,6 +443,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_form_values__multiple_select() {
     html {
       form {
@@ -434,6 +460,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_form_valuesById__not_multiple_select() {
     html {
       form {
@@ -450,6 +477,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_form_valuesById__multiple_select() {
     html {
       form {
@@ -466,6 +494,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_form_fillInWith_by_name__multiple_select__with_multiple_values() {
     html {
       form {
@@ -483,6 +512,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_form_fillInWith_by_name__multiple_select__with_single_value() {
     html {
       form {
@@ -500,6 +530,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_form_fillInWith_by_name__not_multiple_select() {
     html {
       form {
@@ -512,6 +543,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_form_fillInWith_by_id__multiple_select__with_multiple_values() {
     html {
       form {
@@ -529,6 +561,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_form_fillInWith_by_id__multiple_select__with_single_value() {
     html {
       form {
@@ -546,6 +579,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_form_fillInWith_by_id__not_multiple_select() {
     html {
       form {
@@ -563,6 +597,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_deselect__not_multiple_select__should_fail() {
     html {
       form {
@@ -584,6 +619,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_deselect__multiple_select() {
     html {
       form {
@@ -601,6 +637,7 @@ class SelectDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_value_not_found() {
     html {
       form {

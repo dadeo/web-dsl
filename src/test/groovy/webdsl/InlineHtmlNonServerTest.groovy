@@ -12,9 +12,12 @@
  */
 package webdsl
 
-class InlineHtmlNonServerTest extends AbstractNonServerTest {
+import org.junit.Test
 
-  void test_test_invokes_closure() {
+@Mixin(NonServerMixin)
+class InlineHtmlNonServerTest {
+
+  @Test void test_test_invokes_closure() {
     def invoked
 
     webdsl {
@@ -24,7 +27,7 @@ class InlineHtmlNonServerTest extends AbstractNonServerTest {
     assert invoked
   }
 
-  void test_test_returns_result() {
+  @Test void test_test_returns_result() {
     def invoked
 
     def result = webdsl {
@@ -34,7 +37,7 @@ class InlineHtmlNonServerTest extends AbstractNonServerTest {
     assert result
   }
 
-  void test_test_with_html_as_string() {
+  @Test void test_test_with_html_as_string() {
     html """
         <div id='mydiv'>hello world</div>
       """
@@ -44,7 +47,7 @@ class InlineHtmlNonServerTest extends AbstractNonServerTest {
     }
   }
 
-  void test_test_with_htmlbuilder() {
+  @Test void test_test_with_htmlbuilder() {
     html {
       div(id: 'mydiv', 'hello world')
     }

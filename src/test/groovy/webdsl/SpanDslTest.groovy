@@ -12,8 +12,12 @@
  */
 package webdsl
 
-class SpanDslTest extends AbstractNonServerTest {
+import org.junit.Test
 
+@Mixin(NonServerMixin)
+class SpanDslTest {
+
+  @Test
   void test_getValue() {
     html {
       span id:'id', ' MY VALUE '
@@ -25,6 +29,7 @@ class SpanDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_getValue_with_additional_markup() {
     html "<span id='id'>this is <span>marked up</span> text</span>"
 
@@ -34,6 +39,7 @@ class SpanDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue() {
     html {
       span id:'id', ' MY VALUE '
@@ -58,6 +64,7 @@ class SpanDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setText() {
     html {
       span id:'id', ' MY VALUE '
@@ -71,6 +78,7 @@ class SpanDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_asXml() {
     html {
       span id:'id', 'OLD VALUE'
@@ -87,6 +95,7 @@ class SpanDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_click() {
     html """
       <span id="id" onclick="echo();">abcd</span>
@@ -105,6 +114,5 @@ class SpanDslTest extends AbstractNonServerTest {
       assert echoedText.value == 'abcd'
     }
   }
-
 
 }

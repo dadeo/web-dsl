@@ -12,8 +12,12 @@
  */
 package webdsl
 
-class TextInputDslTest extends AbstractNonServerTest {
+import org.junit.Test
 
+@Mixin(NonServerMixin)
+class TextInputDslTest {
+
+  @Test
   void test_value() {
     html {
       form {
@@ -29,6 +33,7 @@ class TextInputDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_text() {
     html {
       form {
@@ -44,6 +49,7 @@ class TextInputDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_fillInWith_by_name_input() {
     html {
       form {
@@ -60,6 +66,7 @@ class TextInputDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_fillInWith_by_id() {
     html {
       form {
@@ -76,6 +83,7 @@ class TextInputDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_values() {
     html {
       form {
@@ -90,6 +98,7 @@ class TextInputDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_valuesById_input() {
     html {
       form {
@@ -104,6 +113,7 @@ class TextInputDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_page_updated_when_javascript_executes() {
     html """
       <input id="textToEcho" onchange="echo();" type="text" value=""/>

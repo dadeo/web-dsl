@@ -14,7 +14,8 @@ package webdsl
 
 import org.junit.Test
 
-class StylesTest extends AbstractNonServerTest {
+@Mixin(NonServerMixin)
+class StylesTest {
 
   @Test
   void test_element_with_inline_style() {

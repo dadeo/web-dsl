@@ -12,8 +12,12 @@
  */
 package webdsl
 
-class TableDslTest extends AbstractNonServerTest {
+import org.junit.Test
 
+@Mixin(NonServerMixin)
+class TableDslTest {
+
+  @Test
   void test_table_as_objects() {
     html {
       table(id: 'table3') {
@@ -38,6 +42,7 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_table_as_objects_with_names() {
     html {
       table(id: 'table3') {
@@ -62,6 +67,7 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_table_as_objects_rowRange() {
     html {
       table(id: 'table3') {
@@ -83,6 +89,7 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_table_as_objects_rowRange_through_end() {
     html {
       table(id: 'table3') {
@@ -105,6 +112,7 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_table_as_objects_rowRange_from_end() {
     html {
       table(id: 'table3') {
@@ -127,6 +135,7 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_table_as_objects_rowRange_of_one() {
     html {
       table(id: 'table3') {
@@ -147,6 +156,7 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_table_as_objects_column() {
     html {
       table(id: 'table3') {
@@ -171,6 +181,7 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_table_as_objects_column_offset_and_row_range() {
     html {
       table(id: 'table3') {
@@ -193,6 +204,7 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_table_as_list() {
     html {
       table(id: 'table3') {
@@ -218,6 +230,7 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_table_as_list_with_offset() {
     html {
       table(id: 'table3') {
@@ -243,6 +256,7 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_table_as_list_with_row_range() {
     html {
       table(id: 'table3') {
@@ -265,6 +279,7 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_table_as_list_with_column_and_row_range() {
     html {
       table(id: 'table3') {
@@ -287,6 +302,7 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_table_as_columns() {
     html {
       table(id: 'table3') {
@@ -310,6 +326,7 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_table_as_columns_not_all_columns_requested() {
     html {
       table(id: 'table3') {
@@ -329,6 +346,7 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_table_as_columns_extra_columns_requested() {
     html {
       table(id: 'table3') {
@@ -340,14 +358,15 @@ class TableDslTest extends AbstractNonServerTest {
 
     webdsl {
       def expected = [
-          [first: "pinky", last: "jones1", ssn:""],
-          [first: "winky", last: "jones2", ssn:""],
-          [first: "dinky", last: "jones3", ssn:""],
+          [first: "pinky", last: "jones1", ssn: ""],
+          [first: "winky", last: "jones2", ssn: ""],
+          [first: "dinky", last: "jones3", ssn: ""],
       ]
       assert table3.as.columns('first', 'last', 'ssn') == expected
     }
   }
 
+  @Test
   void test_table_as_columns_with_column_offset() {
     html {
       table(id: 'table3') {
@@ -371,6 +390,7 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_table_as_columns_with_row_range() {
     html {
       table(id: 'table3') {
@@ -392,6 +412,7 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_table_as_columns_with_column_offset_and_row_range() {
     html {
       table(id: 'table3') {
@@ -413,6 +434,7 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_table_as_object() {
     html {
       table(id: 'person') {
@@ -432,6 +454,7 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_table_as_object_with_rowRange() {
     html {
       table(id: 'person') {
@@ -450,6 +473,7 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_table_as_object_with_column() {
     html {
       table(id: 'person') {
@@ -469,6 +493,7 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_table_process() {
     html {
       table(id: 'employees') {
@@ -498,6 +523,7 @@ class TableDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_table_by_span() {
     html {
       table(id: 'employees') {

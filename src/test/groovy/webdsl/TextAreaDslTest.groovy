@@ -12,13 +12,16 @@
  */
 package webdsl
 
+import org.junit.Test
 
-class TextAreaDslTest extends AbstractNonServerTest {
+@Mixin(NonServerMixin)
+class TextAreaDslTest {
 
+  @Test
   void test_value_textarea() {
     html {
       form {
-        textarea(name: "name", id:"id")
+        textarea(name: "name", id: "id")
       }
     }
 
@@ -30,10 +33,11 @@ class TextAreaDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_fillInWith_by_name_textarea() {
     html {
       form {
-        textarea(name: "name", id:"id")
+        textarea(name: "name", id: "id")
       }
     }
 
@@ -46,6 +50,7 @@ class TextAreaDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_fillInWith_by_id_textarea() {
     html {
       form {
@@ -62,20 +67,22 @@ class TextAreaDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_values_textarea() {
     html {
       form {
-        textarea(name: "name","MYVALUE")
+        textarea(name: "name", "MYVALUE")
       }
     }
 
     webdsl {
       form {
-        assert [name:"MYVALUE"] == values()
+        assert [name: "MYVALUE"] == values()
       }
     }
   }
 
+  @Test
   void test_valuesById_textarea() {
     html {
       form {
@@ -85,7 +92,7 @@ class TextAreaDslTest extends AbstractNonServerTest {
 
     webdsl {
       form {
-        assert [id:"MYVALUE"] == valuesById()
+        assert [id: "MYVALUE"] == valuesById()
       }
     }
   }

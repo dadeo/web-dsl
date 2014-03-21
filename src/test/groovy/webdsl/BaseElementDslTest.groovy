@@ -12,8 +12,12 @@
  */
 package webdsl
 
-class BaseElementDslTest extends AbstractNonServerTest {
+import org.junit.Test
 
+@Mixin(NonServerMixin)
+class BaseElementDslTest {
+
+  @Test
   void test_getAttribute() {
     html {
       div(id: "my-div", class: 'look-a-class') {}
@@ -25,6 +29,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_getAttributes() {
     html {
       div(id: "my-div", class: 'look-a-class') {}
@@ -35,6 +40,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_hasClass() {
     html {
       div(id: "my-div", class: 'look-a-class') {}
@@ -45,6 +51,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_hasClass_not_the_same_class() {
     html {
       div(id: "my-div", class: 'look-a-class') {}
@@ -55,6 +62,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_hasClass_does_not_have_a_class() {
     html {
       div(id: "my-div") {}
@@ -65,6 +73,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_hasClass_multiple_classes() {
     html {
       div(id: "my-div", class: 'one-class two-class three-class blue-class') {}
@@ -78,6 +87,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_hasClass_does_not_match_on_partials() {
     html {
       div(id: "my-div", class: 'one-class two-class three-class blue-class') {}
@@ -88,7 +98,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
-
+  @Test
   void test_hasAttribute() {
     html {
       div(id: "my-div", class: 'look-a-class') {}
@@ -100,6 +110,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_hasAttribute_empty_attribute() {
     html {
       div(id: "my-div", class: 'look-a-class', disabled: '', checked: '') {}
@@ -111,6 +122,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_hasAttribute_attribute_with_no_value() {
     html("<div id='my-div' class='look-a-class' disabled checked></div>")
 
@@ -120,6 +132,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_hasAttribute_attribute_are_not_case_sensitive() {
     html("<div id='my-div' class='look-a-class' DISABLED CHECKED></div>")
 
@@ -129,6 +142,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_hasAttribute_no_attribute() {
     html {
       div(id: "my-div") {}
@@ -140,6 +154,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_isDisabled_true() {
     html {
       div(id: "my-div", disabled: 'true') {}
@@ -150,6 +165,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_isDisabled_upper_case_true() {
     html {
       div(id: "my-div", DISABLED: 'DISABLED') {}
@@ -160,6 +176,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_isDisabled_false() {
     html {
       div(id: "my-div") {}
@@ -170,6 +187,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_insertBefore_first_element() {
     html {
       div('b', id: 'target')
@@ -185,6 +203,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_insertBefore_last_element() {
     html {
       div('a')
@@ -200,6 +219,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_insertAfter_first_element() {
     html {
       div('a', id: 'target')
@@ -215,6 +235,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_insertAfter_last_element() {
     html {
       div('a')
@@ -230,6 +251,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_prependChild_children_exist() {
     html {
       div(id: 'target') {
@@ -248,6 +270,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_prependChild_no_children_exist() {
     html {
       div(id: 'target') {}
@@ -264,7 +287,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
-
+  @Test
   void test_appendChild_children_exist() {
     html {
       div(id: 'target') {
@@ -283,6 +306,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_appendChild_no_children_exist() {
     html {
       div(id: 'target') {}
@@ -299,6 +323,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_asXml() {
     html {
       div('b')
@@ -313,6 +338,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_closest_direct_descendent() {
     html {
       div(id: 'div0') {}
@@ -333,6 +359,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_closest_nested_descendant() {
     html {
       div(id: 'div0') {}
@@ -355,6 +382,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_closest_css_selector_class() {
     html {
       div(id: 'div0', class: 'one') {}
@@ -377,6 +405,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_closest_css_selector_class__not_an_ancestor() {
     html {
       div(id: 'div0', class: 'one') {}
@@ -399,6 +428,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_closest_css_selector_id() {
     html {
       div(id: 'div0', class: 'one') {}
@@ -421,6 +451,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_closest_css_selector_id__not_an_ancestor() {
     html {
       div(id: 'div0', class: 'one') {}
@@ -443,6 +474,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_closest_css_selector_child() {
     html {
       div(id: 'div0', class: 'one') {}
@@ -465,6 +497,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_closest_css_selector_sibling() {
     html {
       div(id: 'div1', class: 'one') {
@@ -484,6 +517,7 @@ class BaseElementDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_closest_css_selector_tag__not_found() {
     html {
       div(id: 'div1') {

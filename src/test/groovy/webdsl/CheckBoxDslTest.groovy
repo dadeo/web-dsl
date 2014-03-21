@@ -12,11 +12,13 @@
  */
 package webdsl
 
-import com.gargoylesoftware.htmlunit.BrowserVersion
+import org.junit.Test
 import webdsl.support.CheckBoxDsl
 
-class CheckBoxDslTest extends AbstractNonServerTest {
+@Mixin(NonServerMixin)
+class CheckBoxDslTest {
 
+  @Test
   void test_instance_type() {
     html """
       <form>
@@ -31,6 +33,7 @@ class CheckBoxDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_click() {
     html """
       <form>
@@ -51,6 +54,7 @@ class CheckBoxDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_getValue_not_checked() {
     html """
       <form>
@@ -63,6 +67,7 @@ class CheckBoxDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_getValue_checked() {
     html """
       <form>
@@ -76,6 +81,7 @@ class CheckBoxDslTest extends AbstractNonServerTest {
   }
 
 
+  @Test
   void test_getValue_outside_of_a_form() {
     html """
       <input type="checkbox" name="bike" value="Bike">I have a bike<br>
@@ -88,6 +94,7 @@ class CheckBoxDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_getValue_multiple_forms() {
     html """
       <form id='form1'>
@@ -110,6 +117,7 @@ class CheckBoxDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_null_is_false() {
     html """
       <form>
@@ -124,6 +132,7 @@ class CheckBoxDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_true() {
     html """
       <form>
@@ -138,6 +147,7 @@ class CheckBoxDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_false() {
     html """
       <form>
@@ -152,6 +162,7 @@ class CheckBoxDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_outside_of_a_form_null_is_false() {
     html """
       <input type="checkbox" name="bike" value="Bike">I have a bike<br>
@@ -164,6 +175,7 @@ class CheckBoxDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_does_not_affect_other_forms_inputs__modify_first_form_input() {
     html """
       <form id='form1'>
@@ -188,6 +200,7 @@ class CheckBoxDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_setValue_does_not_affect_other_forms_inputs__modify_second_form_input() {
     html """
       <form id='form1'>
@@ -212,6 +225,7 @@ class CheckBoxDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_form_values() {
     html """
       <form>
@@ -225,6 +239,7 @@ class CheckBoxDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_form_valuesById() {
     html """
       <form>
@@ -238,6 +253,7 @@ class CheckBoxDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_form_fillInWith_by_name() {
     html """
       <form>
@@ -252,6 +268,7 @@ class CheckBoxDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_form_fillInWith_by_id() {
     html """
       <form>
@@ -266,6 +283,7 @@ class CheckBoxDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_click_fires_onclick_event() {
     js '''
       function handler() {
@@ -286,6 +304,7 @@ class CheckBoxDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_value_fires_onclick_event() {
     js '''
       function handler() {
@@ -306,6 +325,7 @@ class CheckBoxDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_value_does_not_fire_onclick_event_when_value_does_not_change() {
     js '''
       function handler() {

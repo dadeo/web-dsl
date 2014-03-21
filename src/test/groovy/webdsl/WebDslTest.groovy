@@ -14,10 +14,13 @@ package webdsl
 
 import com.gargoylesoftware.htmlunit.BrowserVersion
 import com.gargoylesoftware.htmlunit.WebConnection
+import org.junit.Test
 
-class WebDslTest extends AbstractNonServerTest {
+@Mixin(NonServerMixin)
+class WebDslTest {
   private static final String WEBAPPS_DIRECTORY = 'src/test/resources/webapps/simple'
 
+  @Test
   void test_constructor_no_args() {
     JettyRunner.withServer(webappsDirectory: WEBAPPS_DIRECTORY) {
       WebDsl webDsl = new WebDsl().init("http://localhost:8081/test.html")
@@ -25,6 +28,7 @@ class WebDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_constructor_url() {
     JettyRunner.withServer(webappsDirectory: WEBAPPS_DIRECTORY) {
       WebDsl webDsl = new WebDsl("http://localhost:8081/test.html")
@@ -33,6 +37,7 @@ class WebDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_constructor_url_and_browser_version() {
     JettyRunner.withServer(webappsDirectory: WEBAPPS_DIRECTORY) {
       WebDsl webDsl = new WebDsl(BrowserVersion.CHROME, "http://localhost:8081/test.html")
@@ -41,6 +46,7 @@ class WebDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_alertHandler_configured_by_default() {
     html """
       <script>
@@ -58,6 +64,7 @@ class WebDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_constructor_browser_version() {
     html """
       <div id="myDiv">yo</div>
@@ -73,6 +80,7 @@ class WebDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_alerts_compound() {
     html """
       <script>
@@ -94,6 +102,7 @@ class WebDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_alertHandler_alerts_clear() {
     html """
       <script>
@@ -119,6 +128,7 @@ class WebDslTest extends AbstractNonServerTest {
     }
   }
 
+  @Test
   void test_javascriptEnabled() {
     WebDsl dsl = new WebDsl()
 
@@ -136,6 +146,7 @@ class WebDslTest extends AbstractNonServerTest {
     assert dsl.webClient.options.javaScriptEnabled
   }
 
+  @Test
   void test_enableJavaScript() {
     WebDsl dsl = new WebDsl()
 
@@ -146,6 +157,7 @@ class WebDslTest extends AbstractNonServerTest {
     assert dsl.javaScriptEnabled
   }
 
+  @Test
   void test_disableJavaScript() {
     WebDsl dsl = new WebDsl()
 

@@ -30,7 +30,7 @@ class RadioButtonDsl extends ElementDsl {
 
   def getValue() {
     if (checked)
-      super.value
+      element.getAttribute("value")
     else {
       BaseElementDsl formDsl = closest('form')
       DomNode containingNode = formDsl ? formDsl.element : pageContainer.page

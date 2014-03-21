@@ -48,16 +48,20 @@ class ElementDsl extends BaseElementDsl {
     element.getTextContent()
   }
 
+  def setText(String text) {
+    element.setTextContent(text)
+  }
+
   def getValue() {
-    untrimmedValue.trim()
+    text
   }
 
   def getUntrimmedValue() {
-    element.getAttribute("value")
+    untrimmedText
   }
 
   def setValue(value) {
-    element.setAttribute("value", value)
+    element.setTextContent(value)
   }
 
   def getChildren() {

@@ -23,7 +23,7 @@ class DslFactory {
       (HtmlCheckBoxInput):CheckBoxDsl,
       (HtmlUnorderedList):ListDsl,
       (HtmlOrderedList):ListDsl,
-      (HtmlInput):InputDsl,
+      (HtmlTextInput):TextInputDsl,
       (HtmlTextArea):TextAreaDsl,
       (HtmlElement):ElementDsl
   ]

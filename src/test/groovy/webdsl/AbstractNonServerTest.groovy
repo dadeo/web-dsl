@@ -12,6 +12,7 @@
  */
 package webdsl
 
+import com.gargoylesoftware.htmlunit.BrowserVersion
 import groovy.xml.StreamingMarkupBuilder
 import junit.framework.TestCase
 
@@ -70,7 +71,7 @@ abstract class AbstractNonServerTest extends TestCase {
     }
 
     WebPageDslBuilder builder = new WebPageDslBuilder()
-//        .browserVersion(BrowserVersion.FIREFOX_3_6)
+        .browserVersion(BrowserVersion.CHROME)
         .defaultUrl("http://localhost/test.html")
         .defaultContents(modifiedContents)
 

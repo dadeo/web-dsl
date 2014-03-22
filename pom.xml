@@ -13,9 +13,9 @@
     </scm>
 
     <properties>
-        <groovy.version>1.8.8</groovy.version>
+        <groovy.version>2.2.1</groovy.version>
         <gmaven.version>1.5</gmaven.version>
-        <gmaven.provider>1.8</gmaven.provider>
+        <gmaven.provider>2.0</gmaven.provider>
     </properties>
 
     <distributionManagement>

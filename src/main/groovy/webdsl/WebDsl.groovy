@@ -95,6 +95,7 @@ class WebDsl {
     this.webClient.setAjaxController(new NicelyResynchronizingAjaxController())
     this.webClient.alertHandler = new CollectingAlertHandler(alerts)
     this.webClient.options.useInsecureSSL = true
+    this.webClient.options.throwExceptionOnFailingStatusCode = false
   }
 
   def form(closure) {
@@ -316,4 +317,11 @@ class WebDsl {
     container.get()."$name"
   }
 
+  boolean getThrowExceptionOnFailingStatusCode() {
+    webClient.options.throwExceptionOnFailingStatusCode
+  }
+
+  void setThrowExceptionOnFailingStatusCode(boolean throwException) {
+    webClient.options.throwExceptionOnFailingStatusCode = throwException
+  }
 }

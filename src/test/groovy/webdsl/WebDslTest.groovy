@@ -165,4 +165,17 @@ class WebDslTest {
 
     assert !dsl.javaScriptEnabled
   }
+
+  @Test
+  void test_throwExceptionOnFailingStatusCode_defaults_to_false() {
+    WebDsl dsl = new WebDsl()
+    assert !dsl.throwExceptionOnFailingStatusCode
+  }
+
+  @Test
+  void test_throwExceptionOnFailingStatusCode_is_modifiable() {
+    WebDsl dsl = new WebDsl()
+    dsl.throwExceptionOnFailingStatusCode = true
+    assert dsl.throwExceptionOnFailingStatusCode
+  }
 }

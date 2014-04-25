@@ -13,7 +13,7 @@
 package webdsl.support
 
 
-class CheckBoxDsl extends ElementDsl {
+class CheckBoxDsl extends InputDsl {
   CheckBoxDsl(pageContainer, DslFactory factory, element) {
     super(pageContainer, factory, element)
   }

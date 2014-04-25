@@ -15,7 +15,7 @@ package webdsl.support
 import com.gargoylesoftware.htmlunit.html.DomNode
 import com.gargoylesoftware.htmlunit.html.HtmlElement
 
-class RadioButtonDsl extends ElementDsl {
+class RadioButtonDsl extends InputDsl {
   RadioButtonDsl(pageContainer, DslFactory factory, element) {
     super(pageContainer, factory, element)
   }

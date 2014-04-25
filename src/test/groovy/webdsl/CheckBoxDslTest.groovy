@@ -19,6 +19,19 @@ import webdsl.support.CheckBoxDsl
 class CheckBoxDslTest {
 
   @Test
+  void test_dsl_instance() {
+    html """
+        <form>
+          <input type="checkbox" name="bike" value="Bike">I have a bike<br>
+        </form>
+      """
+
+    webdsl {
+      assert $("[name=bike]") instanceof CheckBoxDsl
+    }
+  }
+
+  @Test
   void test_instance_type() {
     html """
       <form>

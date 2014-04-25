@@ -13,8 +13,8 @@
 package webdsl.support
 
 
-class TextInputDsl extends InputDsl {
-  TextInputDsl(pageContainer, DslFactory factory, element) {
+class SubmitInputDsl extends InputDsl {
+  SubmitInputDsl(pageContainer, DslFactory factory, element) {
     super(pageContainer, factory, element)
   }
 }

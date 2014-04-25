@@ -13,6 +13,7 @@
 package webdsl.support
 
 import com.gargoylesoftware.htmlunit.html.HtmlForm
+import com.gargoylesoftware.htmlunit.html.HtmlResetInput
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput
 import com.gargoylesoftware.htmlunit.html.HtmlLabel
 
@@ -55,7 +56,7 @@ class FormDsl extends BaseElementDsl {
     form.htmlElementDescendants.each {element ->
       def item = factory.create(pageContainer, element)
       def attributeValue = item[attributeName]
-      if (attributeValue && !(element instanceof HtmlSubmitInput)) {
+      if (attributeValue && !(element instanceof HtmlSubmitInput || element instanceof HtmlResetInput)) {
         result[attributeValue] = item.tableValue(attributeName)
       }
     }

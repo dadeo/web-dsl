@@ -13,8 +13,33 @@
 package webdsl.support
 
 
-class TextInputDsl extends InputDsl {
-  TextInputDsl(pageContainer, DslFactory factory, element) {
+class InputDsl extends ElementDsl {
+  InputDsl(pageContainer, DslFactory factory, element) {
     super(pageContainer, factory, element)
   }
+
+  def setValue(value) {
+    element.setValueAttribute(value)
+  }
+
+  def getValue(){
+    untrimmedValue.trim()
+  }
+
+  def getUntrimmedValue() {
+    element.getAttribute("value")
+  }
+
+  def setText(text) {
+    value = text
+  }
+
+  def getText(){
+    value
+  }
+
+  def getUntrimmedText() {
+    untrimmedValue
+  }
+
 }

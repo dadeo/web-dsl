@@ -66,8 +66,9 @@ class FormDsl extends BaseElementDsl {
   def fillInWith(Map values) {
     pageContainer.do {
       values.each {k, v ->
-        if(exists(k)) {
-          k.value = v
+        if(pageContainer.exists(k)) {
+          def element = pageContainer[k]
+          element.value = v
         }
       }
     }

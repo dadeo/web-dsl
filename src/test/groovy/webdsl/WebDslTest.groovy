@@ -178,4 +178,17 @@ class WebDslTest {
     dsl.throwExceptionOnFailingStatusCode = true
     assert dsl.throwExceptionOnFailingStatusCode
   }
+
+  @Test
+  void test_printContentOnFailingStatusCode_defaults_to_false() {
+    WebDsl dsl = new WebDsl()
+    assert !dsl.printContentOnFailingStatusCode
+  }
+
+  @Test
+  void test_printContentOnFailingStatusCode_is_modifiable() {
+    WebDsl dsl = new WebDsl()
+    dsl.printContentOnFailingStatusCode = true
+    assert dsl.printContentOnFailingStatusCode
+  }
 }

@@ -324,4 +324,12 @@ class WebDsl {
   void setThrowExceptionOnFailingStatusCode(boolean throwException) {
     webClient.options.throwExceptionOnFailingStatusCode = throwException
   }
+
+  boolean getPrintContentOnFailingStatusCode() {
+    webClient.options.throwExceptionOnFailingStatusCode
+  }
+
+  void setPrintContentOnFailingStatusCode(boolean throwException) {
+    webClient.options.throwExceptionOnFailingStatusCode = throwException
+  }
 }

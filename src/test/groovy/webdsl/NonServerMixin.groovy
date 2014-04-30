@@ -13,8 +13,8 @@
 package webdsl
 
 import com.gargoylesoftware.htmlunit.BrowserVersion
+import com.gargoylesoftware.htmlunit.WebConnection
 import groovy.xml.StreamingMarkupBuilder
-import junit.framework.TestCase
 
 class NonServerMixin {
   private String contents
@@ -38,19 +38,19 @@ class NonServerMixin {
   }
 
   def webdsl(Closure closure) {
-    withBuilder { WebPageDslBuilder builder ->
-      WebDsl webDsl = builder.build()
-      webDsl.do closure
-    }
+    WebDsl webDsl = createBuilder().build()
+    webDsl.do closure
   }
 
   def withWebConnection(Closure closure) {
-    withBuilder { WebPageDslBuilder builder ->
-      closure(builder.buildWebConnection())
-    }
+    closure(createBuilder().buildWebConnection())
   }
 
-  private def withBuilder(Closure closure) {
+  WebConnection createWebConnection() {
+    createBuilder().buildWebConnection()
+  }
+
+  private WebPageDslBuilder createBuilder() {
     String modifiedContents = contents
 
     String cssLink = cssContents ? '<link rel="stylesheet" type="text/css" href="test.css"></link>' : ""
@@ -81,6 +81,6 @@ class NonServerMixin {
     if (jsContents)
       builder = builder.setResponseFor("jquery.js", jsContents, 'application/javascript')
 
-    closure(builder)
+    builder
   }
 }

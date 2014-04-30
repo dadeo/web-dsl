@@ -25,10 +25,7 @@ class FormDslTest {
       }
     }
 
-    WebDsl dsl1
-    withBuilder { WebPageDslBuilder builder ->
-      dsl1 = builder.build()
-    }
+    WebDsl dsl1 = createBuilder().build()
 
     html {
       form {
@@ -36,10 +33,7 @@ class FormDslTest {
       }
     }
 
-    WebDsl dsl2
-    withBuilder { WebPageDslBuilder builder ->
-      dsl2 = builder.build()
-    }
+    WebDsl dsl2 = createBuilder().build()
 
     dsl1.do {
       form.fillInWith([name1: "abc"])

@@ -13,7 +13,6 @@
 package webdsl
 
 import com.gargoylesoftware.htmlunit.BrowserVersion
-import com.gargoylesoftware.htmlunit.WebConnection
 import org.junit.Test
 
 @Mixin(NonServerMixin)
@@ -24,7 +23,13 @@ class WebDslTest {
   void test_constructor_no_args() {
     JettyRunner.withServer(webappsDirectory: WEBAPPS_DIRECTORY) {
       WebDsl webDsl = new WebDsl().init("http://localhost:8081/test.html")
+
       assert webDsl.title == 'test html'
+
+      assert webDsl.webClient.browserVersion == BrowserVersion.default
+      assert webDsl.javaScriptEnabled
+      assert !webDsl.printContentOnFailingStatusCode
+      assert !webDsl.throwExceptionOnFailingStatusCode
     }
   }
 
@@ -32,18 +37,114 @@ class WebDslTest {
   void test_constructor_url() {
     JettyRunner.withServer(webappsDirectory: WEBAPPS_DIRECTORY) {
       WebDsl webDsl = new WebDsl("http://localhost:8081/test.html")
+
       assert webDsl.title == 'test html'
+
       assert webDsl.webClient.browserVersion == BrowserVersion.default
+      assert webDsl.javaScriptEnabled
+      assert !webDsl.printContentOnFailingStatusCode
+      assert !webDsl.throwExceptionOnFailingStatusCode
     }
   }
 
   @Test
-  void test_constructor_url_and_browser_version() {
+  void test_constructor_url_and_option_browserVersion_overridden() {
     JettyRunner.withServer(webappsDirectory: WEBAPPS_DIRECTORY) {
-      WebDsl webDsl = new WebDsl(BrowserVersion.CHROME, "http://localhost:8081/test.html")
+      WebDsl webDsl = new WebDsl("http://localhost:8081/test.html",
+                                 new WebDsl.Options(browserVersion: BrowserVersion.CHROME))
+
       assert webDsl.title == 'test html'
+
       assert webDsl.webClient.browserVersion == BrowserVersion.CHROME
+      assert webDsl.javaScriptEnabled
+      assert !webDsl.printContentOnFailingStatusCode
+      assert !webDsl.throwExceptionOnFailingStatusCode
     }
+  }
+
+  @Test
+  void test_constructor_url_and_option_javaScriptEnabled_overridden() {
+    JettyRunner.withServer(webappsDirectory: WEBAPPS_DIRECTORY) {
+      WebDsl webDsl = new WebDsl("http://localhost:8081/test.html",
+                                 new WebDsl.Options(javaScriptEnabled: false))
+
+      assert webDsl.title == 'test html'
+
+      assert webDsl.webClient.browserVersion == BrowserVersion.default
+      assert !webDsl.javaScriptEnabled
+      assert !webDsl.printContentOnFailingStatusCode
+      assert !webDsl.throwExceptionOnFailingStatusCode
+    }
+  }
+
+  @Test
+  void test_constructor_url_and_option_printContentOnFailingStatusCode_overridden() {
+    JettyRunner.withServer(webappsDirectory: WEBAPPS_DIRECTORY) {
+      WebDsl webDsl = new WebDsl("http://localhost:8081/test.html",
+                                 new WebDsl.Options(printContentOnFailingStatusCode: true))
+
+      assert webDsl.title == 'test html'
+
+      assert webDsl.webClient.browserVersion == BrowserVersion.default
+      assert webDsl.javaScriptEnabled
+      assert webDsl.printContentOnFailingStatusCode
+      assert !webDsl.throwExceptionOnFailingStatusCode
+    }
+  }
+
+  @Test
+  void test_constructor_url_and_option_throwExceptionOnFailingStatusCode_overridden() {
+    JettyRunner.withServer(webappsDirectory: WEBAPPS_DIRECTORY) {
+      WebDsl webDsl = new WebDsl("http://localhost:8081/test.html",
+                                 new WebDsl.Options(throwExceptionOnFailingStatusCode: true))
+
+      assert webDsl.title == 'test html'
+
+      assert webDsl.webClient.browserVersion == BrowserVersion.default
+      assert webDsl.javaScriptEnabled
+      assert !webDsl.printContentOnFailingStatusCode
+      assert webDsl.throwExceptionOnFailingStatusCode
+    }
+  }
+
+  @Test
+  void test_constructor_url_and_web_connection() {
+    html """
+      <div id="myDiv">yo</div>
+    """
+
+    WebDsl webDsl = new WebDsl('http://localhost', createWebConnection())
+
+    assert webDsl.$('#myDiv').text == 'yo'
+
+    assert webDsl.webClient.browserVersion == BrowserVersion.default
+    assert webDsl.javaScriptEnabled
+    assert !webDsl.printContentOnFailingStatusCode
+    assert !webDsl.throwExceptionOnFailingStatusCode
+  }
+
+  @Test
+  void test_constructor_url_and_options_and_web_connection() {
+    html """
+      <div id="myDiv">yo</div>
+    """
+
+    WebDsl webDsl = new WebDsl('http://localhost',
+                               createWebConnection(),
+                               [
+                                   browserVersion: BrowserVersion.CHROME,
+                                   javaScriptEnabled: false,
+                                   printContentOnFailingStatusCode: true,
+                                   throwExceptionOnFailingStatusCode: true
+                               ] as WebDsl.Options)
+
+    assert webDsl.$('#myDiv').text == 'yo'
+
+    assert webDsl.webClient.browserVersion == BrowserVersion.CHROME
+    assert !webDsl.javaScriptEnabled
+    assert webDsl.printContentOnFailingStatusCode
+    assert webDsl.throwExceptionOnFailingStatusCode
+
   }
 
   @Test
@@ -55,29 +156,9 @@ class WebDslTest {
       </script>
     """
 
-    withWebConnection { WebConnection connection ->
-      WebDsl webDsl = new WebDsl()
-      webDsl.webClient.webConnection = connection
-      webDsl.init('http://localhost')
+    WebDsl webDsl = new WebDsl('http://localhost', createWebConnection())
 
-      assert webDsl.alerts == ['hello world!!!', 'good-bye world!!!']
-    }
-  }
-
-  @Test
-  void test_constructor_browser_version() {
-    html """
-      <div id="myDiv">yo</div>
-    """
-
-    withWebConnection { WebConnection connection ->
-      WebDsl webDsl = new WebDsl(BrowserVersion.CHROME)
-      webDsl.webClient.webConnection = connection
-      webDsl.init('http://localhost')
-
-      assert webDsl.$('#myDiv').text == 'yo'
-      assert webDsl.webClient.browserVersion == BrowserVersion.CHROME
-    }
+    assert webDsl.alerts == ['hello world!!!', 'good-bye world!!!']
   }
 
   @Test
@@ -89,17 +170,13 @@ class WebDslTest {
       </script>
     """
 
-    withWebConnection { WebConnection connection ->
-      WebDsl webDsl = new WebDsl()
-      webDsl.webClient.webConnection = connection
-      webDsl.init('http://localhost')
+    WebDsl webDsl = new WebDsl('http://localhost', createWebConnection())
 
-      assert webDsl.alerts == ['hello world!!!', 'good-bye world!!!']
+    assert webDsl.alerts == ['hello world!!!', 'good-bye world!!!']
 
-      webDsl.init('http://localhost')
+    webDsl.init('http://localhost')
 
-      assert webDsl.alerts == ['hello world!!!', 'good-bye world!!!', 'hello world!!!', 'good-bye world!!!']
-    }
+    assert webDsl.alerts == ['hello world!!!', 'good-bye world!!!', 'hello world!!!', 'good-bye world!!!']
   }
 
   @Test
@@ -111,21 +188,17 @@ class WebDslTest {
       </script>
     """
 
-    withWebConnection { WebConnection connection ->
-      WebDsl webDsl = new WebDsl()
-      webDsl.webClient.webConnection = connection
-      webDsl.init('http://localhost')
+    WebDsl webDsl = new WebDsl('http://localhost', createWebConnection())
 
-      assert webDsl.alerts == ['hello world!!!', 'good-bye world!!!']
+    assert webDsl.alerts == ['hello world!!!', 'good-bye world!!!']
 
-      webDsl.alerts.clear()
+    webDsl.alerts.clear()
 
-      assert webDsl.alerts == []
+    assert webDsl.alerts == []
 
-      webDsl.init('http://localhost')
+    webDsl.init('http://localhost')
 
-      assert webDsl.alerts == ['hello world!!!', 'good-bye world!!!']
-    }
+    assert webDsl.alerts == ['hello world!!!', 'good-bye world!!!']
   }
 
   @Test
@@ -167,22 +240,11 @@ class WebDslTest {
   }
 
   @Test
-  void test_throwExceptionOnFailingStatusCode_defaults_to_false() {
-    WebDsl dsl = new WebDsl()
-    assert !dsl.throwExceptionOnFailingStatusCode
-  }
-
-  @Test
   void test_throwExceptionOnFailingStatusCode_is_modifiable() {
     WebDsl dsl = new WebDsl()
     dsl.throwExceptionOnFailingStatusCode = true
     assert dsl.throwExceptionOnFailingStatusCode
-  }
-
-  @Test
-  void test_printContentOnFailingStatusCode_defaults_to_false() {
-    WebDsl dsl = new WebDsl()
-    assert !dsl.printContentOnFailingStatusCode
+    assert dsl.webClient.options.throwExceptionOnFailingStatusCode == true
   }
 
   @Test
@@ -190,5 +252,6 @@ class WebDslTest {
     WebDsl dsl = new WebDsl()
     dsl.printContentOnFailingStatusCode = true
     assert dsl.printContentOnFailingStatusCode
+    assert dsl.webClient.options.printContentOnFailingStatusCode == true
   }
 }

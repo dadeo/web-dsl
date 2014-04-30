@@ -16,6 +16,7 @@ import com.gargoylesoftware.htmlunit.BrowserVersion
 import com.gargoylesoftware.htmlunit.CollectingAlertHandler
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController
 import com.gargoylesoftware.htmlunit.WebClient
+import com.gargoylesoftware.htmlunit.WebConnection
 import com.gargoylesoftware.htmlunit.html.DomText
 import com.gargoylesoftware.htmlunit.html.HtmlElement
 import com.gargoylesoftware.htmlunit.html.HtmlPage
@@ -39,27 +40,24 @@ class WebDsl {
   private List<String> alerts = []
 
   WebDsl() {
-    this(new WebClient())
+    this(new Options())
   }
 
-  WebDsl(BrowserVersion browserVersion) {
-    this(new WebClient(browserVersion))
+  WebDsl(Options options) {
+    this((WebConnection) null, options)
   }
 
-  WebDsl(WebClient webClient) {
-    initWebClient(webClient)
+  WebDsl(WebConnection webConnection, Options options = null) {
+    initWebClient(webConnection, options)
   }
 
-  WebDsl(String url) {
-    this(new WebClient(), url)
+  WebDsl(String url, WebConnection webConnection, Options options = new Options()) {
+    this(webConnection, options)
+    init(url)
   }
 
-  WebDsl(BrowserVersion browserVersion, String url) {
-    this(new WebClient(browserVersion), url)
-  }
-
-  WebDsl(WebClient webClient, String url) {
-    initWebClient(webClient)
+  WebDsl(String url, Options options = new Options()) {
+    this(options)
     init(url)
   }
 
@@ -86,16 +84,20 @@ class WebDsl {
   }
 
   def openNewClient(where) {
-    initWebClient(new WebClient())
+    initWebClient(webClient.webConnection, new Options())
     _for(where)
   }
 
-  private def initWebClient(WebClient webClient) {
-    this.webClient = webClient
+  private def initWebClient(WebConnection webConnection, Options options) {
+    this.webClient = new WebClient(options.browserVersion)
+    if(webConnection)
+      this.webClient.webConnection = webConnection
     this.webClient.setAjaxController(new NicelyResynchronizingAjaxController())
     this.webClient.alertHandler = new CollectingAlertHandler(alerts)
-    this.webClient.options.useInsecureSSL = true
-    this.webClient.options.throwExceptionOnFailingStatusCode = false
+    this.webClient.options.useInsecureSSL = options.useInsecureSSL
+    this.webClient.options.throwExceptionOnFailingStatusCode = options.throwExceptionOnFailingStatusCode
+    this.webClient.options.printContentOnFailingStatusCode = options.printContentOnFailingStatusCode
+    this.webClient.options.javaScriptEnabled = options.javaScriptEnabled
   }
 
   def form(closure) {
@@ -326,10 +328,18 @@ class WebDsl {
   }
 
   boolean getPrintContentOnFailingStatusCode() {
-    webClient.options.throwExceptionOnFailingStatusCode
+    webClient.options.printContentOnFailingStatusCode
   }
 
   void setPrintContentOnFailingStatusCode(boolean throwException) {
-    webClient.options.throwExceptionOnFailingStatusCode = throwException
+    webClient.options.printContentOnFailingStatusCode = throwException
+  }
+
+  static class Options {
+    BrowserVersion browserVersion = BrowserVersion.default
+    boolean javaScriptEnabled = true
+    boolean printContentOnFailingStatusCode = false
+    boolean throwExceptionOnFailingStatusCode = false
+    boolean useInsecureSSL = true
   }
 }

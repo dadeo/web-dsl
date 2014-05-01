@@ -53,9 +53,9 @@ class WebDslTest {
     JettyRunner.withServer(webappsDirectory: WEBAPPS_DIRECTORY) {
       WebDsl webDsl = new WebDsl("http://localhost:8081/test.html",
                                  new WebDsl.Options(browserVersion: BrowserVersion.CHROME),
-                                 { dsl, webClient ->
+                                 { dsl ->
                                    assert dsl instanceof WebDsl
-                                   assert webClient instanceof WebClient
+                                   assert dsl.webClient instanceof WebClient
                                    assert dsl.page == null
                                    assert dsl.webClient.browserVersion == BrowserVersion.CHROME
                                    assert dsl.webClient.options.cssEnabled
@@ -148,6 +148,23 @@ class WebDslTest {
   }
 
   @Test
+  void test_constructor_web_connection() {
+    html """
+      <div id="myDiv">yo</div>
+    """
+
+    WebDsl webDsl = new WebDsl(createWebConnection())
+    webDsl.init('http://localhost')
+
+    assert webDsl.$('#myDiv').text == 'yo'
+
+    assert webDsl.webClient.browserVersion == BrowserVersion.default
+    assert webDsl.javaScriptEnabled
+    assert !webDsl.printContentOnFailingStatusCode
+    assert !webDsl.throwExceptionOnFailingStatusCode
+  }
+
+  @Test
   void test_constructor_url_and_options_and_web_connection() {
     html """
       <div id="myDiv">yo</div>
@@ -184,9 +201,9 @@ class WebDslTest {
                                    printContentOnFailingStatusCode: true,
                                    throwExceptionOnFailingStatusCode: true
                                ] as WebDsl.Options,
-                               { dsl, webClient ->
+                               { dsl ->
                                  assert dsl instanceof WebDsl
-                                 assert webClient instanceof WebClient
+                                 assert dsl.webClient instanceof WebClient
                                  assert dsl.page == null
                                  assert dsl.webClient.browserVersion == BrowserVersion.CHROME
                                  assert dsl.webClient.options.cssEnabled

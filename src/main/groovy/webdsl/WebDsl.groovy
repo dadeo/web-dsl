@@ -39,27 +39,23 @@ class WebDsl {
   private DslFactory factory = new DslFactory()
   private List<String> alerts = []
 
-  WebDsl() {
-    this(new Options())
-  }
-
-  WebDsl(Options options) {
+  WebDsl(Options options = new Options()) {
     this((WebConnection) null, options)
   }
 
-  WebDsl(WebConnection webConnection, Options options = null) {
+  WebDsl(WebConnection webConnection, Options options = new Options()) {
     initWebClient(webConnection, options)
   }
 
   WebDsl(String url, WebConnection webConnection, Options options = new Options(), Closure customizer = null) {
     this(webConnection, options)
-    customizer?.call(this, this.webClient)
+    customizer?.call(this)
     init(url)
   }
 
   WebDsl(String url, Options options = new Options(), Closure customizer = null) {
     this(options)
-    customizer?.call(this, this.webClient)
+    customizer?.call(this)
     init(url)
   }
 

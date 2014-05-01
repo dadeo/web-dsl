@@ -51,13 +51,15 @@ class WebDsl {
     initWebClient(webConnection, options)
   }
 
-  WebDsl(String url, WebConnection webConnection, Options options = new Options()) {
+  WebDsl(String url, WebConnection webConnection, Options options = new Options(), Closure customizer = null) {
     this(webConnection, options)
+    customizer?.call(this, this.webClient)
     init(url)
   }
 
-  WebDsl(String url, Options options = new Options()) {
+  WebDsl(String url, Options options = new Options(), Closure customizer = null) {
     this(options)
+    customizer?.call(this, this.webClient)
     init(url)
   }
 

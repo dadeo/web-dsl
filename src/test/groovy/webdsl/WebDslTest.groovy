@@ -13,6 +13,7 @@
 package webdsl
 
 import com.gargoylesoftware.htmlunit.BrowserVersion
+import com.gargoylesoftware.htmlunit.WebClient
 import org.junit.Test
 
 @Mixin(NonServerMixin)
@@ -44,6 +45,29 @@ class WebDslTest {
       assert webDsl.javaScriptEnabled
       assert !webDsl.printContentOnFailingStatusCode
       assert !webDsl.throwExceptionOnFailingStatusCode
+    }
+  }
+
+  @Test
+  void test_constructor_url_and_option_and_customizer() {
+    JettyRunner.withServer(webappsDirectory: WEBAPPS_DIRECTORY) {
+      WebDsl webDsl = new WebDsl("http://localhost:8081/test.html",
+                                 new WebDsl.Options(browserVersion: BrowserVersion.CHROME),
+                                 { dsl, webClient ->
+                                   assert dsl instanceof WebDsl
+                                   assert webClient instanceof WebClient
+                                   assert dsl.page == null
+                                   assert dsl.webClient.browserVersion == BrowserVersion.CHROME
+                                   assert dsl.webClient.options.cssEnabled
+                                   dsl.webClient.options.cssEnabled = false
+                                 })
+
+      assert webDsl.title == 'test html'
+
+      assert webDsl.javaScriptEnabled
+      assert !webDsl.printContentOnFailingStatusCode
+      assert !webDsl.throwExceptionOnFailingStatusCode
+      assert !webDsl.webClient.options.cssEnabled
     }
   }
 
@@ -144,7 +168,38 @@ class WebDslTest {
     assert !webDsl.javaScriptEnabled
     assert webDsl.printContentOnFailingStatusCode
     assert webDsl.throwExceptionOnFailingStatusCode
+  }
 
+  @Test
+  void test_constructor_url_and_options_and_web_connection_and_customizer() {
+    html """
+      <div id="myDiv">yo</div>
+    """
+
+    WebDsl webDsl = new WebDsl('http://localhost',
+                               createWebConnection(),
+                               [
+                                   browserVersion: BrowserVersion.CHROME,
+                                   javaScriptEnabled: false,
+                                   printContentOnFailingStatusCode: true,
+                                   throwExceptionOnFailingStatusCode: true
+                               ] as WebDsl.Options,
+                               { dsl, webClient ->
+                                 assert dsl instanceof WebDsl
+                                 assert webClient instanceof WebClient
+                                 assert dsl.page == null
+                                 assert dsl.webClient.browserVersion == BrowserVersion.CHROME
+                                 assert dsl.webClient.options.cssEnabled
+                                 dsl.webClient.options.cssEnabled = false
+                               })
+
+    assert webDsl.$('#myDiv').text == 'yo'
+
+    assert webDsl.webClient.browserVersion == BrowserVersion.CHROME
+    assert !webDsl.javaScriptEnabled
+    assert webDsl.printContentOnFailingStatusCode
+    assert webDsl.throwExceptionOnFailingStatusCode
+    assert !webDsl.webClient.options.cssEnabled
   }
 
   @Test

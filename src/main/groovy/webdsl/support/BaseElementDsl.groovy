@@ -47,6 +47,10 @@ class BaseElementDsl {
     result
   }
 
+  String asText() {
+    element.asText()
+  }
+
   CSSStyleDeclaration getStyle() {
     element.scriptObject.currentStyle
   }

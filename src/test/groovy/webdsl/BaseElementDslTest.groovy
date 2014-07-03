@@ -418,6 +418,21 @@ class BaseElementDslTest {
   }
 
   @Test
+  void test_asText() {
+    html {
+      div(id: 'my-div') {
+        span('my')
+        span(' ')
+        span('text')
+      }
+    }
+
+    webdsl {
+      assert $('#my-div').asText() == 'my text'
+    }
+  }
+
+  @Test
   void test_closest_direct_descendent() {
     html {
       div(id: 'div0') {}

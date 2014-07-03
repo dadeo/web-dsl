@@ -55,6 +55,31 @@ class BaseElementDslTest {
     }
   }
 
+
+  @Test
+  void test_setAttribute_resets_cached_scripts() {
+    html """
+      <input id="ok" onclick="setTo('yo');" type="button" value="ok"/>
+      <input id="eventText" type="text" value=""/>
+
+      <script>
+        function setTo(what) {
+          document.getElementById('eventText').value = what;
+        }
+      </script>
+    """
+
+    webdsl {
+      ok.click()
+      assert eventText.value == 'yo'
+
+      ok.setAttribute('onclick', "setTo('yo dog');")
+      ok.click()
+
+      assert eventText.value == 'yo dog'
+    }
+  }
+
   @Test
   void test_modifyAttribute() {
     html {
@@ -67,6 +92,30 @@ class BaseElementDslTest {
       $('#my-div').modifyAttribute('class', { it.toUpperCase() })
 
       assert $('#my-div').getAttribute('class') == 'LOOK-A-CLASS'
+    }
+  }
+
+  @Test
+  void test_modifyAttribute_resets_cached_scripts() {
+    html """
+      <input id="ok" onclick="setTo('yo');" type="button" value="ok"/>
+      <input id="eventText" type="text" value=""/>
+
+      <script>
+        function setTo(what) {
+          document.getElementById('eventText').value = what;
+        }
+      </script>
+    """
+
+    webdsl {
+      ok.click()
+      assert eventText.value == 'yo'
+
+      ok.modifyAttribute('onclick', { it.replaceAll('yo', 'yo dog') })
+      ok.click()
+
+      assert eventText.value == 'yo dog'
     }
   }
 

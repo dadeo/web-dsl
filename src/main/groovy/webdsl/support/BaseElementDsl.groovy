@@ -65,10 +65,12 @@ class BaseElementDsl {
 
   void setAttribute(String name, String value) {
     element.setAttribute(name, value)
+    clearScriptObjectIfEventAttribute(name)
   }
 
   void modifyAttribute(String name, Closure<String> modifier) {
     element.setAttribute(name, modifier(element.getAttribute(name)))
+    clearScriptObjectIfEventAttribute(name)
   }
 
   boolean hasClass(String className) {
@@ -159,5 +161,10 @@ class BaseElementDsl {
 
     if (candidate)
       factory.create(pageContainer, candidate)
+  }
+
+  protected void clearScriptObjectIfEventAttribute(String name) {
+    if (name.startsWith('on'))
+      element.scriptObject = null
   }
 }

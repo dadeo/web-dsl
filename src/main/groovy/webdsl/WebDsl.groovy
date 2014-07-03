@@ -20,16 +20,19 @@ import org.codehaus.groovy.runtime.GStringImpl
 import webdsl.support.BaseElementDsl
 import webdsl.support.ChildrenDsl
 import webdsl.support.DslFactory
+import webdsl.support.ElementSortOrder
 import webdsl.support.FormDsl
+import webdsl.support.PageContainer
 import webdsl.support.SelectorDsl
 import webdsl.support.css.selector.CssSelector
 import webdsl.support.css.selector.CssSelectorParser
 
-class WebDsl {
+class WebDsl implements PageContainer {
   private static final ThreadLocal container = new ThreadLocal()
 
   WebClient webClient
   HtmlPage page
+  private ElementSortOrder elementSortOrder
   def bind = [:]
 
   private boolean factoryResets = true
@@ -198,21 +201,22 @@ class WebDsl {
     ]
   }
 
-  BaseElementDsl $(selector, target = page) {
+  BaseElementDsl $(String selector, target = page) {
     def dslElements = $$(selector, target)
     dslElements[0]
   }
 
-  List<BaseElementDsl> $$(selector, target = page) {
+  List<BaseElementDsl> $$(String selector, target = page) {
     CssSelector cssSelector = new CssSelectorParser().parse(selector)
 
 
     def dslElements = cssSelector.select(target)
                                  .unique()
-                                 .sort(elementSortOrder())
-                                 .collect { factory.create(this, it) }
 
-    dslElements
+    if(dslElements.size() > 1)
+      dslElements.sort(elementSortOrder())
+
+    dslElements.collect { factory.create(this, it) }
   }
 
   List<String> getAlerts() {
@@ -235,10 +239,21 @@ class WebDsl {
     javaScriptEnabled = false
   }
 
+  void pageWasModified() {
+    elementSortOrder = null
+  }
+
   private Closure elementSortOrder() {
-    int counter = 0
-    Map<HtmlElement, Integer> sortOrder = ((HtmlPage) page).htmlElementDescendants.collectEntries { [it, counter++] }
-    return { HtmlElement it -> sortOrder[it] }
+    if(!elementSortOrder || !elementSortOrder.page.is(page)) {
+      int counter = 0
+      Map<HtmlElement, Integer> sortOrder = [:]
+      for(HtmlElement element in ((HtmlPage) page).htmlElementDescendants) {
+        sortOrder[element] = counter
+        ++counter
+      }
+      elementSortOrder = new ElementSortOrder(page: page, comparator: { HtmlElement it -> sortOrder[it] })
+    }
+    elementSortOrder.comparator
   }
 
   static def camel(String string) {

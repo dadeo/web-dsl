@@ -32,7 +32,7 @@ class DslFactory {
       (HtmlElement):ElementDsl
   ]
 
-  def create(pageContainer, element) {
+  def create(PageContainer pageContainer, element) {
     registry.findResult { Class elementClazz, Class dslClazz ->
       if(elementClazz.isInstance(element)) {
         dslClazz.newInstance([pageContainer, this, element] as Object[])

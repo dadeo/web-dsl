@@ -20,10 +20,10 @@ import webdsl.support.css.selector.InsideCssSelector
 
 class BaseElementDsl {
   HtmlElement element
-  def pageContainer
+  PageContainer pageContainer
   DslFactory factory
 
-  BaseElementDsl(pageContainer, DslFactory factory, element) {
+  BaseElementDsl(PageContainer pageContainer, DslFactory factory, element) {
     this.pageContainer = pageContainer
     this.factory = factory
     this.element = element
@@ -82,6 +82,7 @@ class BaseElementDsl {
   void insertBefore(Closure closure) {
     HtmlElement newElement = new PageElementBuilder().build(pageContainer.page, closure)
     element.insertBefore(newElement)
+    pageContainer.pageWasModified()
   }
 
   void insertAfter(Closure closure) {
@@ -90,6 +91,7 @@ class BaseElementDsl {
       element.nextSibling.insertBefore(newElement)
     else
       element.parentNode.appendChild(newElement)
+    pageContainer.pageWasModified()
   }
 
   void prependChild(Closure closure) {
@@ -98,11 +100,13 @@ class BaseElementDsl {
       element.firstChild.insertBefore(newElement)
     else
       element.appendChild(newElement)
+    pageContainer.pageWasModified()
   }
 
   void appendChild(Closure closure) {
     HtmlElement newElement = new PageElementBuilder().build(pageContainer.page, closure)
     element.appendChild(newElement)
+    pageContainer.pageWasModified()
   }
 
   String asXml() {

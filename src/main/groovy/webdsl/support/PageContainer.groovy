@@ -12,12 +12,14 @@
  */
 package webdsl.support
 
-import com.gargoylesoftware.htmlunit.html.HtmlPage
-
+import com.gargoylesoftware.htmlunit.Page
 
 interface PageContainer {
-  void setPage(HtmlPage newPage)
+  void setPage(Page newPage)
+
   BaseElementDsl $(String selector, target)
+
   List<BaseElementDsl> $$(String selector, target)
+
   void pageWasModified()
 }

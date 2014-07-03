@@ -31,7 +31,7 @@ class WebDsl implements PageContainer {
   private static final ThreadLocal container = new ThreadLocal()
 
   WebClient webClient
-  HtmlPage page
+  Page page
   private ElementSortOrder elementSortOrder
   def bind = [:]
 
@@ -103,15 +103,20 @@ class WebDsl implements PageContainer {
   }
 
   def getForm() {
-    new FormDsl(this, factory, page.getForms()[0])
+    new FormDsl(this, factory, htmlPage.getForms()[0])
   }
 
-  void setPage(HtmlPage newPage) {
+  void setPage(Page newPage) {
     page = newPage
   }
 
+  HtmlPage getHtmlPage() {
+    assert page instanceof HtmlPage, page.class
+    (HtmlPage) page
+  }
+
   private getTitle() {
-    page.getTitleText()
+    htmlPage.getTitleText()
   }
 
   def back() {
@@ -153,14 +158,14 @@ class WebDsl implements PageContainer {
   }
 
   private createDslForElement(String name) {
-    page.htmlElementDescendants.find {
+    htmlPage.htmlElementDescendants.find {
       it.getAttribute('id') == name || it.getAttribute('name') == name
     }
   }
 
   def findSelectorsFor(name) {
     def result = new SelectorDsl(this, factory)
-    page.body.children.each { element ->
+    htmlPage.body.children.each { element ->
       if (element.class != DomText && element.tagName == name) {
         result << element
       }
@@ -171,7 +176,7 @@ class WebDsl implements PageContainer {
 
   def properties() {
     def result = []
-    page.htmlElementDescendants.each {
+    htmlPage.htmlElementDescendants.each {
       String id = it.getAttribute('id')
       if (id) result << id
 
@@ -182,15 +187,15 @@ class WebDsl implements PageContainer {
   }
 
   List<HtmlElement> findElementsByNameOrId(String nameOrId) {
-    page.getElementsByIdAndOrName(nameOrId)
+    htmlPage.getElementsByIdAndOrName(nameOrId)
   }
 
   def getChildren() {
-    new ChildrenDsl().children(this, page)
+    new ChildrenDsl().children(this, htmlPage)
   }
 
   def children(options) {
-    new ChildrenDsl().children(this, page, options)
+    new ChildrenDsl().children(this, htmlPage, options)
   }
 
   def handle(Class elementClass) {
@@ -201,12 +206,12 @@ class WebDsl implements PageContainer {
     ]
   }
 
-  BaseElementDsl $(String selector, target = page) {
+  BaseElementDsl $(String selector, target = htmlPage) {
     def dslElements = $$(selector, target)
     dslElements[0]
   }
 
-  List<BaseElementDsl> $$(String selector, target = page) {
+  List<BaseElementDsl> $$(String selector, target = htmlPage) {
     CssSelector cssSelector = new CssSelectorParser().parse(selector)
 
 
@@ -247,7 +252,7 @@ class WebDsl implements PageContainer {
     if(!elementSortOrder || !elementSortOrder.page.is(page)) {
       int counter = 0
       Map<HtmlElement, Integer> sortOrder = [:]
-      for(HtmlElement element in ((HtmlPage) page).htmlElementDescendants) {
+      for(HtmlElement element in htmlPage.htmlElementDescendants) {
         sortOrder[element] = counter
         ++counter
       }
@@ -281,7 +286,7 @@ class WebDsl implements PageContainer {
 
   static def click(String string) {
     def dsl = container.get()
-    def found = dsl.page.tabbableElements.find { HtmlElement element ->
+    def found = dsl.htmlPage.tabbableElements.find { HtmlElement element ->
       element.getTextContent() == string || element.getAttribute("value") == string || element.getAttribute("href") == string
     }
 

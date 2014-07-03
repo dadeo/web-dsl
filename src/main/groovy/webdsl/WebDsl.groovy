@@ -12,15 +12,12 @@
  */
 package webdsl
 
-import com.gargoylesoftware.htmlunit.BrowserVersion
-import com.gargoylesoftware.htmlunit.CollectingAlertHandler
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController
-import com.gargoylesoftware.htmlunit.WebClient
-import com.gargoylesoftware.htmlunit.WebConnection
+import com.gargoylesoftware.htmlunit.*
 import com.gargoylesoftware.htmlunit.html.DomText
 import com.gargoylesoftware.htmlunit.html.HtmlElement
 import com.gargoylesoftware.htmlunit.html.HtmlPage
 import org.codehaus.groovy.runtime.GStringImpl
+import webdsl.support.BaseElementDsl
 import webdsl.support.ChildrenDsl
 import webdsl.support.DslFactory
 import webdsl.support.FormDsl
@@ -88,7 +85,7 @@ class WebDsl {
 
   private def initWebClient(WebConnection webConnection, Options options) {
     this.webClient = new WebClient(options.browserVersion)
-    if(webConnection)
+    if (webConnection)
       this.webClient.webConnection = webConnection
     this.webClient.setAjaxController(new NicelyResynchronizingAjaxController())
     this.webClient.alertHandler = new CollectingAlertHandler(alerts)
@@ -106,7 +103,7 @@ class WebDsl {
     new FormDsl(this, factory, page.getForms()[0])
   }
 
-  protected void setPage(HtmlPage newPage) {
+  void setPage(HtmlPage newPage) {
     page = newPage
   }
 
@@ -119,12 +116,12 @@ class WebDsl {
     page = webClient.currentWindow.enclosedPage
   }
 
-  private boolean exists(String elementName) {
+  boolean exists(String elementName) {
     try {
       getProperty(elementName)
-      return true
+      true
     } catch (MissingPropertyException e) {
-      return false
+      false
     }
   }
 
@@ -201,16 +198,16 @@ class WebDsl {
     ]
   }
 
-  def $(selector) {
-    def dslElements = $$(selector)
+  BaseElementDsl $(selector, target = page) {
+    def dslElements = $$(selector, target)
     dslElements[0]
   }
 
-  def $$(selector) {
+  List<BaseElementDsl> $$(selector, target = page) {
     CssSelector cssSelector = new CssSelectorParser().parse(selector)
 
 
-    def dslElements = cssSelector.select(page)
+    def dslElements = cssSelector.select(target)
                                  .unique()
                                  .sort(elementSortOrder())
                                  .collect { factory.create(this, it) }
@@ -240,7 +237,7 @@ class WebDsl {
 
   private Closure elementSortOrder() {
     int counter = 0
-    Map<HtmlElement, Integer> sortOrder = ((HtmlPage) page).htmlElementDescendants.toList().collectEntries { [it, counter++] }
+    Map<HtmlElement, Integer> sortOrder = ((HtmlPage) page).htmlElementDescendants.collectEntries { [it, counter++] }
     return { HtmlElement it -> sortOrder[it] }
   }
 

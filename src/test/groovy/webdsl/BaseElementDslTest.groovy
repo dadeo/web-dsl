@@ -536,4 +536,61 @@ class BaseElementDslTest {
     }
   }
 
+  @Test
+  void test_find_child_by_css_selector_found() {
+    html {
+      div(id: 'div1') {
+        span 'text 1', class: 'target'
+      }
+      div(id: 'div2') {
+        span 'text 2', class: 'target'
+      }
+    }
+
+    webdsl {
+      assert $('#div2').$('.target').value == 'text 2'
+    }
+  }
+
+  @Test
+  void test_find_child_by_css_selector_not_found() {
+    html {
+      div(id: 'div1') {
+      }
+    }
+
+    webdsl {
+      assert $('#div1').$('.target') == null
+    }
+  }
+
+  @Test
+  void test_find_children_by_css_selector_found() {
+    html {
+      div(id: 'div1') {
+        span 'text 1', class: 'target'
+      }
+      div(id: 'div2') {
+        span 'text 2.1', class: 'target'
+        span 'text 2.2', class: 'target'
+      }
+    }
+
+    webdsl {
+      assert $('#div2').$$('.target').value == ['text 2.1', 'text 2.2' ]
+    }
+  }
+
+  @Test
+  void test_find_children_by_css_selector_not_found() {
+    html {
+      div(id: 'div1') {
+      }
+    }
+
+    webdsl {
+      assert $('#div1').$$('.target') == []
+    }
+  }
+
 }

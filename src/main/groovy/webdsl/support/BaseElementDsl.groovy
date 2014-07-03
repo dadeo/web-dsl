@@ -109,10 +109,18 @@ class BaseElementDsl {
     element.asXml()
   }
 
+  BaseElementDsl $(String cssSelector) {
+    pageContainer.$(cssSelector, element)
+  }
+
+  List<BaseElementDsl> $$(String cssSelector) {
+    pageContainer.$$(cssSelector, element)
+  }
+
   def closest(String cssSelectorPattern) {
     CssSelector selector = new CssSelectorParser().parse(cssSelectorPattern)
 
-    if(selector instanceof InsideCssSelector)
+    if (selector instanceof InsideCssSelector)
       closestSimple(selector.cssSelectors[0])
     else
       closestComplex(selector)
@@ -120,11 +128,11 @@ class BaseElementDsl {
 
   protected def closestSimple(CssSelector selector) {
     HtmlElement candidate = element.parentNode
-    while(candidate && !selector.select(candidate)) {
+    while (candidate && !selector.select(candidate)) {
       candidate = candidate.parentNode != pageContainer.page ? candidate.parentNode : null
     }
 
-    if(candidate)
+    if (candidate)
       factory.create(pageContainer, candidate)
   }
 
@@ -133,11 +141,11 @@ class BaseElementDsl {
 
     HtmlElement candidate = element.parentNode
 
-    while(candidate && !candidates.find { it == candidate }) {
+    while (candidate && !candidates.find { it == candidate }) {
       candidate = candidate.parentNode != pageContainer.page ? candidate.parentNode : null
     }
 
-    if(candidate)
+    if (candidate)
       factory.create(pageContainer, candidate)
   }
 }

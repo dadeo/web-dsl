@@ -41,6 +41,36 @@ class BaseElementDslTest {
   }
 
   @Test
+  void test_setAttribute() {
+    html {
+      div(id: "my-div", class: 'look-a-class') {}
+    }
+
+    webdsl {
+      assert $('#my-div').getAttribute('class') == 'look-a-class'
+
+      $('#my-div').setAttribute('class', 'LOOK_A_CLASS')
+
+      assert $('#my-div').getAttribute('class') == 'LOOK_A_CLASS'
+    }
+  }
+
+  @Test
+  void test_modifyAttribute() {
+    html {
+      div(id: "my-div", class: 'look-a-class') {}
+    }
+
+    webdsl {
+      assert $('#my-div').getAttribute('class') == 'look-a-class'
+
+      $('#my-div').modifyAttribute('class', { it.toUpperCase() })
+
+      assert $('#my-div').getAttribute('class') == 'LOOK-A-CLASS'
+    }
+  }
+
+  @Test
   void test_hasClass() {
     html {
       div(id: "my-div", class: 'look-a-class') {}
@@ -577,7 +607,7 @@ class BaseElementDslTest {
     }
 
     webdsl {
-      assert $('#div2').$$('.target').value == ['text 2.1', 'text 2.2' ]
+      assert $('#div2').$$('.target').value == ['text 2.1', 'text 2.2']
     }
   }
 

@@ -63,6 +63,14 @@ class BaseElementDsl {
     element.attributesMap.collectEntries { k, v -> [k, v.textContent] }
   }
 
+  void setAttribute(String name, String value) {
+    element.setAttribute(name, value)
+  }
+
+  void modifyAttribute(String name, Closure<String> modifier) {
+    element.setAttribute(name, modifier(element.getAttribute(name)))
+  }
+
   boolean hasClass(String className) {
     element.getAttribute('class').split(/\s+/).contains(className)
   }

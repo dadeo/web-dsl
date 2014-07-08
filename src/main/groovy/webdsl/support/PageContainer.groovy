@@ -20,6 +20,4 @@ interface PageContainer {
   BaseElementDsl $(String selector, target)
 
   List<BaseElementDsl> $$(String selector, target)
-
-  void pageWasModified()
 }

@@ -53,7 +53,7 @@ class TableDsl extends BaseElementDsl {
   }
 
   def "do"(options = [:]) {
-    def grid = new GridDsl(options)
+    def grid = new GridDsl(pageContainer, factory, options)
     process options, { row, column, td ->
       if (column == 0) {
         grid.nextRow td

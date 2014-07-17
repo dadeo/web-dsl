@@ -12,16 +12,22 @@
  */
 package webdsl.support
 
-import webdsl.WebDsl
 import com.gargoylesoftware.htmlunit.html.HtmlSpan
+import webdsl.WebDsl
+
+import static webdsl.Orientation.VERTICAL
 
 
 class GridDsl {
   def grid = []
-  def options
+  def gridOptions
+  private PageContainer pageContainer
+  private DslFactory factory
 
-  GridDsl(options = [:]) {
-    this.options = options
+  GridDsl(PageContainer pageContainer, DslFactory factory, gridOptions = [:]) {
+    this.pageContainer = pageContainer
+    this.factory = factory
+    this.gridOptions = gridOptions
   }
 
   def nextRow(td) {
@@ -31,7 +37,7 @@ class GridDsl {
   def appendColumn(td) {
     grid[-1] << td
   }
-  
+
   def getAs() {
     this
   }
@@ -39,11 +45,11 @@ class GridDsl {
   def getSpan() {
     def result = []
     process { row, column, td ->
-      if(column == 0) {
+      if (column == 0) {
         result << [:]
       }
       td.htmlElementDescendants.each { span ->
-        if(span instanceof HtmlSpan && span.getAttribute("name")) {
+        if (span instanceof HtmlSpan && span.getAttribute("name")) {
           result[-1][span.getAttribute("name")] = span.getTextContent()
         }
       }
@@ -54,7 +60,7 @@ class GridDsl {
   def getList() {
     def result = []
     process { row, column, td ->
-      if(column == 0 && inRowRange(row, grid.size())){
+      if (column == 0 && inRowRange(row, grid.size())) {
         result << td.textContent.trim()
       }
     }
@@ -66,7 +72,7 @@ class GridDsl {
     def attribute
     process { row, column, td ->
       if (inRowRange(row, grid.size())) {
-        if(column == 0) {
+        if (column == 0) {
           attribute = td.textContent.trim()
         } else {
           result[WebDsl.camel(attribute)] = td.textContent.trim()
@@ -77,20 +83,48 @@ class GridDsl {
   }
 
   def getObjects() {
-    objects()
+    objects([:])
   }
 
-  def objects(String... names) {
+  def objects(Map tableOptions) {
+    if (tableOptions.orientation == VERTICAL)
+      verticalObjects(tableOptions)
+    else
+      horizontalObjects(tableOptions)
+  }
+
+  private def horizontalObjects(Map options) {
     def results = []
     def attributes = [:]
     process { row, column, td ->
       if (row == 0) {
-        attributes[column] = names ? names[column] : td.textContent.trim()
-      } else if (inRowRange(row - 1, grid.size() - 1)){
-        if(column == 0) {
+        String key = WebDsl.camel(td.textContent.trim())
+        attributes[column] = options.names ? options.names[column] ?: key : key
+      } else if (inRowRange(row - 1, grid.size() - 1)) {
+        if (column == 0) {
           results << [:]
         }
-        results[-1][WebDsl.camel(attributes[column])] = td.textContent.trim()
+        results[-1][attributes[column]] = td.textContent.trim()
+      }
+    }
+    results
+  }
+
+  private def verticalObjects(Map options) {
+    def results = []
+    String key
+    process { row, column, td ->
+      if(row == 0 && column != 0)
+        results << [:]
+
+      if (inRowRange(row, grid.size())) {
+        BaseElementDsl elementDsl = factory.create(pageContainer, td)
+        if (column == 0) {
+          key = WebDsl.camel(elementDsl.text)
+          if (options.names)
+            key = options.names[row] ?: key
+        } else
+          results[column - 1][key] = elementDsl.text
       }
     }
     results
@@ -106,11 +140,11 @@ class GridDsl {
     def oldRow = -1
     process { row, column, td ->
       if (inRowRange(row, grid.size())) {
-        if(oldRow != -1 && row != oldRow && column == 0) {
+        if (oldRow != -1 && row != oldRow && column == 0) {
           finalize()
           map = [:]
         }
-        if(column < columnNames.size() && inRowRange(row, grid.size())) {
+        if (column < columnNames.size() && inRowRange(row, grid.size())) {
           map[columnNames[column]] = td.textContent.trim()
         }
         oldRow = row
@@ -129,6 +163,6 @@ class GridDsl {
   }
 
   boolean inRowRange(row, size) {
-    options.rowRange ? new RowRange(options.rowRange, size).contains(row) : true
+    gridOptions.rowRange ? new RowRange(gridOptions.rowRange, size).contains(row) : true
   }
 }

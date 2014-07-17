@@ -14,11 +14,13 @@ package webdsl
 
 import org.junit.Test
 
+import static webdsl.Orientation.VERTICAL
+
 @Mixin(NonServerMixin)
 class TableDslTest {
 
   @Test
-  void test_table_as_objects() {
+  void test_table_as_horizontal_objects() {
     html {
       table(id: 'table3') {
         tr { td('first name'); td('last name') }
@@ -43,32 +45,70 @@ class TableDslTest {
   }
 
   @Test
-  void test_table_as_objects_with_names() {
+  void test_table_as_vertical_objects() {
     html {
-      table(id: 'table3') {
-        tr { td('first name'); td('last name') }
-        tr { td('pinky'); td('jones1') }
-        tr { td('winky'); td('jones2') }
-        tr { td('dinky'); td('jones3') }
-        tr { td('linky'); td('jones4') }
-        tr { td('stinky'); td('jones5') }
+      table(id: 'table1') {
+        tr { td('first name'); td('pinky'); td('winky') }
+        tr { td('last name'); td('jones1'); td('jones2') }
+        tr { td('ssn'); td('111'); td('222') }
       }
     }
 
     webdsl {
       def expected = [
-          [first: "pinky", last: "jones1"],
-          [first: "winky", last: "jones2"],
-          [first: "dinky", last: "jones3"],
-          [first: "linky", last: "jones4"],
-          [first: "stinky", last: "jones5"],
+          [firstName: "pinky", lastName: "jones1", ssn: '111'],
+          [firstName: "winky", lastName: "jones2", ssn: '222'],
       ]
-      assert table3.as.objects('first', 'last') == expected
+      assert $('#table1').as.objects(orientation: VERTICAL) == expected
     }
   }
 
   @Test
-  void test_table_as_objects_rowRange() {
+  void test_table_as_horizontal_objects_with_names() {
+    html {
+      table(id: 'table3') {
+        tr { td('first name'); td('last name'); td('pay rate') }
+        tr { td('pinky'); td('jones1'); td('111') }
+        tr { td('winky'); td('jones2'); td('222') }
+        tr { td('dinky'); td('jones3'); td('333') }
+        tr { td('linky'); td('jones4'); td('444') }
+        tr { td('stinky'); td('jones5'); td('555') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [first: "pinky", last: "jones1", payRate: "111"],
+          [first: "winky", last: "jones2", payRate: "222"],
+          [first: "dinky", last: "jones3", payRate: "333"],
+          [first: "linky", last: "jones4", payRate: "444"],
+          [first: "stinky", last: "jones5", payRate: "555"],
+      ]
+      assert table3.as.objects(names: ['first', 'last']) == expected
+    }
+  }
+
+  @Test
+  void test_table_as_vertical_objects_with_names() {
+    html {
+      table(id: 'table1') {
+        tr { td('first name'); td('pinky'); td('winky') }
+        tr { td('last name'); td('jones1'); td('jones2') }
+        tr { td('pay rate'); td('111'); td('222') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [first: "pinky", last: "jones1", payRate: '111'],
+          [first: "winky", last: "jones2", payRate: '222'],
+      ]
+      assert $('#table1').as.objects(orientation: VERTICAL, names: ['first', 'last']) == expected
+    }
+  }
+
+  @Test
+  void test_table_as_horizontal_objects_rowRange() {
     html {
       table(id: 'table3') {
         tr { td('first name'); td('last name') }
@@ -90,7 +130,62 @@ class TableDslTest {
   }
 
   @Test
-  void test_table_as_objects_rowRange_through_end() {
+  void test_table_as_vertical_objects_rowRange() {
+    html {
+      table(id: 'table1') {
+        tr { td('first name'); td('pinky'); td('winky') }
+        tr { td('last name'); td('jones1'); td('jones2') }
+        tr { td('ssn'); td('111'); td('222') }
+        tr { td('pay rate'); td('1'); td('2') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [lastName: "jones1", ssn: '111'],
+          [lastName: "jones2", ssn: '222'],
+      ]
+      assert $('#table1').do(rowRange: 1..2).as.objects(orientation: VERTICAL) == expected
+    }
+  }
+
+  @Test
+  void test_table_as_horizontal_objects_rowRange_no_objects() {
+    html {
+      table(id: 'table3') {
+        tr { td('first name'); td('last name') }
+        tr { td('pinky'); td('jones1') }
+        tr { td('winky'); td('jones2') }
+      }
+    }
+
+    webdsl {
+      def expected = [];
+
+      assert table3(rowRange: 2..3).as.objects == expected
+    }
+  }
+
+  @Test
+  void test_table_as_vertical_objects_rowRange_no_objects() {
+    html {
+      table(id: 'table1') {
+        tr { td('first name'); td('pinky'); td('winky') }
+        tr { td('last name'); td('jones1'); td('jones2') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [:],
+          [:],
+      ]
+      assert $('#table1').do(rowRange: 2..3).as.objects(orientation: VERTICAL) == expected
+    }
+  }
+
+  @Test
+  void test_table_as_horizontal_objects_rowRange_through_end() {
     html {
       table(id: 'table3') {
         tr { td('first name'); td('last name') }
@@ -113,7 +208,27 @@ class TableDslTest {
   }
 
   @Test
-  void test_table_as_objects_rowRange_from_end() {
+  void test_table_as_vertical_objects_rowRange_through_end() {
+    html {
+      table(id: 'table1') {
+        tr { td('first name'); td('pinky'); td('winky') }
+        tr { td('last name'); td('jones1'); td('jones2') }
+        tr { td('ssn'); td('111'); td('222') }
+        tr { td('pay rate'); td('1'); td('2') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [lastName: "jones1", ssn: '111', payRate: '1'],
+          [lastName: "jones2", ssn: '222', payRate: '2'],
+      ]
+      assert $('#table1').do(rowRange: 1..-1).as.objects(orientation: VERTICAL) == expected
+    }
+  }
+
+  @Test
+  void test_table_as_horizontal_objects_rowRange_from_end() {
     html {
       table(id: 'table3') {
         tr { td('first name'); td('last name') }
@@ -136,7 +251,27 @@ class TableDslTest {
   }
 
   @Test
-  void test_table_as_objects_rowRange_of_one() {
+  void test_table_as_vertical_objects_rowRange_from_end() {
+    html {
+      table(id: 'table1') {
+        tr { td('first name'); td('pinky'); td('winky') }
+        tr { td('last name'); td('jones1'); td('jones2') }
+        tr { td('ssn'); td('111'); td('222') }
+        tr { td('pay rate'); td('1'); td('2') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [ssn: '111', payRate: '1'],
+          [ssn: '222', payRate: '2'],
+      ]
+      assert $('#table1').do(rowRange: -2..-1).as.objects(orientation: VERTICAL) == expected
+    }
+  }
+
+  @Test
+  void test_table_as_horizontal_objects_rowRange_of_one() {
     html {
       table(id: 'table3') {
         tr { td('first name'); td('last name') }
@@ -157,7 +292,27 @@ class TableDslTest {
   }
 
   @Test
-  void test_table_as_objects_column() {
+  void test_table_as_vertical_objects_rowRange_of_one() {
+    html {
+      table(id: 'table1') {
+        tr { td('first name'); td('pinky'); td('winky') }
+        tr { td('last name'); td('jones1'); td('jones2') }
+        tr { td('ssn'); td('111'); td('222') }
+        tr { td('pay rate'); td('1'); td('2') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [lastName: "jones1"],
+          [lastName: "jones2"],
+      ]
+      assert $('#table1').do(rowRange: 1..-3).as.objects(orientation: VERTICAL) == expected
+    }
+  }
+
+  @Test
+  void test_table_as_horizontal_objects_column() {
     html {
       table(id: 'table3') {
         tr { td('first name'); td('last name') }
@@ -182,7 +337,27 @@ class TableDslTest {
   }
 
   @Test
-  void test_table_as_objects_column_offset_and_row_range() {
+  void test_table_as_vertical_objects_column() {
+    html {
+      table(id: 'table1') {
+        tr { td('ignored'); td('first name'); td('pinky'); td('winky') }
+        tr { td('ignored'); td('last name'); td('jones1'); td('jones2') }
+        tr { td('ignored'); td('ssn'); td('111'); td('222') }
+        tr { td('ignored'); td('pay rate'); td('1'); td('2') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [firstName: "pinky", lastName: "jones1", ssn: '111', payRate: '1'],
+          [firstName: "winky", lastName: "jones2", ssn: '222', payRate: '2'],
+      ]
+      assert $('#table1').do(column:1).as.objects(orientation: VERTICAL) == expected
+    }
+  }
+
+  @Test
+  void test_table_as_horizontal_objects_column_offset_and_row_range() {
     html {
       table(id: 'table3') {
         tr { td('first name'); td('last name') }
@@ -201,6 +376,26 @@ class TableDslTest {
           [lastName: "jones4"],
       ]
       assert table3(column: 1, rowRange: 1..3).as.objects == expected
+    }
+  }
+
+  @Test
+  void test_table_as_vertical_objects_column_offset_and_row_range() {
+    html {
+      table(id: 'table1') {
+        tr { td('ignored'); td('first name'); td('pinky'); td('winky') }
+        tr { td('ignored'); td('last name'); td('jones1'); td('jones2') }
+        tr { td('ignored'); td('ssn'); td('111'); td('222') }
+        tr { td('ignored'); td('pay rate'); td('1'); td('2') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [lastName: "jones1", ssn: '111'],
+          [lastName: "jones2", ssn: '222'],
+      ]
+      assert $('#table1').do(column:1, rowRange: 1..2).as.objects(orientation: VERTICAL) == expected
     }
   }
 

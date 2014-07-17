@@ -43,7 +43,7 @@ class JettyRunnerTest {
     new WebDsl().for(DEFAULT_TEST_URL_BASE + "/now?abc=1&def=3&def=2").do {
       assert title == 'TestServlet now'
 
-      assert $('#parameters').as.objects('key', 'value') == [[key:'abc', value:'1'], [key:'def', value:'2, 3']]
+      assert $('#parameters').as.objects(names: ['key', 'value']) == [[key:'abc', value:'1'], [key:'def', value:'2, 3']]
     }
   }
 }

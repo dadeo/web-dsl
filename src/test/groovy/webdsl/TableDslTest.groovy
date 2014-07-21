@@ -1051,6 +1051,27 @@ class TableDslTest {
   }
 
   @Test
+  void test_table_as_object_names() {
+    html {
+      table(id: 'person') {
+        tr { td('first'); td('pinky') }
+        tr { td('last'); td('jones') }
+        tr { td('ssn'); td('111') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          firstName: 'pinky',
+          lastName: 'jones',
+          ssn: '111'
+      ]
+
+      assert person.as.object(names: ['firstName', 'lastName' ]) == expected
+    }
+  }
+
+  @Test
   void test_table_as_object_with_rowRange() {
     html {
       table(id: 'person') {

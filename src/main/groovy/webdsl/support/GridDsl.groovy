@@ -77,12 +77,12 @@ class GridDsl {
   def object(Map tableOptions) {
     def result = [:]
     String key
-    process { row, column, td ->
+    process { int row, int column, td ->
       BaseElementDsl elementDsl = factory.create(pageContainer, td)
 
       if (inRowRange(row, grid.size())) {
         if (column == 0) {
-          key = extractKey(tableOptions, elementDsl, column)
+          key = extractKey(tableOptions, elementDsl, row)
         } else {
           result[key] = extractValue(tableOptions, elementDsl, key)
         }

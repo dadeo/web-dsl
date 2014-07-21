@@ -23,6 +23,9 @@ class GridDsl {
   def gridOptions
   private PageContainer pageContainer
   private DslFactory factory
+  private Closure textClosure = { it.text.trim() }
+  private Closure camelCaseClosure = { WebDsl.camel(it.text.trim()) }
+
 
   GridDsl(PageContainer pageContainer, DslFactory factory, gridOptions = [:]) {
     this.pageContainer = pageContainer
@@ -68,14 +71,20 @@ class GridDsl {
   }
 
   def getObject() {
+    object([:])
+  }
+
+  def object(Map tableOptions) {
     def result = [:]
-    def attribute
+    String key
     process { row, column, td ->
+      BaseElementDsl elementDsl = factory.create(pageContainer, td)
+
       if (inRowRange(row, grid.size())) {
         if (column == 0) {
-          attribute = td.textContent.trim()
+          key = extractKey(tableOptions, elementDsl, column)
         } else {
-          result[WebDsl.camel(attribute)] = td.textContent.trim()
+          result[key] = extractValue(tableOptions, elementDsl, key)
         }
       }
     }
@@ -97,14 +106,17 @@ class GridDsl {
     def results = []
     def attributes = [:]
     process { row, column, td ->
+      BaseElementDsl elementDsl = factory.create(pageContainer, td)
       if (row == 0) {
-        String key = WebDsl.camel(td.textContent.trim())
-        attributes[column] = options.names ? options.names[column] ?: key : key
+        String key = extractKey(options, elementDsl, column)
+        attributes[column] = key
       } else if (inRowRange(row - 1, grid.size() - 1)) {
         if (column == 0)
           results << [:]
-        if (inColumnRange(column, grid.size()))
-          results[-1][attributes[column]] = td.textContent.trim()
+        if (inColumnRange(column, grid.size())) {
+          String key = attributes[column]
+          results[-1][key] = extractValue(options, elementDsl, key)
+        }
       }
     }
     results
@@ -119,16 +131,14 @@ class GridDsl {
 
       if (column == 0) {
         resultIndex = 0
-        key = WebDsl.camel(elementDsl.text)
-        if (options.names)
-          key = options.names[row] ?: key
+        key = extractKey(options, elementDsl, row)
       } else if (inColumnRange(column - 1, grid[row].size() - 1)) {
 
         if (row == 0 && column != 0)
           results << [:]
 
         if (inRowRange(row, grid.size())) {
-          results[resultIndex][key] = elementDsl.text
+          results[resultIndex][key] = extractValue(options, elementDsl, key)
         }
 
         resultIndex++
@@ -170,11 +180,27 @@ class GridDsl {
     }
   }
 
-  boolean inRowRange(row, size) {
+  private String extractKey(Map tableOptions, BaseElementDsl elementDsl, int index) {
+    Closure keyExtractor = tableOptions.keyExtractor ?: camelCaseClosure
+
+    String key = keyExtractor(elementDsl)
+
+    if (tableOptions.names)
+      key = tableOptions.names[index] ?: key
+
+    key
+  }
+
+  private String extractValue(Map tableOptions, BaseElementDsl elementDsl, String key) {
+    Closure valueExtractor = tableOptions.valueExtractors?.get(key) ?: textClosure
+    valueExtractor(elementDsl)
+  }
+
+  private boolean inRowRange(row, size) {
     gridOptions.rowRange ? new RowRange(gridOptions.rowRange, size).contains(row) : true
   }
 
-  boolean inColumnRange(column, size) {
+  private boolean inColumnRange(column, size) {
     gridOptions.columnRange ? new RowRange(gridOptions.columnRange, size).contains(column) : true
   }
 }

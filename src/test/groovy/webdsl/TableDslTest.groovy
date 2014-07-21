@@ -20,6 +20,44 @@ import static webdsl.Orientation.VERTICAL
 class TableDslTest {
 
   @Test
+  void test_table_as_horizontal_objects__values_can_have_spaces() {
+    html {
+      table(id: 'table3') {
+        tr { td('first name'); td('text') }
+        tr { td('pinky'); td('this is pinky') }
+        tr { td('winky'); td('this is winky') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [firstName: "pinky", text: "this is pinky"],
+          [firstName: "winky", text: "this is winky"],
+      ]
+      assert table3.as.objects == expected
+    }
+  }
+
+  @Test
+  void test_table_as_vertical_objects__values_can_have_spaces() {
+    html {
+      table(id: 'table1') {
+        tr { td('first name'); td('pinky'); td('winky') }
+        tr { td('last name'); td('jones1'); td('jones2') }
+        tr { td('text'); td('this is pinky'); td('this is winky')}
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [firstName: "pinky", lastName: "jones1", text: 'this is pinky'],
+          [firstName: "winky", lastName: "jones2", text: 'this is winky'],
+      ]
+      assert $('#table1').as.objects(orientation: VERTICAL) == expected
+    }
+  }
+
+  @Test
   void test_table_as_horizontal_objects() {
     html {
       table(id: 'table3') {
@@ -60,6 +98,102 @@ class TableDslTest {
           [firstName: "winky", lastName: "jones2", ssn: '222'],
       ]
       assert $('#table1').as.objects(orientation: VERTICAL) == expected
+    }
+  }
+
+  @Test
+  void test_table_as_horizontal_objects_with_key_extractor() {
+    html {
+      table(id: 'table3') {
+        tr { td('first name'); td('last name') }
+        tr { td('pinky'); td('jones1') }
+        tr { td('winky'); td('jones2') }
+        tr { td('dinky'); td('jones3') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [first: "pinky", last: "jones1"],
+          [first: "winky", last: "jones2"],
+          [first: "dinky", last: "jones3"],
+      ]
+
+      Closure firstWordClosure = { it.text.split()[0] }
+
+      assert table3.as.objects(keyExtractor: firstWordClosure) == expected
+    }
+  }
+
+  @Test
+  void test_table_as_vertical_objects_with_key_extractor() {
+    html {
+      table(id: 'table1') {
+        tr { td('first name'); td('pinky'); td('winky') }
+        tr { td('last name'); td('jones1'); td('jones2') }
+        tr { td('ssn'); td('111'); td('222') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [first: "pinky", last: "jones1", ssn: '111'],
+          [first: "winky", last: "jones2", ssn: '222'],
+      ]
+
+      Closure firstWordClosure = { it.text.split()[0] }
+
+      assert $('#table1').as.objects(orientation: VERTICAL, keyExtractor: firstWordClosure) == expected
+    }
+  }
+
+  @Test
+  void test_table_as_horizontal_objects_with_value_extractors() {
+    html {
+      table(id: 'table3') {
+        tr { td('first name'); td('last name'); td('ssn') }
+        tr { td('pinky'); td('jones1'); td('1-1-1') }
+        tr { td('winky'); td('jones2'); td('2-2-2') }
+        tr { td('dinky'); td('jones3'); td('3-3-3') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [firstName: "PINKY", lastName: "jones1", ssn: "111"],
+          [firstName: "WINKY", lastName: "jones2", ssn: "222"],
+          [firstName: "DINKY", lastName: "jones3", ssn: "333"],
+      ]
+
+      Closure toUpperCaseClosure = { it.text.toUpperCase() }
+      Closure removeDashesClosure = { it.text.replaceAll('-', '') }
+      Map<String, Closure> valueExtractors = [firstName: toUpperCaseClosure, ssn: removeDashesClosure]
+
+      assert table3.as.objects(valueExtractors: valueExtractors) == expected
+    }
+  }
+
+  @Test
+  void test_table_as_vertical_objects_with_value_extractors() {
+    html {
+      table(id: 'table1') {
+        tr { td('first name'); td('pinky'); td('winky') }
+        tr { td('last name'); td('jones1'); td('jones2') }
+        tr { td('ssn'); td('1-1-1'); td('2-2-2') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [firstName: "PINKY", lastName: "jones1", ssn: '111'],
+          [firstName: "WINKY", lastName: "jones2", ssn: '222'],
+      ]
+
+      Closure toUpperCaseClosure = { it.text.toUpperCase() }
+      Closure removeDashesClosure = { it.text.replaceAll('-', '') }
+      Map<String, Closure> valueExtractors = [firstName: toUpperCaseClosure, ssn: removeDashesClosure]
+
+      assert $('#table1').as.objects(orientation: VERTICAL, valueExtractors: valueExtractors) == expected
     }
   }
 
@@ -833,6 +967,26 @@ class TableDslTest {
   }
 
   @Test
+  void test_table_as_object__values_can_have_spaces() {
+    html {
+      table(id: 'person') {
+        tr { td('first'); td('pinky') }
+        tr { td('last'); td('jones') }
+        tr { td('text'); td('this is pinky') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          first: 'pinky',
+          last: 'jones',
+          text: 'this is pinky'
+      ]
+      assert person.as.object == expected
+    }
+  }
+
+  @Test
   void test_table_as_object() {
     html {
       table(id: 'person') {
@@ -849,6 +1003,50 @@ class TableDslTest {
           ssn: '111-11-1111'
       ]
       assert person.as.object == expected
+    }
+  }
+
+  @Test
+  void test_table_as_object_key_extractor() {
+    html {
+      table(id: 'person') {
+        tr { td('first name'); td('pinky') }
+        tr { td('last name'); td('jones') }
+        tr { td('ssn'); td('111-11-1111') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          ('FIRST NAME'): 'pinky',
+          ('LAST NAME'): 'jones',
+          SSN: '111-11-1111'
+      ]
+      assert person.as.object(keyExtractor: { it.text.toUpperCase() }) == expected
+    }
+  }
+
+  @Test
+  void test_table_as_object_value_extractors() {
+    html {
+      table(id: 'person') {
+        tr { td('first'); td('pinky') }
+        tr { td('last'); td('jones') }
+        tr { td('ssn'); td('111-11-1111') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          first: 'PINKY',
+          last: 'jones',
+          ssn: '111111111'
+      ]
+
+      Closure toUpperCaseClosure = { it.text.toUpperCase() }
+      Closure removeDashesClosure = { it.text.replaceAll('-', '') }
+
+      assert person.as.object(valueExtractors: [first: toUpperCaseClosure, ssn: removeDashesClosure ]) == expected
     }
   }
 

@@ -167,7 +167,7 @@ class TableDslTest {
   }
 
   @Test
-  void test_table_as_vertical_objects_rowRange_no_objects() {
+  void test_table_as_vertical_objects_rowRange_no_properties() {
     html {
       table(id: 'table1') {
         tr { td('first name'); td('pinky'); td('winky') }
@@ -312,6 +312,209 @@ class TableDslTest {
   }
 
   @Test
+  void test_table_as_horizontal_objects_columnRange() {
+    html {
+      table(id: 'table3') {
+        tr { td('first name'); td('last name'); td('ssn'); td('pay rate') }
+        tr { td('pinky'); td('jones1'); td('111'); td('1') }
+        tr { td('winky'); td('jones2'); td('222'); td('2') }
+        tr { td('dinky'); td('jones3'); td('333'); td('3') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [lastName: "jones1", ssn: "111"],
+          [lastName: "jones2", ssn: "222"],
+          [lastName: "jones3", ssn: "333"],
+      ]
+      assert $('#table3').do(columnRange: 1..2).as.objects == expected
+    }
+  }
+
+  @Test
+  void test_table_as_vertical_objects_columnRange() {
+    html {
+      table(id: 'table1') {
+        tr { td('first name'); td('pinky'); td('winky'); td('dinky'); td('linky'); td('stinky') }
+        tr { td('last name'); td('jones1'); td('jones2'); td('jones3'); td('jones4'); td('jones5') }
+        tr { td('ssn'); td('111'); td('222'); td('333'); td('444'); td('555') }
+        tr { td('pay rate'); td('1'); td('2'); td('3'); td('4'); td('5') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [firstName: 'winky', lastName: "jones2", ssn: '222', payRate: '2'],
+          [firstName: 'dinky', lastName: "jones3", ssn: '333', payRate: '3'],
+          [firstName: 'linky', lastName: "jones4", ssn: '444', payRate: '4'],
+      ]
+      assert $('#table1').do(columnRange: 1..3).as.objects(orientation: VERTICAL) == expected
+    }
+  }
+
+  @Test
+  void test_table_as_horizontal_objects_columnRange_no_properties() {
+    html {
+      table(id: 'table3') {
+        tr { td('first name'); td('last name'); }
+        tr { td('pinky'); td('jones1'); }
+        tr { td('winky'); td('jones2'); }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [:],
+          [:],
+      ]
+      assert $('#table3').do(columnRange: 2..3).as.objects == expected
+    }
+  }
+
+  @Test
+  void test_table_as_vertical_objects_columnRange_no_objects() {
+    html {
+      table(id: 'table1') {
+        tr { td('first name'); td('pinky'); td('winky'); }
+        tr { td('last name'); td('jones1'); td('jones2'); }
+        tr { td('ssn'); td('111'); td('222'); }
+        tr { td('pay rate'); td('1'); td('2'); }
+      }
+    }
+
+    webdsl {
+      def expected = []
+      assert $('#table1').do(columnRange: 2..3).as.objects(orientation: VERTICAL) == expected
+    }
+  }
+
+  @Test
+  void test_table_as_horizontal_objects_columnRange_through_end() {
+    html {
+      table(id: 'table3') {
+        tr { td('first name'); td('last name'); td('ssn'); td('pay rate') }
+        tr { td('pinky'); td('jones1'); td('111'); td('1') }
+        tr { td('winky'); td('jones2'); td('222'); td('2') }
+        tr { td('dinky'); td('jones3'); td('333'); td('3') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [lastName: "jones1", ssn: "111", payRate: '1'],
+          [lastName: "jones2", ssn: "222", payRate: '2'],
+          [lastName: "jones3", ssn: "333", payRate: '3'],
+      ]
+      assert $('#table3').do(columnRange: 1..-1).as.objects == expected
+    }
+  }
+
+  @Test
+  void test_table_as_vertical_objects_columnRange_through_end() {
+    html {
+      table(id: 'table1') {
+        tr { td('first name'); td('pinky'); td('winky'); td('dinky'); td('linky'); td('stinky') }
+        tr { td('last name'); td('jones1'); td('jones2'); td('jones3'); td('jones4'); td('jones5') }
+        tr { td('ssn'); td('111'); td('222'); td('333'); td('444'); td('555') }
+        tr { td('pay rate'); td('1'); td('2'); td('3'); td('4'); td('5') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [firstName: 'winky', lastName: "jones2", ssn: '222', payRate: '2'],
+          [firstName: 'dinky', lastName: "jones3", ssn: '333', payRate: '3'],
+          [firstName: 'linky', lastName: "jones4", ssn: '444', payRate: '4'],
+          [firstName: 'stinky', lastName: "jones5", ssn: '555', payRate: '5'],
+      ]
+      assert $('#table1').do(columnRange: 1..-1).as.objects(orientation: VERTICAL) == expected
+    }
+  }
+
+  @Test
+  void test_table_as_horizontal_objects_columnRange_from_end() {
+    html {
+      table(id: 'table3') {
+        tr { td('first name'); td('last name'); td('ssn'); td('pay rate') }
+        tr { td('pinky'); td('jones1'); td('111'); td('1') }
+        tr { td('winky'); td('jones2'); td('222'); td('2') }
+        tr { td('dinky'); td('jones3'); td('333'); td('3') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [ssn: "111", payRate: '1'],
+          [ssn: "222", payRate: '2'],
+          [ssn: "333", payRate: '3'],
+      ]
+      assert $('#table3').do(columnRange: -1..-2).as.objects == expected
+    }
+  }
+
+  @Test
+  void test_table_as_vertical_objects_columnRange_from_end() {
+    html {
+      table(id: 'table1') {
+        tr { td('first name'); td('pinky'); td('winky'); td('dinky'); td('linky'); td('stinky') }
+        tr { td('last name'); td('jones1'); td('jones2'); td('jones3'); td('jones4'); td('jones5') }
+        tr { td('ssn'); td('111'); td('222'); td('333'); td('444'); td('555') }
+        tr { td('pay rate'); td('1'); td('2'); td('3'); td('4'); td('5') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [firstName: 'dinky', lastName: "jones3", ssn: '333', payRate: '3'],
+          [firstName: 'linky', lastName: "jones4", ssn: '444', payRate: '4'],
+          [firstName: 'stinky', lastName: "jones5", ssn: '555', payRate: '5'],
+      ]
+      assert $('#table1').do(columnRange: -1..-3).as.objects(orientation: VERTICAL) == expected
+    }
+  }
+
+  @Test
+  void test_table_as_horizontal_objects_columnRange_of_one() {
+    html {
+      table(id: 'table3') {
+        tr { td('first name'); td('last name'); td('ssn'); td('pay rate') }
+        tr { td('pinky'); td('jones1'); td('111'); td('1') }
+        tr { td('winky'); td('jones2'); td('222'); td('2') }
+        tr { td('dinky'); td('jones3'); td('333'); td('3') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [ssn: "111"],
+          [ssn: "222"],
+          [ssn: "333"],
+      ]
+      assert $('#table3').do(columnRange: 2..-2).as.objects == expected
+    }
+  }
+
+  @Test
+  void test_table_as_vertical_objects_columnRange_of_one() {
+    html {
+      table(id: 'table1') {
+        tr { td('first name'); td('pinky'); td('winky'); td('dinky'); td('linky'); td('stinky') }
+        tr { td('last name'); td('jones1'); td('jones2'); td('jones3'); td('jones4'); td('jones5') }
+        tr { td('ssn'); td('111'); td('222'); td('333'); td('444'); td('555') }
+        tr { td('pay rate'); td('1'); td('2'); td('3'); td('4'); td('5') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [firstName: 'dinky', lastName: "jones3", ssn: '333', payRate: '3'],
+      ]
+      assert $('#table1').do(columnRange: 2..-3).as.objects(orientation: VERTICAL) == expected
+    }
+  }
+
+  @Test
   void test_table_as_horizontal_objects_column() {
     html {
       table(id: 'table3') {
@@ -352,7 +555,7 @@ class TableDslTest {
           [firstName: "pinky", lastName: "jones1", ssn: '111', payRate: '1'],
           [firstName: "winky", lastName: "jones2", ssn: '222', payRate: '2'],
       ]
-      assert $('#table1').do(column:1).as.objects(orientation: VERTICAL) == expected
+      assert $('#table1').do(column: 1).as.objects(orientation: VERTICAL) == expected
     }
   }
 
@@ -395,7 +598,7 @@ class TableDslTest {
           [lastName: "jones1", ssn: '111'],
           [lastName: "jones2", ssn: '222'],
       ]
-      assert $('#table1').do(column:1, rowRange: 1..2).as.objects(orientation: VERTICAL) == expected
+      assert $('#table1').do(column: 1, rowRange: 1..2).as.objects(orientation: VERTICAL) == expected
     }
   }
 

@@ -101,10 +101,10 @@ class GridDsl {
         String key = WebDsl.camel(td.textContent.trim())
         attributes[column] = options.names ? options.names[column] ?: key : key
       } else if (inRowRange(row - 1, grid.size() - 1)) {
-        if (column == 0) {
+        if (column == 0)
           results << [:]
-        }
-        results[-1][attributes[column]] = td.textContent.trim()
+        if (inColumnRange(column, grid.size()))
+          results[-1][attributes[column]] = td.textContent.trim()
       }
     }
     results
@@ -112,20 +112,28 @@ class GridDsl {
 
   private def verticalObjects(Map options) {
     def results = []
+    int resultIndex = 0
     String key
     process { row, column, td ->
-      if(row == 0 && column != 0)
-        results << [:]
+      BaseElementDsl elementDsl = factory.create(pageContainer, td)
 
-      if (inRowRange(row, grid.size())) {
-        BaseElementDsl elementDsl = factory.create(pageContainer, td)
-        if (column == 0) {
-          key = WebDsl.camel(elementDsl.text)
-          if (options.names)
-            key = options.names[row] ?: key
-        } else
-          results[column - 1][key] = elementDsl.text
+      if (column == 0) {
+        resultIndex = 0
+        key = WebDsl.camel(elementDsl.text)
+        if (options.names)
+          key = options.names[row] ?: key
+      } else if (inColumnRange(column - 1, grid[row].size() - 1)) {
+
+        if (row == 0 && column != 0)
+          results << [:]
+
+        if (inRowRange(row, grid.size())) {
+          results[resultIndex][key] = elementDsl.text
+        }
+
+        resultIndex++
       }
+
     }
     results
   }
@@ -164,5 +172,9 @@ class GridDsl {
 
   boolean inRowRange(row, size) {
     gridOptions.rowRange ? new RowRange(gridOptions.rowRange, size).contains(row) : true
+  }
+
+  boolean inColumnRange(column, size) {
+    gridOptions.columnRange ? new RowRange(gridOptions.columnRange, size).contains(column) : true
   }
 }

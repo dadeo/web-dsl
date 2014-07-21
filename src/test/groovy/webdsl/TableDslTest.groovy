@@ -1124,7 +1124,7 @@ class TableDslTest {
       def result = []
 
       employees.process { row, column, td ->
-        result << [rowIndex: row, columnIndex: column, content: td.textContent.trim()]
+        result << [rowIndex: row, columnIndex: column, content: td.text]
       }
 
       def expected = [

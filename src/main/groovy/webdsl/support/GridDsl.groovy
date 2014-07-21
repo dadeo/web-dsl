@@ -51,7 +51,7 @@ class GridDsl {
       if (column == 0) {
         result << [:]
       }
-      td.htmlElementDescendants.each { span ->
+      td.element.htmlElementDescendants.each { span ->
         if (span instanceof HtmlSpan && span.getAttribute("name")) {
           result[-1][span.getAttribute("name")] = span.getTextContent()
         }
@@ -64,7 +64,7 @@ class GridDsl {
     def result = []
     process { row, column, td ->
       if (column == 0 && inRowRange(row, grid.size())) {
-        result << td.textContent.trim()
+        result << td.text
       }
     }
     result
@@ -78,13 +78,11 @@ class GridDsl {
     def result = [:]
     String key
     process { int row, int column, td ->
-      BaseElementDsl elementDsl = factory.create(pageContainer, td)
-
       if (inRowRange(row, grid.size())) {
         if (column == 0) {
-          key = extractKey(tableOptions, elementDsl, row)
+          key = extractKey(tableOptions, td, row)
         } else {
-          result[key] = extractValue(tableOptions, elementDsl, key)
+          result[key] = extractValue(tableOptions, td, key)
         }
       }
     }
@@ -106,16 +104,15 @@ class GridDsl {
     def results = []
     def attributes = [:]
     process { row, column, td ->
-      BaseElementDsl elementDsl = factory.create(pageContainer, td)
       if (row == 0) {
-        String key = extractKey(options, elementDsl, column)
+        String key = extractKey(options, td, column)
         attributes[column] = key
       } else if (inRowRange(row - 1, grid.size() - 1)) {
         if (column == 0)
           results << [:]
         if (inColumnRange(column, grid.size())) {
           String key = attributes[column]
-          results[-1][key] = extractValue(options, elementDsl, key)
+          results[-1][key] = extractValue(options, td, key)
         }
       }
     }
@@ -127,18 +124,16 @@ class GridDsl {
     int resultIndex = 0
     String key
     process { row, column, td ->
-      BaseElementDsl elementDsl = factory.create(pageContainer, td)
-
       if (column == 0) {
         resultIndex = 0
-        key = extractKey(options, elementDsl, row)
+        key = extractKey(options, td, row)
       } else if (inColumnRange(column - 1, grid[row].size() - 1)) {
 
         if (row == 0 && column != 0)
           results << [:]
 
         if (inRowRange(row, grid.size())) {
-          results[resultIndex][key] = extractValue(options, elementDsl, key)
+          results[resultIndex][key] = extractValue(options, td, key)
         }
 
         resultIndex++
@@ -163,7 +158,7 @@ class GridDsl {
           map = [:]
         }
         if (column < columnNames.size() && inRowRange(row, grid.size())) {
-          map[columnNames[column]] = td.textContent.trim()
+          map[columnNames[column]] = td.text
         }
         oldRow = row
       }

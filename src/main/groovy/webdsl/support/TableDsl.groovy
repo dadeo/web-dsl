@@ -45,7 +45,7 @@ class TableDsl extends BaseElementDsl {
     table.rows[startIndex..-1].each { row ->
       int columnIndex = 0
       row.cells[startColumn..-1].each { td ->
-        closure rowIndex, columnIndex, td
+        closure rowIndex, columnIndex, factory.create(pageContainer, td)
         ++columnIndex
       }
       ++rowIndex

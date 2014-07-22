@@ -186,7 +186,7 @@ class GridDsl {
     key
   }
 
-  private String extractValue(Map tableOptions, BaseElementDsl elementDsl, String key) {
+  private Object extractValue(Map tableOptions, BaseElementDsl elementDsl, String key) {
     Closure valueExtractor = tableOptions.valueExtractors?.get(key) ?: textClosure
     valueExtractor(elementDsl)
   }

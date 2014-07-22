@@ -198,6 +198,63 @@ class TableDslTest {
   }
 
   @Test
+  void test_table_as_horizontal_objects__value_extractor_is_able_to_return_an_object() {
+    html {
+      table(id: 'table3') {
+        tr { td('first name'); td('last name'); td('ssn') }
+        tr { td('pinky'); td('jones1'); td('111-11-1111') }
+        tr { td('winky'); td('jones2'); td('222-22-2222') }
+        tr { td('dinky'); td('jones3'); td('333-33-3333') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [firstName: "pinky", lastName: "jones1", ssn: [part1: '111', part2: '11', part3: '1111']],
+          [firstName: "winky", lastName: "jones2", ssn: [part1: '222', part2: '22', part3: '2222']],
+          [firstName: "dinky", lastName: "jones3", ssn: [part1: '333', part2: '33', part3: '3333']],
+      ]
+
+      Closure ssnToMapClosure = {
+        def parts = it.text.trim().split('-')
+        [part1: parts[0], part2: parts[1], part3: parts[2]]
+      }
+
+      Map<String, Closure> valueExtractors = [ssn: ssnToMapClosure]
+
+      assert table3.as.objects(valueExtractors: valueExtractors) == expected
+    }
+  }
+
+  @Test
+  void test_table_as_vertical_objects__value_extractor_is_able_to_return_an_object() {
+    html {
+      table(id: 'table1') {
+        tr { td('first name'); td('pinky'); td('winky') }
+        tr { td('last name'); td('jones1'); td('jones2') }
+        tr { td('ssn'); td('111-11-1111'); td('222-22-2222') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          [firstName: "pinky", lastName: "jones1", ssn: [part1: '111', part2: '11', part3: '1111']],
+          [firstName: "winky", lastName: "jones2", ssn: [part1: '222', part2: '22', part3: '2222']],
+      ]
+
+      Closure ssnToMapClosure = {
+        def parts = it.text.trim().split('-')
+        [part1: parts[0], part2: parts[1], part3: parts[2]]
+      }
+
+      Map<String, Closure> valueExtractors = [ssn: ssnToMapClosure]
+
+
+      assert $('#table1').as.objects(orientation: VERTICAL, valueExtractors: valueExtractors) == expected
+    }
+  }
+
+  @Test
   void test_table_as_horizontal_objects_with_names() {
     html {
       table(id: 'table3') {
@@ -1047,6 +1104,32 @@ class TableDslTest {
       Closure removeDashesClosure = { it.text.replaceAll('-', '') }
 
       assert person.as.object(valueExtractors: [first: toUpperCaseClosure, ssn: removeDashesClosure ]) == expected
+    }
+  }
+
+  @Test
+  void test_table_as_object_value_extractor_is_able_to_return_an_object() {
+    html {
+      table(id: 'person') {
+        tr { td('first'); td('pinky') }
+        tr { td('last'); td('jones') }
+        tr { td('ssn'); td('111-11-1111') }
+      }
+    }
+
+    webdsl {
+      def expected = [
+          first: 'pinky',
+          last: 'jones',
+          ssn: [part1: '111', part2: '11', part3: '1111']
+      ]
+
+      Closure ssnToMapClosure = {
+        def parts = it.text.trim().split('-')
+        [part1: parts[0], part2: parts[1], part3: parts[2]]
+      }
+
+      assert person.as.object(valueExtractors: [ssn: ssnToMapClosure ]) == expected
     }
   }
 

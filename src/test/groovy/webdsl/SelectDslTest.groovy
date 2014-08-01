@@ -638,6 +638,65 @@ class SelectDslTest {
   }
 
   @Test
+  void test_getValue_option_selected__selection_value_is_empty_string() {
+    html {
+      form {
+        select(id: 'autos') {
+          option(value: 'volvo', 'Volvo')
+          option(value: '', selected: 'true', '')
+          option(value: 'audi', 'Audi')
+        }
+      }
+    }
+
+    webdsl {
+      assert $("#autos").value == ''
+    }
+  }
+
+  @Test
+  void test_setValue_to_empty_string__option_value_is_empty_string() {
+    html {
+      form {
+        select(id: 'autos') {
+          option(value: 'volvo', selected: 'true', 'Volvo')
+          option(value: '', 'Saab')
+          option(value: 'audi', 'Audi')
+        }
+      }
+    }
+
+    webdsl {
+      $("#autos").value = ''
+
+      assert $("#autos").value == 'Saab'
+      assert $("#autos").selectedOptions.text == ['Saab']
+      assert $("#autos").selectedOptions.value == ['']
+    }
+  }
+
+  @Test
+  void test_setValue_to_empty_string__option_text_is_empty_string() {
+    html {
+      form {
+        select(id: 'autos') {
+          option(value: 'volvo', selected: 'true', 'Volvo')
+          option(value: 'saab', '')
+          option(value: 'audi', 'Audi')
+        }
+      }
+    }
+
+    webdsl {
+      $("#autos").value = ''
+
+      assert $("#autos").value == ''
+      assert $("#autos").selectedOptions.text == ['']
+      assert $("#autos").selectedOptions.value == ['saab']
+    }
+  }
+
+  @Test
   void test_setValue_value_not_found() {
     html {
       form {

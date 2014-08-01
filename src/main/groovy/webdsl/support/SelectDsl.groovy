@@ -48,7 +48,7 @@ class SelectDsl extends ElementDsl {
 
   @Override
   def setValue(value) {
-    setValues([value].flatten().grep())
+    setValues([value].flatten().grep { it != null })
   }
 
   def setValues(List<String> values) {

@@ -16,6 +16,7 @@ import com.gargoylesoftware.htmlunit.*
 import com.gargoylesoftware.htmlunit.html.DomText
 import com.gargoylesoftware.htmlunit.html.HtmlElement
 import com.gargoylesoftware.htmlunit.html.HtmlPage
+import com.gargoylesoftware.htmlunit.util.NameValuePair
 import org.codehaus.groovy.runtime.GStringImpl
 import webdsl.support.*
 import webdsl.support.css.selector.CssSelector
@@ -234,6 +235,28 @@ class WebDsl implements PageContainer {
 
   void disableJavaScript() {
     javaScriptEnabled = false
+  }
+
+  void httpGet(URL url, Map<String, Object> params = [:]) {
+    httpGet url.toString(), params
+  }
+
+  void httpGet(String url, Map<String, Object> params = [:]) {
+    http HttpMethod.GET, url, params
+  }
+
+  void httpPost(URL url, Map<String, Object> params) {
+    httpPost url.toString(), params
+  }
+
+  void httpPost(String url, Map<String, Object> params) {
+    http HttpMethod.POST, url, params
+  }
+
+  void http(HttpMethod method, String url, Map<String, Object> params) {
+    WebRequest request = new WebRequest(new URL(url), method)
+    request.requestParameters = params.collect { k, v -> new NameValuePair(k, v?.toString() ?: '') }
+    page = webClient.getPage(webClient.currentWindow, request)
   }
 
   private Closure elementSortOrder() {

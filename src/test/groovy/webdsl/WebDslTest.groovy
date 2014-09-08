@@ -326,4 +326,82 @@ class WebDslTest {
     assert dsl.printContentOnFailingStatusCode
     assert dsl.webClient.options.printContentOnFailingStatusCode == true
   }
+
+  @Test
+  void test_httpGet_url_and_parameters() {
+    JettyRunner.withServer() {
+      WebDsl webDsl = new WebDsl()
+
+      webDsl.httpGet(new URL("http://localhost:8081/testit/test.html"), [a: 1, b: 2, c: null, d: 4])
+
+      assert webDsl.title == 'TestServlet test.html'
+      assert webDsl.$('#methodType').value == 'GET'
+      assert webDsl.$('#parameters').do(offset:1).as.object == [a: '1', b: '2', c:'', d: '4']
+    }
+  }
+
+  @Test
+  void test_httpGet_url_and_no_parameters() {
+    JettyRunner.withServer() {
+      WebDsl webDsl = new WebDsl()
+
+      webDsl.httpGet(new URL("http://localhost:8081/testit/test.html"))
+
+      assert webDsl.title == 'TestServlet test.html'
+      assert webDsl.$('#methodType').value == 'GET'
+      assert webDsl.$('#parameters').as.objects == []
+    }
+  }
+
+  @Test
+  void test_httpGet_url_string_and_parameters() {
+    JettyRunner.withServer() {
+      WebDsl webDsl = new WebDsl()
+
+      webDsl.httpGet("http://localhost:8081/testit/test.html", [a: 1, b: 2, c: null, d: 4])
+
+      assert webDsl.title == 'TestServlet test.html'
+      assert webDsl.$('#methodType').value == 'GET'
+      assert webDsl.$('#parameters').do(offset:1).as.object == [a: '1', b: '2', c:'', d: '4']
+    }
+  }
+
+  @Test
+  void test_httpGet_url_string_and_no_parameters() {
+    JettyRunner.withServer() {
+      WebDsl webDsl = new WebDsl()
+
+      webDsl.httpGet("http://localhost:8081/testit/test.html")
+
+      assert webDsl.title == 'TestServlet test.html'
+      assert webDsl.$('#methodType').value == 'GET'
+      assert webDsl.$('#parameters').as.objects == []
+    }
+  }
+
+  @Test
+  void test_httpPost_url_and_parameters() {
+    JettyRunner.withServer() {
+      WebDsl webDsl = new WebDsl()
+
+      webDsl.httpPost(new URL("http://localhost:8081/testit/test.html"), [a: 1, b: 2, c: null, d: 4])
+
+      assert webDsl.title == 'TestServlet test.html'
+      assert webDsl.$('#methodType').value == 'POST'
+      assert webDsl.$('#parameters').do(offset:1).as.object == [a: '1', b: '2', c:'', d: '4']
+    }
+  }
+
+  @Test
+  void test_httpPost_url_string_and_parameters() {
+    JettyRunner.withServer() {
+      WebDsl webDsl = new WebDsl()
+
+      webDsl.httpPost("http://localhost:8081/testit/test.html", [a: 1, b: 2, c: null, d: 4])
+
+      assert webDsl.title == 'TestServlet test.html'
+      assert webDsl.$('#methodType').value == 'POST'
+      assert webDsl.$('#parameters').do(offset:1).as.object == [a: '1', b: '2', c:'', d: '4']
+    }
+  }
 }

@@ -29,6 +29,8 @@ public class JettyRunner {
   private Server server
   def params
   def path
+  String methodType
+
   private ServletHandler handler
 
   JettyRunner(options = [:]) {
@@ -55,6 +57,8 @@ public class JettyRunner {
               <body>
                 <h1>Hello TestServlet</h1>
                 <p><a href="/main.html">main</a>
+                <h2>Method Type</h2>
+                <p id="methodType">$methodType</p>
                 <h2>Parameters</h2>
                 <table id="parameters">
                   <tr><th>Name</th><th>Value</th></tr>
@@ -73,6 +77,7 @@ public class JettyRunner {
 
   def start() {
     path = ""
+    methodType = ""
     params = [:]
     server.start()
   }
@@ -90,6 +95,7 @@ public class JettyRunner {
     testServlet.doGet = { HttpServletRequest request, HttpServletResponse response ->
       path = request.getRequestURI().split("/")[-1]
       params = request.getParameterMap()
+      methodType = request.method
 
       def c = pageContent.clone()
       c.delegate = this
@@ -108,6 +114,10 @@ public class JettyRunner {
     runner.start()
     runner.server.join()
 
+  }
+
+  static def withServer(Closure closure) {
+    withServer [:], closure
   }
 
   static def withServer(Map options, Closure closure) {

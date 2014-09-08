@@ -1064,6 +1064,19 @@ class TableDslTest {
   }
 
   @Test
+  void test_table_as_object_when_table_empty() {
+    html {
+      table(id: 'person') {
+      }
+    }
+
+    webdsl {
+      def expected = [:]
+      assert person.as.object == expected
+    }
+  }
+
+  @Test
   void test_table_as_object_key_extractor() {
     html {
       table(id: 'person') {

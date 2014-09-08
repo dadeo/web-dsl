@@ -349,7 +349,7 @@ class WebDslTest {
 
       assert webDsl.title == 'TestServlet test.html'
       assert webDsl.$('#methodType').value == 'GET'
-      assert webDsl.$('#parameters').as.objects == []
+      assert webDsl.$('#parameters').do(offset:1).as.object == [:]
     }
   }
 
@@ -375,7 +375,7 @@ class WebDslTest {
 
       assert webDsl.title == 'TestServlet test.html'
       assert webDsl.$('#methodType').value == 'GET'
-      assert webDsl.$('#parameters').as.objects == []
+      assert webDsl.$('#parameters').do(offset:1).as.object == [:]
     }
   }
 

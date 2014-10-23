@@ -15,10 +15,11 @@ package webdsl
 import com.gargoylesoftware.htmlunit.html.HtmlSelect
 import org.junit.Before
 import org.junit.Test
+import webdsl.support.BaseElementDsl
 import webdsl.support.DslFactory
 import webdsl.support.SelectDsl
 
-@Mixin(ServerMixin)
+@Mixin(NonServerMixin)
 class DslHousekeepingTest {
   def map
 
@@ -64,6 +65,10 @@ class DslHousekeepingTest {
 
   @Test
   void test_factory_no_override_of_select() {
+    html {
+      select(name: 'auto')
+    }
+
     webdsl {
       assert auto instanceof SelectDsl
     }
@@ -71,6 +76,10 @@ class DslHousekeepingTest {
 
   @Test
   void test_factory_override_of_select() {
+    html {
+      select(name: 'auto')
+    }
+
     webdsl {
       handle HtmlSelect with OtherDsl
 
@@ -80,6 +89,10 @@ class DslHousekeepingTest {
 
   @Test
   void test_factory_defaults_to_reset() {
+    html {
+      select(name: 'auto')
+    }
+
     webdsl(
         {
           handle HtmlSelect with OtherDsl
@@ -95,6 +108,10 @@ class DslHousekeepingTest {
 
   @Test
   void test_factory_reset_can_be_overridden() {
+    html {
+      select(name: 'auto')
+    }
+
     webdsl(
         {
           factoryResets = false
@@ -111,8 +128,9 @@ class DslHousekeepingTest {
   }
 
 
-  static class OtherDsl {
+  static class OtherDsl extends BaseElementDsl {
     OtherDsl(pageContainer, DslFactory factory, element) {
+      super(pageContainer, factory, element)
     }
   }
 }

@@ -13,16 +13,18 @@
 package webdsl.support.css.selector
 
 import com.gargoylesoftware.htmlunit.html.HtmlElement
+import groovy.transform.Immutable
+import webdsl.support.BaseElementDsl
 
-@groovy.transform.Immutable
+@Immutable
 class ParentCssSelector implements CssSelector {
   CssSelector parent
   CssSelector child
 
   @Override
-  List select(candidate) {
+  List<? extends BaseElementDsl> select(candidate) {
     List parents = parent.select(candidate)
-    def result = parents.collectMany { HtmlElement aParent ->
+    parents.collectMany { HtmlElement aParent ->
       aParent.childElements.collect { child.select(it) }.grep().flatten()
     }
   }

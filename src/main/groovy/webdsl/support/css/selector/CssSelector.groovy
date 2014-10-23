@@ -12,7 +12,9 @@
  */
 package webdsl.support.css.selector
 
+import webdsl.support.BaseElementDsl
+
 
 interface CssSelector {
-  List select(candidate)
+  List<? extends BaseElementDsl> select(candidate)
 }

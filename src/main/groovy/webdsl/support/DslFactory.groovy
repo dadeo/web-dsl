@@ -13,9 +13,11 @@
 package webdsl.support
 
 import com.gargoylesoftware.htmlunit.html.*
+import groovy.transform.CompileStatic
 
+@CompileStatic
 class DslFactory {
-  private registry = [
+  private Map<Class<? extends HtmlElement>, Class<? extends BaseElementDsl>> registry = [
       (HtmlForm):FormDsl,
       (HtmlTable):TableDsl,
       (HtmlSelect):SelectDsl,
@@ -33,17 +35,17 @@ class DslFactory {
       (HtmlElement):ElementDsl
   ]
 
-  def create(PageContainer pageContainer, element) {
-    if(element instanceof BaseElementDsl) return element
+  BaseElementDsl create(PageContainer pageContainer, element) {
+    if(element instanceof BaseElementDsl) return (BaseElementDsl) element
 
-    registry.findResult { Class elementClazz, Class dslClazz ->
+    (BaseElementDsl) registry.findResult { Class elementClazz, Class dslClazz ->
       if(elementClazz.isInstance(element)) {
         dslClazz.newInstance([pageContainer, this, element] as Object[])
       }
     }
   }
 
-  void register(Class dslClass, Class elementClass) {
+  void register(Class<BaseElementDsl> dslClass, Class<HtmlElement> elementClass) {
     registry[elementClass] = dslClass
   }
 }

@@ -19,5 +19,5 @@ interface PageContainer {
 
   BaseElementDsl $(String selector, target)
 
-  List<BaseElementDsl> $$(String selector, target)
+  List<? extends BaseElementDsl> $$(String selector, target)
 }

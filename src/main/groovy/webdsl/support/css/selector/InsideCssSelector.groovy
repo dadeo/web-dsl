@@ -12,12 +12,15 @@
  */
 package webdsl.support.css.selector
 
-@groovy.transform.Immutable
+import groovy.transform.Immutable
+import webdsl.support.BaseElementDsl
+
+@Immutable
 class InsideCssSelector implements CssSelector {
   List<CssSelector> cssSelectors
 
   @Override
-  List select(candidate) {
+  List<? extends BaseElementDsl> select(candidate) {
     def applySelector = { cssSelector, target ->
       def insideSelector = { element -> cssSelector.select(element) }
 

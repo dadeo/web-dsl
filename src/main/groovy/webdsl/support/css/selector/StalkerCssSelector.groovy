@@ -13,14 +13,16 @@
 package webdsl.support.css.selector
 
 import com.gargoylesoftware.htmlunit.html.HtmlElement
+import groovy.transform.Immutable
+import webdsl.support.BaseElementDsl
 
-@groovy.transform.Immutable
+@Immutable
 class StalkerCssSelector implements CssSelector {
   CssSelector stalked
   CssSelector stalker
 
   @Override
-  List select(candidate) {
+  List<? extends BaseElementDsl> select(candidate) {
     List stalkedResults = stalked.select(candidate)
     stalkedResults.collectMany {
       HtmlElement sibling = it.nextSibling

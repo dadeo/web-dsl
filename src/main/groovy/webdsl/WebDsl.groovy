@@ -19,7 +19,10 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage
 import com.gargoylesoftware.htmlunit.util.NameValuePair
 import groovy.transform.CompileStatic
 import org.codehaus.groovy.runtime.GStringImpl
-import webdsl.support.*
+import webdsl.support.BaseElementDsl
+import webdsl.support.DslFactory
+import webdsl.support.FormDsl
+import webdsl.support.PageContainer
 import webdsl.support.css.selector.CssSelector
 import webdsl.support.css.selector.CssSelectorParser
 
@@ -53,17 +56,19 @@ class WebDsl implements PageContainer {
     init(url)
   }
 
+  @CompileStatic
   WebDsl init(String url) {
     container.set this
     setPage webClient.getPage(url)
     this
   }
 
+  @CompileStatic
   WebDsl _for(String url) {
     init(url)
   }
 
-  def _do(closure) {
+  def _do(Closure closure) {
     if (factoryResets) {
       factory = new DslFactory()
     }
@@ -75,11 +80,13 @@ class WebDsl implements PageContainer {
     }
   }
 
-  def openNewClient(where) {
+  @CompileStatic
+  def openNewClient(String where) {
     initWebClient(webClient.webConnection, new Options())
     _for(where)
   }
 
+  @CompileStatic
   private def initWebClient(WebConnection webConnection, Options options) {
     this.webClient = new WebClient(options.browserVersion)
     if (webConnection)
@@ -92,32 +99,39 @@ class WebDsl implements PageContainer {
     this.webClient.options.javaScriptEnabled = options.javaScriptEnabled
   }
 
-  def form(closure) {
-    form.do closure
+  @CompileStatic
+  def form(Closure closure) {
+    form._do closure
   }
 
-  def getForm() {
+  @CompileStatic
+  FormDsl getForm() {
     new FormDsl(this, factory, htmlPage.getForms()[0])
   }
 
+  @CompileStatic
   void setPage(Page newPage) {
     page = newPage
   }
 
+  @CompileStatic
   HtmlPage getHtmlPage() {
     assert page instanceof HtmlPage, page.class
     (HtmlPage) page
   }
 
-  private getTitle() {
+  @CompileStatic
+  String getTitle() {
     htmlPage.getTitleText()
   }
 
+  @CompileStatic
   def back() {
     webClient.currentWindow.getHistory().back()
     page = webClient.currentWindow.enclosedPage
   }
 
+  @CompileStatic
   boolean exists(String elementName) {
     try {
       getProperty(elementName)
@@ -178,9 +192,10 @@ class WebDsl implements PageContainer {
     element ?: name ?: value ?: href ?: text ?: $(searchString)
   }
 
-  def properties() {
-    def result = []
-    htmlPage.htmlElementDescendants.each {
+  @CompileStatic
+  List<String> properties() {
+    List<String> result = []
+    htmlPage.htmlElementDescendants.each { HtmlElement it ->
       String id = it.getAttribute('id')
       if (id) result << id
 
@@ -188,18 +203,6 @@ class WebDsl implements PageContainer {
       if (name) result << name
     }
     result
-  }
-
-  List<HtmlElement> findElementsByNameOrId(String nameOrId) {
-    htmlPage.getElementsByIdAndOrName(nameOrId)
-  }
-
-  def getChildren() {
-    new ChildrenDsl().children(this, htmlPage)
-  }
-
-  def children(options) {
-    new ChildrenDsl().children(this, htmlPage, options)
   }
 
   def handle(Class elementClass) {
@@ -210,22 +213,24 @@ class WebDsl implements PageContainer {
     ]
   }
 
+  @CompileStatic
   BaseElementDsl $(String selector, target = htmlPage) {
     def dslElements = $$(selector, target)
     dslElements[0]
   }
 
-  List<BaseElementDsl> $$(String selector, target = htmlPage) {
+  @CompileStatic
+  List<? extends BaseElementDsl> $$(String selector, target = htmlPage) {
     CssSelector cssSelector = new CssSelectorParser().parse(selector)
 
 
-    def dslElements = cssSelector.select(target)
-                                 .unique()
+    List<? extends BaseElementDsl> dslElements = cssSelector.select(target)
+                                                            .unique().toList()
 
     if (dslElements.size() > 1)
-      dslElements.sort(elementSortOrder())
+      dslElements.sort(true, elementSortOrder())
 
-    dslElements.collect { factory.create(this, it) }
+    dslElements.collect { factory.create(this, it) }.toList()
   }
 
   List<String> getAlerts() {
@@ -276,7 +281,7 @@ class WebDsl implements PageContainer {
     return { HtmlElement it -> sortOrder[it] }
   }
 
-  static def camel(String string) {
+  static String camel(String string) {
     def buffer = new StringBuffer()
 
     int match = 0
@@ -291,7 +296,7 @@ class WebDsl implements PageContainer {
     buffer.toString()
   }
 
-  static def camel(Map map) {
+  static Map<String, ?> camel(Map<String, ?> map) {
     def result = [:]
     map.each { k, v ->
       result[camel(k)] = v
@@ -323,11 +328,12 @@ class WebDsl implements PageContainer {
     getIntern(string).value = value
   }
 
+
   static def setValue(GStringImpl string, value) {
     getIntern(string).value = value
   }
 
-  static def map(Map target, mappings) {
+  static def map(Map target, Map mappings) {
     def result = [:]
     target.each { k, v ->
       def newKey = mappings[k]

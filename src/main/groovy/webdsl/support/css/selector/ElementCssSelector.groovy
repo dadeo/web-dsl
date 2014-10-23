@@ -13,6 +13,7 @@
 package webdsl.support.css.selector
 
 import groovy.transform.Immutable
+import webdsl.support.BaseElementDsl
 import webdsl.support.matchers.ValueMatcher
 
 @Immutable
@@ -21,7 +22,7 @@ class ElementCssSelector implements CssSelector {
   String tagName
   Map<String, ValueMatcher> attributes = [:]
 
-  List select(candidate) {
+  List<? extends BaseElementDsl> select(candidate) {
     def predicates = []
 
     if (id)
@@ -36,6 +37,6 @@ class ElementCssSelector implements CssSelector {
       }
     }
 
-    predicates.every { it(candidate) } ? [candidate] : []
+    (List<? extends BaseElementDsl>) predicates.every { it(candidate) } ? [candidate] : []
   }
 }

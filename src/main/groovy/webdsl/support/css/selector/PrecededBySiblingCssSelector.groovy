@@ -13,21 +13,23 @@
 package webdsl.support.css.selector
 
 import com.gargoylesoftware.htmlunit.html.HtmlElement
+import groovy.transform.Immutable
+import webdsl.support.BaseElementDsl
 
-@groovy.transform.Immutable
+@Immutable
 class PrecededBySiblingCssSelector implements CssSelector {
   CssSelector sibling
   CssSelector selector
 
   @Override
-  List select(candidate) {
+  List<? extends BaseElementDsl> select(candidate) {
     List siblingResults = sibling.select(candidate)
     siblingResults.collectMany {
       List siblingMatches = []
       HtmlElement sibling = it.nextSibling
       while(sibling) {
         siblingMatches.addAll selector.select(sibling)
-        sibling = sibling.nextSibling
+        sibling = (HtmlElement) sibling.nextSibling
       }
       siblingMatches
     }

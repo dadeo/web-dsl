@@ -37,9 +37,13 @@ class NonServerMixin {
     this.jsContents = jsContents
   }
 
-  def webdsl(Closure closure) {
+  def webdsl(Closure... closure) {
     WebDsl webDsl = createBuilder().build()
-    webDsl.do closure.curry(webDsl)
+    def result = null
+    closure.each {
+      result = webDsl.do it.curry(webDsl)
+    }
+    result
   }
 
   def withWebConnection(Closure closure) {

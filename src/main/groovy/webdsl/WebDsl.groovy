@@ -143,10 +143,6 @@ class WebDsl implements PageContainer {
     if (metaClass.hasProperty(this, possibleName)) {
       return getProperty(possibleName)
     }
-    def selectors = findSelectorsFor(name)
-    if (selectors) {
-      return selectors
-    }
     throw new MissingPropertyException(name, WebDsl)
   }
 
@@ -154,17 +150,6 @@ class WebDsl implements PageContainer {
     htmlPage.htmlElementDescendants.find {
       it.getAttribute('id') == name || it.getAttribute('name') == name
     }
-  }
-
-  def findSelectorsFor(name) {
-    def result = new SelectorDsl(this, factory)
-    htmlPage.body.children.each { element ->
-      if (element.class != DomText && element.tagName == name) {
-        result << element
-      }
-    }
-    if (!result.selected) throw new MissingPropertyException(name, this.class)
-    result
   }
 
   def properties() {

@@ -47,6 +47,7 @@ class WebDslServerTest {
   void test_exists_true() {
     webdsl {
       assert exists('form0')
+      assert exists('table')
       assert exists('table4')
       assert exists('myOrderedList')
       assert exists('errors')
@@ -59,7 +60,6 @@ class WebDslServerTest {
   @Test
   void test_exists_false() {
     webdsl {
-      assert !exists('table')
       assert !exists('table5')
       assert !exists('form4')
       assert !exists('orderedList')

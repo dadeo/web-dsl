@@ -34,6 +34,8 @@ class DslFactory {
   ]
 
   def create(PageContainer pageContainer, element) {
+    if(element instanceof BaseElementDsl) return element
+
     registry.findResult { Class elementClazz, Class dslClazz ->
       if(elementClazz.isInstance(element)) {
         dslClazz.newInstance([pageContainer, this, element] as Object[])

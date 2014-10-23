@@ -39,7 +39,7 @@ class NonServerMixin {
 
   def webdsl(Closure closure) {
     WebDsl webDsl = createBuilder().build()
-    webDsl.do closure
+    webDsl.do closure.curry(webDsl)
   }
 
   def withWebConnection(Closure closure) {

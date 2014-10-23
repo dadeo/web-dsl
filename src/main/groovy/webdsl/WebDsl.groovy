@@ -13,10 +13,11 @@
 package webdsl
 
 import com.gargoylesoftware.htmlunit.*
-import com.gargoylesoftware.htmlunit.html.DomText
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor
 import com.gargoylesoftware.htmlunit.html.HtmlElement
 import com.gargoylesoftware.htmlunit.html.HtmlPage
 import com.gargoylesoftware.htmlunit.util.NameValuePair
+import groovy.transform.CompileStatic
 import org.codehaus.groovy.runtime.GStringImpl
 import webdsl.support.*
 import webdsl.support.css.selector.CssSelector
@@ -136,9 +137,11 @@ class WebDsl implements PageContainer {
     this[name].do args[0]
   }
 
+  @CompileStatic
   def propertyMissing(String name) {
-    def element = createDslForElement(name)
+    def element = findElementByPropertyValues(name)
     if (element) return factory.create(this, element)
+
     def possibleName = '$' + name
     if (metaClass.hasProperty(this, possibleName)) {
       return getProperty(possibleName)
@@ -146,10 +149,33 @@ class WebDsl implements PageContainer {
     throw new MissingPropertyException(name, WebDsl)
   }
 
-  private createDslForElement(String name) {
-    htmlPage.htmlElementDescendants.find {
-      it.getAttribute('id') == name || it.getAttribute('name') == name
+  @CompileStatic
+  private findElementByPropertyValues(String searchString) {
+    def name = null
+    def value = null
+    def href = null
+    def text = null
+
+    def element = htmlPage.htmlElementDescendants.find { HtmlElement element ->
+      if (element.getAttribute('id') == searchString)
+        return true
+
+      if (!name && element.getAttribute('name') == searchString)
+        name = element
+
+      if (!value && element.getAttribute("value") == searchString)
+        value = element
+
+      if (!href && element.getAttribute("href") == searchString)
+        href = element
+
+      if (!text && (element instanceof HtmlAnchor) && element.getTextContent() == searchString)
+        text = element
+
+      false
     }
+
+    element ?: name ?: value ?: href ?: text ?: $(searchString)
   }
 
   def properties() {
@@ -274,16 +300,7 @@ class WebDsl implements PageContainer {
   }
 
   static def click(String string) {
-    def dsl = container.get()
-    def found = dsl.htmlPage.tabbableElements.find { HtmlElement element ->
-      element.getTextContent() == string || element.getAttribute("value") == string || element.getAttribute("href") == string
-    }
-
-    if (found) {
-      dsl.setPage found.click()
-    } else {
-      getIntern(string).click()
-    }
+    getIntern(string).click()
   }
 
   static def getText(String string) {

@@ -132,12 +132,12 @@ class WebDsl implements PageContainer {
   }
 
   @CompileStatic
-  boolean exists(String elementName) {
+  def exists(String elementName, Closure trueClosure = { it }, Closure falseClosure = { false }) {
     try {
-      getProperty(elementName)
-      true
+      def element = getProperty(elementName)
+      trueClosure(element)
     } catch (MissingPropertyException e) {
-      false
+      falseClosure()
     }
   }
 

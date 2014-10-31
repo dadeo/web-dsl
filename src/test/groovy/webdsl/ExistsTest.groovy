@@ -13,6 +13,7 @@
 package webdsl
 
 import org.junit.Test
+import webdsl.support.BaseElementDsl
 
 @Mixin(NonServerMixin)
 class ExistsTest {
@@ -30,12 +31,24 @@ class ExistsTest {
   @Test
   void test_no_math() {
     html {
-      a(id: "myId", href:'http://something', 'MYLINK')
+      a(id: "myId", href: 'http://something', 'MYLINK')
       input(name: "name", id: "id", type: 'text', value: 'MYVALUE')
     }
 
     webdsl {
       assert !exists('search')
+    }
+  }
+
+  @Test
+  void test_exists_true_returns_dsl_wrapper_for_found_element() {
+    html {
+      input(name: "name", id: "id", type: 'text', value: 'MYVALUE')
+    }
+
+    webdsl {
+      assert exists('input') instanceof BaseElementDsl
+      assert exists('input').value == 'MYVALUE'
     }
   }
 
@@ -86,7 +99,7 @@ class ExistsTest {
   @Test
   void test_exists_by_href() {
     html {
-      a(id: "myId", href:'search', 'MYLINK')
+      a(id: "myId", href: 'search', 'MYLINK')
     }
 
     webdsl {
@@ -97,11 +110,55 @@ class ExistsTest {
   @Test
   void test_exists_by_text() {
     html {
-      a(id: "myId", href:'http://something', 'search')
+      a(id: "myId", href: 'http://something', 'search')
     }
 
     webdsl {
       assert exists('search')
+    }
+  }
+
+  @Test
+  void test_exists_with_closure_true() {
+    html {
+      a(id: "myId", href: 'http://something', 'search')
+    }
+
+    webdsl {
+      assert exists('search', { "found $it.id" }) == "found myId"
+    }
+  }
+
+  @Test
+  void test_exists_with_closure_false() {
+    html {
+      a(id: "myId", href: 'http://something', 'not me')
+    }
+
+    webdsl {
+      assert exists('search', { "found" }) == false
+    }
+  }
+
+  @Test
+  void test_exists_with_two_closures_true() {
+    html {
+      a(id: "myId", href: 'http://something', 'search')
+    }
+
+    webdsl {
+      assert exists('search', { "found" }, { "not found" }) == "found"
+    }
+  }
+
+  @Test
+  void test_exists_with_two_closures_false() {
+    html {
+      a(id: "myId", href: 'http://something', 'not me')
+    }
+
+    webdsl {
+      assert exists('search', { "found" }, { "not found" }) == "not found"
     }
   }
 

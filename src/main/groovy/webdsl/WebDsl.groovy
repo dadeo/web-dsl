@@ -35,12 +35,14 @@ class WebDsl implements PageContainer {
   private boolean factoryResets = true
   private DslFactory factory = new DslFactory()
   private List<String> alerts = []
+  private Options options
 
   WebDsl(Options options = new Options()) {
     this((WebConnection) null, options)
   }
 
   WebDsl(WebConnection webConnection, Options options = new Options()) {
+    this.options = options
     initWebClient(webConnection, options)
   }
 
@@ -139,6 +141,18 @@ class WebDsl implements PageContainer {
     } catch (MissingPropertyException e) {
       falseClosure()
     }
+  }
+
+  @CompileStatic
+  def waitFor(Closure condition, Long timeOut = null) {
+    long timeOutToUse = timeOut ?: options.waitForTimeOut
+    long startTime = System.currentTimeMillis()
+    def result = condition(this)
+    while (!result && (System.currentTimeMillis() - startTime) < timeOutToUse) {
+      sleep options.waitForSleepTime
+      result = condition(this)
+    }
+    result
   }
 
   def methodMissing(String name, args) {
@@ -368,5 +382,7 @@ class WebDsl implements PageContainer {
     boolean printContentOnFailingStatusCode = false
     boolean throwExceptionOnFailingStatusCode = false
     boolean useInsecureSSL = true
+    long waitForTimeOut = 1000
+    long waitForSleepTime = 50
   }
 }

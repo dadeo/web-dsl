@@ -1,15 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.dadeo</groupId>
     <artifactId>web-dsl</artifactId>
-    <name>Web Dsl</name>
     <version>2.0.0-SNAPSHOT</version>
 
+    <name>Web Dsl</name>
+    <description>web-dsl is a project that wraps htmlunit.  It allows easier page tracking, data entry, and data extraction.</description>
+    <url>https://github.com/dadeo/web-dsl</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <scm>
-        <developerConnection>scm:git:git://github.com/dadeo/web-dsl.git</developerConnection>
+      <connection>scm:git:git@github.com:dadeo/web-dsl.git</connection>
+      <developerConnection>scm:git:git@github.com:dadeo/web-dsl.git</developerConnection>
+      <url>git@github.com:dadeo/web-dsl.git</url>
     </scm>
 
     <properties>
@@ -20,18 +34,18 @@
     </properties>
 
     <distributionManagement>
-        <repository>
-            <id>google-code</id>
-            <name>Local Maven repository of releases</name>
-            <url>dav:https://web-dsl.googlecode.com/svn/mvn-repo/release</url>
-        </repository>
         <snapshotRepository>
-            <id>google-code</id>
-            <name>Local Maven repository of snapshots</name>
-            <url>dav:https://web-dsl.googlecode.com/svn/mvn-repo/snapshot</url>
-            <uniqueVersion>false</uniqueVersion>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
+
+    <developers>
+        <developer>
+          <name>David R Watson</name>
+          <email>drobertwatson@gmail.com</email>
+        </developer>
+      </developers>
 
     <dependencies>
         <dependency>
@@ -123,11 +137,26 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
                 <executions>
                     <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
                         <goals>
                             <goal>jar</goal>
-                            <goal>test-jar</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -147,12 +176,40 @@
             </plugin>
 
             <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.3</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.0-beta-8</version>
                 <configuration>
+                    <goals>deploy nexus-staging:release</goals>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>

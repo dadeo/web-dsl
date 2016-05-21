@@ -13,189 +13,155 @@
 package com.github.dadeo.webdsl.support
 
 import com.gargoylesoftware.htmlunit.html.HtmlSpan
+import com.github.dadeo.webdsl.Orientation
 import com.github.dadeo.webdsl.WebDsl
 
-import static com.github.dadeo.webdsl.Orientation.VERTICAL
-
+import static com.github.dadeo.webdsl.Orientation.HORIZONTAL
 
 class GridDsl {
-  def grid = []
-  def gridOptions
-  private PageContainer pageContainer
-  private DslFactory factory
-  private Closure textClosure = { it.text.trim() }
-  private Closure camelCaseClosure = { WebDsl.camel(it.text.trim()) }
+    List grid = []
+    private Orientation gridOrientation = HORIZONTAL
+    private PageContainer pageContainer
+    private DslFactory factory
+    private Closure textClosure = { it.text.trim() }
+    private Closure camelCaseClosure = { WebDsl.camel(it.text.trim()) }
 
+    GridDsl(PageContainer pageContainer, DslFactory factory) {
+        this.pageContainer = pageContainer
+        this.factory = factory
+    }
 
-  GridDsl(PageContainer pageContainer, DslFactory factory, gridOptions = [:]) {
-    this.pageContainer = pageContainer
-    this.factory = factory
-    this.gridOptions = gridOptions
-  }
+    def nextRow(td) {
+        grid << [td]
+    }
 
-  def nextRow(td) {
-    grid << [td]
-  }
+    def appendColumn(td) {
+        grid[-1] << td
+    }
 
-  def appendColumn(td) {
-    grid[-1] << td
-  }
+    def getAs() {
+        this
+    }
 
-  def getAs() {
-    this
-  }
-
-  def getSpan() {
-    def result = []
-    process { row, column, td ->
-      if (column == 0) {
-        result << [:]
-      }
-      td.element.htmlElementDescendants.each { span ->
-        if (span instanceof HtmlSpan && span.getAttribute("name")) {
-          result[-1][span.getAttribute("name")] = span.getTextContent()
+    def getSpan() {
+        def result = []
+        process { row, column, td ->
+            if (column == 0) {
+                result << [:]
+            }
+            td.element.htmlElementDescendants.each { span ->
+                if (span instanceof HtmlSpan && span.getAttribute("name")) {
+                    result[-1][span.getAttribute("name")] = span.getTextContent()
+                }
+            }
         }
-      }
+        result
     }
-    result
-  }
 
-  def getList() {
-    def result = []
-    process { row, column, td ->
-      if (column == 0 && inRowRange(row, grid.size())) {
-        result << td.text
-      }
+    def getList() {
+        def result = []
+        process { row, column, td ->
+            if (column == 0) {
+                result << td.text
+            }
+        }
+        result
     }
-    result
-  }
 
-  def getObject() {
-    object([:])
-  }
+    def getObject() {
+        object([:])
+    }
 
-  def object(Map tableOptions) {
-    def result = [:]
-    String key
-    process { int row, int column, td ->
-      if (inRowRange(row, grid.size())) {
-        if (column == 0) {
-          key = extractKey(tableOptions, td, row)
+    def object(Map tableOptions) {
+        objects(tableOptions)[0] ?: [:]
+    }
+
+    def getObjects() {
+        objects([:])
+    }
+
+    def objects(Map tableOptions) {
+        reorientGrid(tableOptions)
+
+        Map<Integer, String> attributes = extractKeys(tableOptions)
+
+        def results = []
+        int lastRow = -1
+        int startRow = tableOptions.names ? 0 : 1
+        process(startRow) { row, column, td ->
+            if (lastRow != row) {
+                results << [:]
+                lastRow = row
+            }
+            String key = attributes[column]
+            results[-1][key] = extractValue(tableOptions, td, key)
+        }
+
+        results
+    }
+
+    def columns(String... columnNames) {
+        def result = []
+        def map = [:]
+        def finalize = {
+            (map.size()..<columnNames.size()).each { index -> map[columnNames[index]] = "" }
+            result << map
+        }
+        def oldRow = -1
+        process { row, column, td ->
+            if (oldRow != -1 && row != oldRow && column == 0) {
+                finalize()
+                map = [:]
+            }
+            if (column < columnNames.size()) {
+                map[columnNames[column]] = td.text
+            }
+            oldRow = row
+        }
+        finalize()
+        result
+    }
+
+    def process(Closure closure) {
+        process(0, closure)
+    }
+
+    def process(int fromIndex, Closure closure) {
+        for (int row = fromIndex; row < grid.size(); ++row) {
+            List columnList = grid[row]
+            for (int column = 0; column < columnList.size(); ++column) {
+                def td = columnList[column]
+                closure(row, column, td)
+            }
+        }
+    }
+
+    protected void reorientGrid(Map tableOptions) {
+        Orientation optionOrientation = tableOptions.orientation ?: HORIZONTAL
+        if (gridOrientation != optionOrientation) {
+            grid = grid.transpose()
+            gridOrientation = optionOrientation
+        }
+    }
+
+    protected Map<Integer, String> extractKeys(Map<String, Object> tableOptions) {
+        Map<Integer, String> result = [:]
+        if (tableOptions.names) {
+            ((List<String>) tableOptions.names).eachWithIndex { String name, Integer index -> result[index] = name }
         } else {
-          result[key] = extractValue(tableOptions, td, key)
+            grid[0].eachWithIndex { td, Integer index -> result[index] = extractKey(tableOptions, td) }
         }
-      }
+        result
     }
-    result
-  }
 
-  def getObjects() {
-    objects([:])
-  }
-
-  def objects(Map tableOptions) {
-    if (tableOptions.orientation == VERTICAL)
-      verticalObjects(tableOptions)
-    else
-      horizontalObjects(tableOptions)
-  }
-
-  private def horizontalObjects(Map options) {
-    def results = []
-    def attributes = [:]
-    process { row, column, td ->
-      if (row == 0) {
-        String key = extractKey(options, td, column)
-        attributes[column] = key
-      } else if (inRowRange(row - 1, grid.size() - 1)) {
-        if (column == 0)
-          results << [:]
-        if (inColumnRange(column, grid.size())) {
-          String key = attributes[column]
-          results[-1][key] = extractValue(options, td, key)
-        }
-      }
+    protected String extractKey(Map tableOptions, BaseElementDsl elementDsl) {
+        Closure keyExtractor = tableOptions.keyExtractor ?: camelCaseClosure
+        keyExtractor(elementDsl)
     }
-    results
-  }
 
-  private def verticalObjects(Map options) {
-    def results = []
-    int resultIndex = 0
-    String key
-    process { row, column, td ->
-      if (column == 0) {
-        resultIndex = 0
-        key = extractKey(options, td, row)
-      } else if (inColumnRange(column - 1, grid[row].size() - 1)) {
-
-        if (row == 0 && column != 0)
-          results << [:]
-
-        if (inRowRange(row, grid.size())) {
-          results[resultIndex][key] = extractValue(options, td, key)
-        }
-
-        resultIndex++
-      }
-
+    protected Object extractValue(Map tableOptions, BaseElementDsl elementDsl, String key) {
+        Closure valueExtractor = tableOptions.valueExtractors?.get(key) ?: tableOptions.valueExtractor ?: textClosure
+        valueExtractor(elementDsl)
     }
-    results
-  }
 
-  def columns(String... columnNames) {
-    def result = []
-    def map = [:]
-    def finalize = {
-      (map.size()..<columnNames.size()).each { index -> map[columnNames[index]] = "" }
-      result << map
-    }
-    def oldRow = -1
-    process { row, column, td ->
-      if (inRowRange(row, grid.size())) {
-        if (oldRow != -1 && row != oldRow && column == 0) {
-          finalize()
-          map = [:]
-        }
-        if (column < columnNames.size() && inRowRange(row, grid.size())) {
-          map[columnNames[column]] = td.text
-        }
-        oldRow = row
-      }
-    }
-    finalize()
-    result
-  }
-
-  def process(closure) {
-    grid.eachWithIndex { columnList, row ->
-      columnList.eachWithIndex { td, column ->
-        closure(row, column, td)
-      }
-    }
-  }
-
-  private String extractKey(Map tableOptions, BaseElementDsl elementDsl, int index) {
-    Closure keyExtractor = tableOptions.keyExtractor ?: camelCaseClosure
-
-    String key = keyExtractor(elementDsl)
-
-    if (tableOptions.names)
-      key = tableOptions.names[index] ?: key
-
-    key
-  }
-
-  private Object extractValue(Map tableOptions, BaseElementDsl elementDsl, String key) {
-    Closure valueExtractor = tableOptions.valueExtractors?.get(key) ?: textClosure
-    valueExtractor(elementDsl)
-  }
-
-  private boolean inRowRange(row, size) {
-    gridOptions.rowRange ? new RowRange(gridOptions.rowRange, size).contains(row) : true
-  }
-
-  private boolean inColumnRange(column, size) {
-    gridOptions.columnRange ? new RowRange(gridOptions.columnRange, size).contains(column) : true
-  }
 }

@@ -58,7 +58,7 @@ class NonServerMixin {
     String modifiedContents = contents
 
     String cssLink = cssContents ? '<link rel="stylesheet" type="text/css" href="test.css"></link>' : ""
-    String scriptTag = jsContents ? '<script src="jquery.js"></script>' : ""
+    String scriptTag = jsContents ? '<script src="test.js"></script>' : ""
 
     if (cssContents || jsContents) {
       modifiedContents = """
@@ -83,7 +83,7 @@ class NonServerMixin {
       builder = builder.setResponseFor("test.css", cssContents, "text/css")
 
     if (jsContents)
-      builder = builder.setResponseFor("jquery.js", jsContents, 'application/javascript')
+      builder = builder.setResponseFor("test.js", jsContents, 'application/javascript')
 
     builder
   }

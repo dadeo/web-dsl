@@ -17,33 +17,33 @@ import org.junit.Test
 
 
 class JettyRunnerTest {
-  private static final String DEFAULT_TEST_URL_BASE = 'http://localhost:8081/testit'
-  private JettyRunner runner
+    private static final String DEFAULT_TEST_URL_BASE = 'http://localhost:8081/testit'
+    private JettyRunner runner
 
-  @After
-  void tearDown() {
-    runner?.stop()
-  }
-
-  @Test
-  void test_testit_dynamic_page_title() {
-    runner = new JettyRunner()
-    runner.start()
-
-    new WebDsl().for(DEFAULT_TEST_URL_BASE + "/now").do {
-      assert title == 'TestServlet now'
+    @After
+    void tearDown() {
+        runner?.stop()
     }
-  }
 
-  @Test
-  void test_testit_displays_request_parameters() {
-    runner = new JettyRunner()
-    runner.start()
+    @Test
+    void test_testit_dynamic_page_title() {
+        runner = new JettyRunner()
+        runner.start()
 
-    new WebDsl().for(DEFAULT_TEST_URL_BASE + "/now?abc=1&def=3&def=2").do {
-      assert title == 'TestServlet now'
-
-      assert $('#parameters').as.objects(names: ['key', 'value']) == [[key:'abc', value:'1'], [key:'def', value:'2, 3']]
+        new WebDsl().for(DEFAULT_TEST_URL_BASE + "/now").do {
+            assert title == 'TestServlet now'
+        }
     }
-  }
+
+    @Test
+    void test_testit_displays_request_parameters() {
+        runner = new JettyRunner()
+        runner.start()
+
+        new WebDsl().for(DEFAULT_TEST_URL_BASE + "/now?abc=1&def=3&def=2").do {
+            assert title == 'TestServlet now'
+
+            assert $('#parameters').structure(startRow: 1).as.objects(names: ['key', 'value']) == [[key: 'abc', value: '1'], [key: 'def', value: '2, 3']]
+        }
+    }
 }

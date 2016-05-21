@@ -15,63 +15,78 @@ package com.github.dadeo.webdsl.support
 import com.gargoylesoftware.htmlunit.html.HtmlTable
 
 class TableDsl extends BaseElementDsl {
-  private HtmlTable table
+    private HtmlTable table
 
-  TableDsl(pageContainer, DslFactory factory, table) {
-    super(pageContainer, factory, table)
-    this.table = table
-  }
+    TableDsl(pageContainer, DslFactory factory, table) {
+        super(pageContainer, factory, table)
+        this.table = table
+    }
 
-  def getName() {
-    table.getAttribute("name")
-  }
+    def getName() {
+        table.getAttribute("name")
+    }
 
-  def getBy() {
-    "do"()
-  }
+    GridDsl getBy() {
+        structure()
+    }
 
-  def getAs() {
-    "do"()
-  }
+    GridDsl getAs() {
+        structure()
+    }
 
-  def process(Closure closure) {
-    process null, closure
-  }
+    def process(Closure closure) {
+        process null, closure
+    }
 
-  def process(Map options, Closure closure) {
-    def startIndex = options?.offset ?: 0
-    def startColumn = options?.column ?: 0
-    int rowIndex = 0
-    if(startIndex < table.rows.size()) {
-      table.rows[startIndex..-1].each { row ->
-        int columnIndex = 0
-        row.cells[startColumn..-1].each { td ->
-          closure rowIndex, columnIndex, factory.create(pageContainer, td)
-          ++columnIndex
+    def process(Map options, Closure closure) {
+        def startIndex = options?.offset ?: 0
+        def startColumn = options?.column ?: 0
+        int rowIndex = 0
+        if (startIndex < table.rows.size()) {
+            table.rows[startIndex..-1].each { row ->
+                int columnIndex = 0
+                row.cells[startColumn..-1].each { td ->
+                    closure rowIndex, columnIndex, factory.create(pageContainer, td)
+                    ++columnIndex
+                }
+                ++rowIndex
+            }
         }
-        ++rowIndex
-      }
     }
-  }
 
-  def "do"(options = [:]) {
-    def grid = new GridDsl(pageContainer, factory, options)
-    process options, { row, column, td ->
-      if (column == 0) {
-        grid.nextRow td
-      } else {
-        grid.appendColumn td
-      }
+    def "do"(options = [:]) {
+        structure(options)
     }
-    grid
-  }
 
-  def propertyMissing(String name) {
-    if (name == "tbody" || name == "thead") {
-      super.propertyMissing(name)
-    } else {
-      super.propertyMissing("tbody")[0][name]
+    GridDsl structure(Map<String, Object> options = [:]) {
+        GridDslBuilder gridDslBuilder
+
+        if (table.rowCount > 0) {
+            int columnCount = table.getRow(0).childElements.toList().size()
+            gridDslBuilder = new GridDslBuilder(pageContainer, factory, options, table.rowCount, columnCount)
+
+            int rowIndex = 0
+            table.rows.each { row ->
+                int columnIndex = 0
+                row.cells.each { td ->
+                    gridDslBuilder.append rowIndex, columnIndex, factory.create(pageContainer, td)
+                    ++columnIndex
+                }
+                ++rowIndex
+            }
+        } else {
+            gridDslBuilder = new GridDslBuilder(pageContainer, factory, options, table.rowCount, 0)
+        }
+
+        gridDslBuilder.buildGrid()
     }
-  }
+
+    def propertyMissing(String name) {
+        if (name == "tbody" || name == "thead") {
+            super.propertyMissing(name)
+        } else {
+            super.propertyMissing("tbody")[0][name]
+        }
+    }
 
 }

@@ -9,6 +9,8 @@ return a new page instance that needs to be tracked.  Since then, many useful fe
 Most of the groovy DSL like syntax has been deprecated or removed. However, the name has stuck.
 
 ## Getting Started
+web-dsl is avaliable from Maven Central.  Find the latest version by going [here](http://search.maven.org/#search%7Cga%7C1%7Cweb-dsl).
+
 First create a WebDsl object
 ```
 WebDsl webDsl = new WebDsl("http://localhost:8081/test.html")

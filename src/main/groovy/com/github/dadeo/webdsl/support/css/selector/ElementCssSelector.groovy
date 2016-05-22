@@ -37,6 +37,6 @@ class ElementCssSelector implements CssSelector {
       }
     }
 
-    (List<? extends BaseElementDsl>) predicates.every { it(candidate) } ? [candidate] : []
+    (List<? extends BaseElementDsl>) (predicates.every { it(candidate) } ? [candidate] : [])
   }
 }

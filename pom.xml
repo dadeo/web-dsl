@@ -29,9 +29,8 @@
   </scm>
 
     <properties>
-        <groovy.version>2.2.1</groovy.version>
-        <gmaven.version>1.5</gmaven.version>
-        <gmaven.provider>2.0</gmaven.provider>
+        <groovy.version>2.4.6</groovy.version>
+        <gmavenplus.version>1.5</gmavenplus.version>
         <htmlunit.version>2.15</htmlunit.version>
     </properties>
 
@@ -81,23 +80,14 @@
 
         <plugins>
             <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
-                <version>${gmaven.version}</version>
-                <configuration>
-                    <providerSelection>${gmaven.provider}</providerSelection>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.codehaus.groovy</groupId>
-                        <artifactId>groovy-all</artifactId>
-                        <version>${groovy.version}</version>
-                    </dependency>
-                </dependencies>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <version>${gmavenplus.version}</version>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>generateStubs</goal>
+                            <goal>addSources</goal>
+                            <goal>addTestSources</goal>
                             <goal>compile</goal>
                             <goal>testCompile</goal>
                         </goals>

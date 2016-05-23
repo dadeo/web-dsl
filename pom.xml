@@ -5,7 +5,7 @@
 
     <groupId>com.github.dadeo</groupId>
     <artifactId>web-dsl</artifactId>
-    <version>2.0.0.RC5-SNAPSHOT</version>
+    <version>2.0.0.RC5</version>
 
     <name>Web Dsl</name>
     <description>web-dsl is a project that wraps htmlunit. It allows easier page tracking, data entry, and data
@@ -25,7 +25,7 @@
         <connection>scm:git:git@github.com:dadeo/web-dsl.git</connection>
         <developerConnection>scm:git:git@github.com:dadeo/web-dsl.git</developerConnection>
         <url>git@github.com:dadeo/web-dsl.git</url>
-      <tag>HEAD</tag>
+      <tag>web-dsl-2.0.0.RC5</tag>
   </scm>
 
     <properties>
